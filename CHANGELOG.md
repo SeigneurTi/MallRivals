@@ -2,6 +2,16 @@
 
 Les versions les plus récentes sont en haut.
 
+## v2.8 — Banque, billard, partie auto, événements plus rares (4 novembre 2026)
+
+- **Banque** : toujours au centre de la carte, elle n'appartient à personne et ne peut pas être détruite (les événements l'épargnent, la météorite rebondit dessus). Quand son coffre est plein, une voiture-voleur l'emporte : +600 $. Le coffre se vide, puis l'or revient peu à peu (lingots visibles, « Or 45 % ») : pillable à nouveau au bout de 2 minutes. Son menu indique le temps restant.
+- **Salle de billard** (280 $, 4 places) : 2 tables ; deux clients jouent l'un contre l'autre, chacun son tour. Billes simulées (rebonds, chocs, poches), queue qui recule pendant la visée, « Partie gagnée ! » quand toutes les billes sont rentrées.
+- **Événements aléatoires beaucoup plus rares** : environ un toutes les 4 minutes au lieu de toutes les 40 secondes.
+- **Bouton « Partie auto »** : les deux joueurs jouent tout seuls (ils construisent chaque type de boutique, économisent pour les plus chères, améliorent, protègent, pillent la banque et s'attaquent rarement). Pratique pour regarder la ville.
+- Les bacs de cartes s'adaptent au nombre de cartes (25 désormais).
+- Code : les actions d'un joueur sont regroupées dans `js/actions.js`, partagées par les clics et la partie auto ; un intérieur peut avoir son propre état (`createState`, `update`).
+- Fichiers : nouveaux `js/actions.js`, `js/autoplay.js`, `js/shops/interiors-bank.js` ; modifiés `js/config.js`, `js/catalog.js`, `js/names.js`, `js/icons.js`, `js/shops/shop.js`, `js/shops/interiors-night.js`, `js/state.js`, `js/events/attacks.js`, `js/events/random-events.js`, `js/input.js`, `js/main.js`, `js/render/menu.js`, `js/render/overlay.js`, `js/render/trays.js`, `index.html`, `css/styles.css`.
+
 ## v2.7 — Casino, discothèque, spectateurs face à l'écran (4 novembre 2026)
 
 - Deux nouvelles boutiques, les plus chères du jeu :

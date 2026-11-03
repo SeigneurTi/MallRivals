@@ -129,6 +129,13 @@ input:focus-visible {
   outline-offset: 2px;
 }
 
+/* Bouton « Partie auto » enfoncé. */
+button[aria-pressed="true"] {
+  background: #fff1e6;
+  border-color: var(--accent);
+  color: #7a3410;
+}
+
 #play {
   background: var(--accent);
   border-color: var(--accent);

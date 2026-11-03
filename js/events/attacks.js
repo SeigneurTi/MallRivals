@@ -63,6 +63,10 @@
         if (!lot.shop) {
           return;
         }
+        if (lot.isBank) {
+          robBank(player, lot);
+          return;
+        }
         const thief = Game.config.thief;
         const successChance = Math.max(thief.MIN_SUCCESS, thief.BASE_SUCCESS - thief.SUCCESS_LOSS_PER_SHIELD * lot.shields);
         if (Math.random() < successChance) {
@@ -83,6 +87,23 @@
         Game.events.addSmoke(...Game.world.lotCenter(lot));
       },
     });
+  }
+
+  // Pillage de la banque : le voleur emporte tout l'or (si un autre voleur ne l'a pas
+  // vidée entre-temps). Le coffre se remplit ensuite peu à peu.
+  function robBank(player, lot) {
+    if (!Game.shops.isBankFull(lot)) {
+      Game.feedback.floatText(lot, 'Coffre vide !', '#555');
+      log(`Le voleur de ${PLAYER_NAMES[player]} arrive trop tard : la banque est vide.`);
+      Game.events.addSmoke(...Game.world.lotCenter(lot));
+      return;
+    }
+    const loot = Game.config.bank.LOOT;
+    lot.bank.gold = 0;
+    Game.state.bucks[player] += loot;
+    floatText(lot, '+' + loot + ' $', PLAYER_COLORS[player]);
+    log(`${PLAYER_NAMES[player]} pille la banque : +${loot} $ !`);
+    Game.events.addSmoke(...Game.world.lotCenter(lot));
   }
 
   Object.assign(Game.events, { launchMeteor, launchThief });

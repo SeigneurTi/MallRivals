@@ -45,6 +45,17 @@
     return { x, y, width: MENU_WIDTH, height, items };
   }
 
+  // « À personne · coffre plein : 600 $ à piller » ou « … · coffre plein dans 1 min 20 s ».
+  function bankSummary(lot) {
+    if (Game.shops.isBankFull(lot)) {
+      return `À personne · coffre plein : ${Game.config.bank.LOOT} $ à piller (voiture-voleur)`;
+    }
+    const secondsLeft = Math.ceil((1 - lot.bank.gold) * Game.config.bank.REFILL_SECONDS);
+    const minutes = Math.floor(secondsLeft / 60);
+    const wait = minutes ? `${minutes} min ${secondsLeft % 60} s` : `${secondsLeft} s`;
+    return `À personne · coffre plein dans ${wait}`;
+  }
+
   function draw(c, lot) {
     const menu = layout(lot);
     const ownerName = lot.owner != null ? Game.config.players.NAMES[lot.owner] : 'Sans propriétaire';
@@ -65,7 +76,7 @@
     c.fillText(lot.shop.name, menu.x + 12, menu.y + 18);
     c.fillStyle = '#5d6560';
     c.font = '600 11px Nunito, system-ui, sans-serif';
-    const summary = `${ownerName} · niv. ${lot.level} · ${Game.catalog.capacityOf(lot.shop)} places · ${Game.catalog.incomePerCustomer(lot)} $/client`;
+    const summary = lot.isBank ? bankSummary(lot) : `${ownerName} · niv. ${lot.level} · ${Game.catalog.capacityOf(lot.shop)} places · ${Game.catalog.incomePerCustomer(lot)} $/client`;
     c.fillText(summary, menu.x + 12, menu.y + 37, menu.width - 20);
 
     for (const item of menu.items) {

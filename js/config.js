@@ -70,6 +70,7 @@
         swim: [8, 12],
         ride: [8, 11],                 // manège
         dance: [8, 12],                // piste de danse de la discothèque
+        billiard: [16, 26],            // une partie de billard
       },
       DEFAULT_STAY_SECONDS: 6,
       SEATED_ACTIVITIES: ['sit', 'session'],   // activités où le client s'assoit (tables, fauteuils de cinéma…)
@@ -109,10 +110,33 @@
     },
 
     // Fréquence moyenne des événements aléatoires (par seconde de jeu).
+    // Au total, environ un événement toutes les 4 minutes (v2.7 : toutes les 40 s).
     events: {
-      FIRE_PER_SECOND: 0.004,
-      MONSTER_PER_SECOND: 0.011,
-      UFO_PER_SECOND: 0.009,
+      FIRE_PER_SECOND: 0.0007,         // un incendie toutes les 24 min environ
+      MONSTER_PER_SECOND: 0.002,       // un monstre toutes les 8 min environ
+      UFO_PER_SECOND: 0.0015,          // un OVNI toutes les 11 min environ
+    },
+
+    // Banque : sans propriétaire, toujours au même endroit, pillable à la voiture-voleur.
+    bank: {
+      LOT_INDEX: 15,                   // case au centre de la carte
+      LOOT: 600,                       // butin quand le coffre est plein
+      REFILL_SECONDS: 120,             // l'or revient en 2 minutes
+    },
+
+    billiard: {
+      AIM_SECONDS_MIN: 1.2,            // temps de visée avant chaque coup
+      AIM_SECONDS_MAX: 2.2,
+      SHOT_SPEED: 2.6,                 // vitesse de la bille blanche (longueurs de table par seconde)
+      FRICTION: 1.2,                   // ralentissement des billes
+    },
+
+    // Partie auto (bouton « Partie auto ») : les deux joueurs jouent tout seuls.
+    autoplay: {
+      DECISION_SECONDS: 3,             // un joueur réfléchit toutes les 3 s environ
+      BUILD_CHANCE: 0.7,               // préfère construire quand c'est possible
+      BANK_ROBBERY_CHANCE: 0.25,       // tente de piller la banque quand elle est pleine
+      MALUS_CHANCE: 0.05,              // joue rarement une météorite ou un voleur contre l'adversaire
     },
 
     fire: {

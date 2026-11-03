@@ -22,7 +22,7 @@ bourg-les-bonhommes/
 │   ├── canvas.js            Canvas, mise à l'échelle de l'écran (Game.view)
 │   ├── draw.js              Primitives : rectangle, disque, ellipse, rectangle arrondi
 │   ├── map.js               Carrefours, rues, sorties, cases, recherche de trajet
-│   ├── catalog.js           ★ Les 22 boutiques et 2 malus, formules de gains
+│   ├── catalog.js           ★ Les 23 boutiques, la banque et les 2 malus, formules de gains
 │   ├── names.js             « le Cinéma », « au Cinéma », « du Cinéma »…
 │   ├── icons.js             Icônes des enseignes et des cartes
 │   ├── sprites.js           Bouclier, voiture, icônes des malus
@@ -33,7 +33,8 @@ bourg-les-bonhommes/
 │   │   │                         jouets, vêtements, bijouterie
 │   │   ├── interiors-food.js     Café, glacier, pizzeria, burger, restaurant
 │   │   ├── interiors-leisure.js  Coiffeur, arcade, bowling, cinéma, piscine, manège, hôtel
-│   │   ├── interiors-night.js    Casino, discothèque
+│   │   ├── interiors-night.js    Billard, casino, discothèque
+│   │   ├── interiors-bank.js     Banque (coffre, lingots)
 │   │   └── shop.js          Ouverture, places libres, séances, pistes, dessin du bâtiment
 │   ├── state.js             État de la partie (Game.state), nouvelle partie, destruction
 │   ├── feedback.js          Journal, bannière, textes flottants
@@ -51,6 +52,8 @@ bourg-les-bonhommes/
 │   │   ├── animations.js    Mise à jour et dessin des animations
 │   │   ├── attacks.js       Météorite, voiture-voleur
 │   │   └── random-events.js Incendie, monstre, OVNI
+│   ├── actions.js           Actions d'un joueur : construire, améliorer, protéger, malus
+│   ├── autoplay.js          Partie auto : les deux joueurs jouent tout seuls
 │   ├── input.js             Clics, survol, curseurs et boutons
 │   └── main.js              Boucle d'animation et démarrage
 ├── CHANGELOG.md             Ce qui a changé à chaque version
@@ -72,6 +75,9 @@ bourg-les-bonhommes/
 | Durée de l'attente et du film au cinéma | `js/config.js` | `cinema` |
 | Réussite de la voiture-voleur, vitesse de la voiture | `js/config.js` | `thief` |
 | Fréquence des incendies, monstres, OVNI | `js/config.js` | `events` |
+| Butin, emplacement et remplissage de la banque | `js/config.js` | `bank` |
+| Comportement de la partie auto | `js/config.js` (et `js/autoplay.js`) | `autoplay` |
+| Billard (visée, vitesse, frottement) | `js/config.js` | `billiard` |
 | Effets de l'incendie, du monstre, de l'OVNI | `js/config.js` | `fire`, `monster`, `ufo` |
 | Nombre de places d'une boutique | `js/shops/interiors-*.js` | `slots` de la boutique |
 | Disposition des tables du café | `js/shops/interiors-food.js` | `CAFE_TABLES` (position et angle des chaises) |
@@ -85,7 +91,7 @@ bourg-les-bonhommes/
 1. Ajouter une ligne dans `SHOPS` (`js/catalog.js`), avec un `id` unique et une icône existante de `js/icons.js` (ou en créer une).
 2. Ajouter son intérieur dans le fichier `js/shops/interiors-*.js` qui convient : `activity`, `slots`, `drawFurniture(g)`.
 3. Ajouter son article dans `js/names.js` (« le », « la », « l' »…).
-4. Le bac de cartes est dimensionné pour 24 cartes (12 rangées de 2) : au-delà, il faut revoir `FIRST_ROW_Y` et `ROW_STEP` dans `js/render/trays.js`.
+4. Le bac de cartes s'adapte tout seul au nombre de cartes (`js/render/trays.js`) ; au-delà de 26 cartes environ, elles deviennent petites.
 
 ## Organisation du code
 

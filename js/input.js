@@ -4,9 +4,7 @@
   'use strict';
 
   const BOARD = Game.config.board;
-  const PLAYER_NAMES = Game.config.players.NAMES;
-  const { log, floatText } = Game.feedback;
-  const { shopName } = Game.names;
+  const { floatText } = Game.feedback;
 
   // Position du pointeur en unités logiques du plateau.
   function toBoardPoint(event) {
@@ -19,18 +17,11 @@
   }
 
   function chooseMenuItem(lot, item) {
-    const bucks = Game.state.bucks;
-    if (item.action === 'upgrade' && bucks[lot.owner] >= item.cost) {
-      bucks[lot.owner] -= item.cost;
-      lot.level++;
-      Game.board.draw();
-      floatText(lot, 'Niveau ' + lot.level, '#b7791f');
-      log(`${PLAYER_NAMES[lot.owner]} améliore ${shopName(lot)} au niveau ${lot.level}.`);
-    } else if (item.action === 'shield' && bucks[lot.owner] >= item.cost) {
-      bucks[lot.owner] -= item.cost;
-      lot.shields++;
-      Game.board.draw();
-      floatText(lot, 'Bouclier +1', '#3a86ff');
+    const actions = Game.actions;
+    if (item.action === 'upgrade' && actions.canAfford(lot.owner, item.cost)) {
+      actions.upgrade(lot);
+    } else if (item.action === 'shield' && actions.canAfford(lot.owner, item.cost)) {
+      actions.addShield(lot);
     } else if (item.action && item.action !== 'close') {
       // Pas assez d'argent : le menu reste ouvert.
       Game.state.menuLot = lot;
@@ -48,24 +39,16 @@
       return true;
     }
     if (!card.isAction && !lot.shop) {
-      state.bucks[player] -= card.price;
-      Game.shops.open(lot, card, player);
       state.selection = null;
-      Game.board.draw();
-      log(`${PLAYER_NAMES[player]} ouvre ${shopName(lot)}.`);
+      Game.actions.build(player, lot, card);
       return true;
     }
     if (card.isAction && lot.shop && !lot.isBusy) {
-      if (lot.owner !== 1 - player) {
-        floatText(lot, 'Vise une boutique adverse', '#c0392b');
-        return true;
-      }
-      state.bucks[player] -= card.price;
-      state.selection = null;
-      if (card.id === 'meteorite') {
-        Game.events.launchMeteor(player, lot);
+      const refusal = Game.actions.playMalus(player, card, lot);
+      if (refusal) {
+        floatText(lot, refusal, '#c0392b');
       } else {
-        Game.events.launchThief(player, lot);
+        state.selection = null;
       }
       return true;
     }
@@ -147,6 +130,12 @@
       syncPlayButton();
     });
     document.getElementById('reset').addEventListener('click', Game.world.reset);
+    const autoplayButton = document.getElementById('autoplay');
+    autoplayButton.addEventListener('click', () => {
+      Game.state.isAutoplay = !Game.state.isAutoplay;
+      autoplayButton.setAttribute('aria-pressed', String(Game.state.isAutoplay));
+      autoplayButton.textContent = Game.state.isAutoplay ? 'Partie auto ✓' : 'Partie auto';
+    });
   }
 
   Game.input = { bind, syncPlayButton };

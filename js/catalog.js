@@ -5,7 +5,7 @@
 
   const config = Game.config;
 
-  // Les 22 boutiques, de la moins chère à la plus chère.
+  // Les 23 boutiques, de la moins chère à la plus chère.
   // color : couleur de l'enseigne et des murs ; icon : voir js/icons.js.
   const SHOPS = [
     { id: 'fleuriste', name: 'Fleuriste', price: 60, color: '#e8578f', icon: 'flower' },
@@ -20,6 +20,7 @@
     { id: 'coiffeur', name: 'Coiffeur', price: 210, color: '#6b4fb3', icon: 'scissors' },
     { id: 'burger', name: 'Burger', price: 240, color: '#e2552a', icon: 'burger' },
     { id: 'vetements', name: 'Vêtements', price: 270, color: '#2b8fbd', icon: 'shirt' },
+    { id: 'billard', name: 'Billard', price: 280, color: '#2e7d4f', icon: 'eightball' },
     { id: 'arcade', name: 'Arcade', price: 300, color: '#8c3fd1', icon: 'joystick' },
     { id: 'restaurant', name: 'Restaurant', price: 330, color: '#7d2a3a', icon: 'cutlery' },
     { id: 'bowling', name: 'Bowling', price: 360, color: '#d6336c', icon: 'pin' },
@@ -37,6 +38,9 @@
     { id: 'meteorite', name: 'Météorite', price: 250, isAction: true },
     { id: 'voleur', name: 'Voiture-voleur', price: 300, isAction: true },
   ];
+
+  // La banque : déjà sur la carte, sans propriétaire, ne s'achète pas (pas de carte).
+  const BANK = { id: 'banque', name: 'Banque', price: 0, color: '#5b6b7a', icon: 'bank' };
 
   // Ordre des cartes dans les bacs : boutiques puis malus.
   const CARDS = [...SHOPS, ...ACTIONS];
@@ -71,5 +75,5 @@
     return Math.round(config.economy.SHIELD_BASE_COST + lot.shop.price * config.economy.SHIELD_PRICE_RATE);
   }
 
-  Game.catalog = { SHOPS, ACTIONS, CARDS, capacityOf, incomePerCustomer, entryChance, upgradeCost, shieldCost };
+  Game.catalog = { SHOPS, ACTIONS, CARDS, BANK, capacityOf, incomePerCustomer, entryChance, upgradeCost, shieldCost };
 })();

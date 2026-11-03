@@ -19,11 +19,7 @@
     ctx.setLineDash([8, 6]);
     ctx.lineDashOffset = -time / 40;
     for (const lot of Game.state.lots) {
-      // Malus : une boutique adverse libre de tout événement. Boutique : une case vide.
-      const isTarget = card.isAction
-        ? (lot.shop && lot.owner === 1 - selection.player && !lot.isBusy)
-        : !lot.shop;
-      if (isTarget) {
+      if (Game.actions.isValidTarget(card, selection.player, lot)) {
         ctx.strokeStyle = card.isAction ? '#c0392b' : Game.config.players.COLORS[selection.player];
         roundedRectPath(ctx, lot.x + 2, lot.y + 2, lot.width - 4, lot.height - 4, 6);
         ctx.stroke();

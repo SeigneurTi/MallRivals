@@ -21,6 +21,23 @@
       pinsDownTimer: 0,     // > 0 : les quilles sont à terre
     }));
     lot.cinema = { phase: 'waiting', elapsed: 0 };   // 'waiting' puis 'film'
+    lot.isBank = false;
+    // État propre à certaines boutiques (tables de billard, or de la banque…).
+    const interior = Game.interiors[shop.id];
+    if (interior.createState) {
+      interior.createState(lot);
+    }
+  }
+
+  // Installe la banque : sans propriétaire, coffre plein, impossible à détruire.
+  function openBank(lot) {
+    open(lot, Game.catalog.BANK, null);
+    lot.isBank = true;
+  }
+
+  // La banque peut-elle être pillée ? Seulement quand le coffre est plein.
+  function isBankFull(lot) {
+    return lot.isBank && lot.bank.gold >= 1;
   }
 
   // Un passant peut-il entrer ? Il faut une place libre, et au cinéma, pas de film en cours.
@@ -43,6 +60,10 @@
     }
     if (Game.interiors[lot.shop.id].activity === 'session') {
       updateCinema(lot, dt);
+    }
+    const interior = Game.interiors[lot.shop.id];
+    if (interior.update) {
+      interior.update(lot, dt);
     }
   }
 
@@ -167,7 +188,11 @@
     const freeSlots = lot.occupants.filter(occupant => !occupant).length;
     let label = null;
     let color = '#c0392b';
-    if (interior.activity === 'session') {
+    if (lot.isBank) {
+      // Banque : état du coffre.
+      label = isBankFull(lot) ? 'Coffre plein' : `Or ${Math.floor(lot.bank.gold * 100)} %`;
+      color = isBankFull(lot) ? '#b8860b' : '#5b6b7a';
+    } else if (interior.activity === 'session') {
       const isWaiting = lot.cinema.phase === 'waiting';
       const remaining = Math.ceil((isWaiting ? CINEMA.WAITING_SECONDS : CINEMA.FILM_SECONDS) - lot.cinema.elapsed);
       label = isWaiting ? `Séance dans ${remaining} s` : `Film · ${remaining} s`;
@@ -192,5 +217,5 @@
     ctx.fillText(label, labelX, labelY + 0.5);
   }
 
-  Game.shops = { open, hasFreeSlot, update, drawBuilding, drawLiveLayer, drawOverPeopleLayer };
+  Game.shops = { open, openBank, isBankFull, hasFreeSlot, update, drawBuilding, drawLiveLayer, drawOverPeopleLayer };
 })();

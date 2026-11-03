@@ -26,6 +26,8 @@
     hotel: "l'",
     casino: 'le ',
     discotheque: 'la ',
+    billard: 'la salle de ',
+    banque: 'la ',
   };
 
   // « le Cinéma », « la boutique de vêtements ».

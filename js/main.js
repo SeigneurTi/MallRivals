@@ -16,6 +16,7 @@
     Game.people.spawnIfNeeded(dt);
     Game.events.updateAnimations(dt);
     Game.events.maybeTriggerRandomEvents(dt);
+    Game.autoplay.update(dt);
   }
 
   function render(timestamp) {

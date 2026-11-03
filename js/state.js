@@ -21,6 +21,7 @@
     speedMultiplier: 1,       // curseur « Vitesse »
     isRunning: !Game.view.prefersReducedMotion,           // bouton Pause / Lecture
     hoveredPerson: null,      // passant survolé (info-bulle)
+    isAutoplay: false,        // bouton « Partie auto » : les joueurs jouent tout seuls
   };
 
   function createLots() {
@@ -44,13 +45,18 @@
     const state = Game.state;
     state.lots = createLots();
 
-    Game.utils.shuffled(state.lots).slice(0, START.HOT_LOT_COUNT).forEach(lot => {
+    // La banque est toujours au même endroit ; les tirages ci-dessous se font sur les autres cases.
+    const bankLot = state.lots[Game.config.bank.LOT_INDEX];
+    Game.shops.openBank(bankLot);
+    const otherLots = state.lots.filter(lot => lot !== bankLot);
+
+    Game.utils.shuffled(otherLots).slice(0, START.HOT_LOT_COUNT).forEach(lot => {
       lot.isHot = true;
     });
 
     // Quelques boutiques bon marché déjà ouvertes, une sur deux pour chaque joueur.
     const cheapShops = Game.catalog.SHOPS.slice(0, START.PREBUILT_SHOP_CHOICES);
-    Game.utils.shuffled(state.lots).slice(0, START.PREBUILT_SHOP_COUNT).forEach((lot, k) => {
+    Game.utils.shuffled(otherLots).slice(0, START.PREBUILT_SHOP_COUNT).forEach((lot, k) => {
       Game.shops.open(lot, Game.utils.pickRandom(cheapShops), k % 2);
     });
 
@@ -85,6 +91,7 @@
     lot.level = 1;
     lot.shields = 0;
     lot.occupants = [];
+    lot.isBank = false;
     if (Game.state.menuLot === lot) {
       Game.state.menuLot = null;
     }

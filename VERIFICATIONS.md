@@ -5,8 +5,8 @@
 ## Démarrage
 
 - [ ] La page s'ouvre sans message d'erreur rouge sous le titre.
-- [ ] Le plateau montre 4 routes qui sortent du cadre, 36 cases grises, quelques ronds roses et 4 boutiques déjà ouvertes (2 par joueur, contour orange ou bleu).
-- [ ] Chaque bac affiche 24 cartes avec leur prix et leur nom en petit dessous, et « 1000 bucks » en bas.
+- [ ] Le plateau montre 4 routes qui sortent du cadre, 36 cases grises, quelques ronds roses 4 boutiques déjà ouvertes (2 par joueur, contour orange ou bleu) et la banque au centre.
+- [ ] Chaque bac affiche 25 cartes avec leur prix et leur nom en petit dessous, et « 1000 bucks » en bas.
 - [ ] Les accents s'affichent correctement (« Météorite », « Hôtel », « Manège »).
 - [ ] Des passants arrivent par les 4 routes et se promènent.
 
@@ -51,7 +51,25 @@
 - [ ] Malus sur sa propre boutique : « Vise une boutique adverse », rien n'est payé.
 - [ ] **Voiture-voleur** : la voiture part de la sortie Ouest (joueur 1) ou Est (joueur 2), roule jusqu'à la porte ; « Volé ! » (le contour change de couleur, les boucliers disparaissent) ou « Raté ! » (un bouclier en moins s'il y en avait).
 
-## Événements aléatoires (laisser tourner à ×3)
+## Banque
+
+- [ ] La banque est au centre de la carte dès le départ, sans contour de couleur, avec « Coffre plein » et 10 lingots.
+- [ ] Voiture-voleur sur la banque pleine : +600 $ pour le joueur, le coffre se vide (« Or 0 % »), puis les lingots reviennent un à un.
+- [ ] Tant que le coffre n'est pas plein : la banque n'est pas proposée comme cible, et la viser affiche « Coffre vide ».
+- [ ] Météorite sur la banque : « La banque est trop solide ! », rien n'est payé.
+- [ ] Toucher la banque : le menu indique le temps restant avant que le coffre soit plein (2 minutes en tout).
+
+## Billard
+
+- [ ] 2 tables ; un client à chaque bout. À deux, ils jouent chacun leur tour : la queue recule, la blanche part, les billes rebondissent et tombent dans les poches.
+- [ ] Quand toutes les billes sont rentrées : « Partie gagnée ! » et les billes sont remises en triangle.
+
+## Partie auto
+
+- [ ] Bouton « Partie auto » : il s'enfonce (« Partie auto ✓ ») et les deux joueurs construisent, améliorent et protègent tout seuls ; au bout de quelques minutes, la ville est pleine et toutes les boutiques sont présentes.
+- [ ] Le rejouer l'arrête ; Pause met aussi la partie auto en pause.
+
+## Événements aléatoires (laisser tourner à ×3, ils sont rares : environ un toutes les 4 minutes)
 
 - [ ] **Monstre** : il traverse la carte et fait perdre un bouclier, sinon un niveau (« Niveau −1 »), sinon détruit la boutique ; puis il repart.
 - [ ] **OVNI** : il arrive, éclaire la boutique de son rayon vert, puis l'emporte, est repoussé par un bouclier, ou fait des courses (« +gain » vert).

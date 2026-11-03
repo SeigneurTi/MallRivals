@@ -301,6 +301,34 @@
       dot(c, cx - r * 0.2, cy - r * 0.1, r * 0.14);
     },
 
+    eightball(c, cx, cy, r) {
+      c.fillStyle = '#1b1b2a';
+      dot(c, cx, cy, r * 0.7);
+      c.fillStyle = '#fff';
+      dot(c, cx, cy - r * 0.08, r * 0.32);
+      c.fillStyle = '#1b1b2a';
+      c.font = `800 ${r * 0.5}px Nunito, system-ui, sans-serif`;
+      c.textAlign = 'center';
+      c.textBaseline = 'middle';
+      c.fillText('8', cx, cy - r * 0.04);
+    },
+
+    bank(c, cx, cy, r) {
+      // Fronton, colonnes et marches.
+      c.beginPath();
+      c.moveTo(cx - r * 0.75, cy - r * 0.3);
+      c.lineTo(cx, cy - r * 0.75);
+      c.lineTo(cx + r * 0.75, cy - r * 0.3);
+      c.closePath();
+      c.fill();
+      for (const u of [-0.5, -0.17, 0.17, 0.5]) {
+        c.fillRect(cx + u * r - r * 0.09, cy - r * 0.22, r * 0.18, r * 0.62);
+      }
+      c.fillRect(cx - r * 0.75, cy + r * 0.45, r * 1.5, r * 0.18);
+      c.fillStyle = '#f2c14e';
+      dot(c, cx, cy - r * 0.45, r * 0.1);
+    },
+
     H(c, cx, cy, r) {
       c.font = `800 ${r * 1.5}px "Baloo 2", system-ui, sans-serif`;
       c.textAlign = 'center';

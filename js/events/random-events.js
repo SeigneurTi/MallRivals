@@ -22,7 +22,7 @@
   }
 
   function triggerRandomEvent(kind) {
-    const candidates = Game.state.lots.filter(lot => lot.shop && !lot.isBusy);
+    const candidates = Game.state.lots.filter(lot => lot.shop && !lot.isBusy && !lot.isBank);   // la banque est épargnée
     if (!candidates.length) {
       return;
     }

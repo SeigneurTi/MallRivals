@@ -7,12 +7,17 @@
   const PLAYERS = Game.config.players;
   const { circle, roundedRectPath } = Game.draw;
 
-  // 24 cartes en 12 rangées de 2, entre le nom du joueur (en haut) et son argent (en bas).
+  // Les cartes, en rangées de 2, se répartissent entre le nom du joueur (en haut) et son argent
+  // (en bas) : plus il y a de cartes, plus elles sont basses. Sous chaque carte, 12 unités pour le nom.
   const CARD_WIDTH = 55;
-  const CARD_HEIGHT = 42;
   const FIRST_ROW_Y = 46;
-  const ROW_STEP = 54;
-  const ICON_Y = 15;   // centre de l'icône, depuis le haut de la carte
+  const LAST_NAME_Y = 698;   // le nom de la dernière carte doit finir avant l'argent du joueur
+  const ROW_COUNT = Math.ceil(Game.catalog.CARDS.length / 2);
+  const ROW_STEP = Math.min(58, Math.floor((LAST_NAME_Y - FIRST_ROW_Y) / ROW_COUNT));
+  const CARD_HEIGHT = ROW_STEP - 12;
+  const ICON_Y = Math.round(CARD_HEIGHT * 0.36);                // centre de l'icône, depuis le haut de la carte
+  const ICON_RADIUS = Math.min(11.5, CARD_HEIGHT * 0.27);
+  const ACTION_ICON_SIZE = Math.min(24, CARD_HEIGHT - 16);
 
   function trayLeft(player) {
     return player ? BOARD.WIDTH - BOARD.TRAY_WIDTH : 0;
@@ -48,17 +53,17 @@
       c.stroke();
     }
     if (card.isAction) {
-      Game.sprites.drawActionIcon(c, card, x + width / 2 - 12, y + 3, 24);
+      Game.sprites.drawActionIcon(c, card, x + width / 2 - ACTION_ICON_SIZE / 2, y + 3, ACTION_ICON_SIZE);
     } else {
-      circle(c, x + width / 2, y + ICON_Y, 11.5, '#ffffff');
-      Game.icons.draw(c, card.icon, x + width / 2, y + ICON_Y, 8.2, card.color);
+      circle(c, x + width / 2, y + ICON_Y, ICON_RADIUS, '#ffffff');
+      Game.icons.draw(c, card.icon, x + width / 2, y + ICON_Y, ICON_RADIUS * 0.71, card.color);
     }
     // Prix dans la carte, nom en petit dessous.
     c.fillStyle = card.isAction ? '#c0392b' : '#23272b';
     c.font = '800 10.5px Nunito, system-ui, sans-serif';
     c.textAlign = 'center';
     c.textBaseline = 'middle';
-    c.fillText(card.price + ' $', x + width / 2, y + height - 7);
+    c.fillText(card.price + ' $', x + width / 2, y + height - 6);
     c.fillStyle = selected ? PLAYERS.COLORS[player] : '#c9ced6';
     c.font = '700 8.5px Nunito, system-ui, sans-serif';
     c.fillText(card.name, x + width / 2, y + height + 6.5, width + 2);
