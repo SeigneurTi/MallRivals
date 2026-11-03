@@ -12,8 +12,9 @@
   const PANTS_COLORS = ['#3b4a6b', '#2d2d34', '#6b5440'];
   const SKIN_COLORS = ['#f5d0b0', '#e0ac80', '#b97a52', '#8a5536', '#f0c8a0'];
   const HAIR_COLORS = ['#2b1d14', '#5a3a22', '#c9a26b', '#111111', '#8b4513', '#d6d6d6'];
-  const FIRST_NAMES = ['Léa', 'Hugo', 'Chloé', 'Louis', 'Inès', 'Jules', 'Manon', 'Adam', 'Zoé', 'Nathan', 'Camille', 'Lucas', 'Jade', 'Tom',
-    'Emma', 'Noé', 'Sarah', 'Malo', 'Lina', 'Gabin', 'Rose', 'Sacha', 'Yasmine', 'Théo', 'Alice', 'Bilal', 'Margot', 'Arthur'];
+  const GIRL_NAMES = ['Léa', 'Chloé', 'Inès', 'Manon', 'Zoé', 'Camille', 'Jade', 'Emma', 'Sarah', 'Lina', 'Rose', 'Yasmine', 'Alice', 'Margot'];
+  const BOY_NAMES = ['Hugo', 'Louis', 'Jules', 'Adam', 'Nathan', 'Lucas', 'Tom', 'Noé', 'Malo', 'Gabin', 'Sacha', 'Théo', 'Bilal', 'Arthur'];
+  const GIRL_HAIR_STYLES = ['long', 'ponytail'];
 
   // États successifs d'un passant.
   const PERSON_STATE = {
@@ -41,7 +42,7 @@
       ...map.findPath(secondStop, to).slice(1),
     ];
 
-    // L'ordre des tirages au hasard ci-dessous est celui de la v2.4.
+    const isGirl = Math.random() < 0.5;
     const person = {
       routeNodes,
       routePoints: routeNodes.map(id => map.nodes[id]),
@@ -59,7 +60,11 @@
       pants: pickRandom(PANTS_COLORS),
       skin: pickRandom(SKIN_COLORS),
       hair: pickRandom(HAIR_COLORS),
-      name: pickRandom(FIRST_NAMES),
+      name: pickRandom(isGirl ? GIRL_NAMES : BOY_NAMES),
+      isGirl,
+      hairStyle: isGirl ? pickRandom(GIRL_HAIR_STYLES) : 'short',
+      skirt: isGirl ? pickRandom(SHIRT_COLORS) : null,
+      sitAmount: 0,             // 0 : debout, 1 : assis (varie progressivement)
       x: 0,
       y: 0,
       facing: 1,                // 1 : vers la droite, -1 : vers la gauche

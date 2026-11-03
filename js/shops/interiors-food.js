@@ -4,7 +4,7 @@
   'use strict';
 
   const { rect, circle } = Game.draw;
-  const { slot, seatPairs, checkerFloor, plankFloor } = Game.furniture;
+  const { slot, seatPairs, chairAround, checkerFloor, plankFloor } = Game.furniture;
 
   // Tables rondes avec une chaise de chaque côté (et une assiette si plateColor est donné).
   function roundTables(g, tableUs, v, chairColor, tableColor, plateColor) {
@@ -20,11 +20,21 @@
     }
   }
 
+  // Café : 3 tables disposées librement, chacune avec 2 chaises placées à des angles différents
+  // (angles en degrés : 0 à droite, 90 côté porte, 180 à gauche, 270 côté fond).
+  const CAFE_TABLES = [
+    { u: 0.2, v: 0.5, chairAngles: [200, 75] },
+    { u: 0.5, v: 0.66, chairAngles: [150, 15] },
+    { u: 0.8, v: 0.45, chairAngles: [250, 35] },
+  ];
+  const CAFE_CHAIR_DISTANCE = 0.17;
+  const CAFE_SLOTS = CAFE_TABLES.flatMap(table => table.chairAngles.map(angle => chairAround(table, angle, CAFE_CHAIR_DISTANCE)));
+
   Object.assign(Game.interiors, {
     // 3 tables de 2 places.
     cafe: {
       activity: 'sit',
-      slots: seatPairs([0.2, 0.5, 0.8], 0.58, 0.1),
+      slots: CAFE_SLOTS,
       drawFurniture(g) {
         const { c, x, y, w, h, radius } = g;
         plankFloor(g, '#b98a5e', '#a57850');
@@ -34,7 +44,13 @@
         circle(c, x(0.22), y(0.13), radius(0.03), '#fff');
         circle(c, x(0.3), y(0.13), radius(0.03), '#fff');
         circle(c, x(0.92), y(0.14), radius(0.08), '#4d9b42');   // plante
-        roundTables(g, [0.2, 0.5, 0.8], 0.58, '#7a4a2a', '#f4efe6');
+        // Chaque table avec ses chaises (les chaises sont exactement les places des clients).
+        CAFE_TABLES.forEach((table, tableIndex) => {
+          for (const chair of CAFE_SLOTS.slice(tableIndex * 2, tableIndex * 2 + 2)) {
+            circle(c, x(chair.u), y(chair.v), radius(0.07), '#7a4a2a');
+          }
+          circle(c, x(table.u), y(table.v), radius(0.1), '#f4efe6');
+        });
       },
     },
 

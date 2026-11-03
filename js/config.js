@@ -71,6 +71,8 @@
         ride: [8, 11],                 // manège
       },
       DEFAULT_STAY_SECONDS: 6,
+      SEATED_ACTIVITIES: ['sit', 'session'],   // activités où le client s'assoit (tables, fauteuils de cinéma…)
+      SIT_DOWN_SECONDS: 0.4,           // temps pour s'asseoir ou se relever
       HOVER_RADIUS: 16,                // distance de survol pour afficher le prénom
     },
 

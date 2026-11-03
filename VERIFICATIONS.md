@@ -28,6 +28,9 @@
 - [ ] Une case rose rapporte le double (comparer le « $/client » du menu avec la même boutique sur une case normale).
 - [ ] Quand toutes les places sont prises, la pastille rouge « Complet » s'affiche et personne n'entre.
 - [ ] Café, pizzeria, burger : 6 clients assis (3 tables de 2). Restaurant : 8 clients (4 tables de 2).
+- [ ] Au café, les 3 tables ne sont pas alignées et les chaises sont placées à des angles différents.
+- [ ] Une fois à sa place, le client s'assoit (corps plus bas, jambes vers l'avant) et regarde sa table ; il se relève en repartant. Même chose au cinéma, chez le coiffeur et sur les transats.
+- [ ] Parmi les passants, environ une fille sur deux (cheveux longs ou queue de cheval, jupe) ; l'info-bulle donne un prénom qui correspond.
 - [ ] Les clients qui ressortent portent un petit sac jaune.
 
 ## Boutiques animées

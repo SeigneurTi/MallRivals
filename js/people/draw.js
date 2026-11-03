@@ -5,6 +5,11 @@
   const { FULL_TURN, circle, roundedRectPath } = Game.draw;
   const { PERSON_STATE } = Game.people;
 
+  // Posture assise : de combien le corps descend, longueur de la cuisse et du tibia.
+  const SEATED_DROP = 3.5;
+  const SEATED_THIGH = 5;
+  const SEATED_SHIN = 3.5;
+
   function draw(person, isHovered) {
     const ctx = Game.view.ctx;
     ctx.save();
@@ -25,8 +30,11 @@
       return;
     }
 
-    const legSwing = Math.sin(person.walkPhase) * 2.4;
-    const bob = Math.abs(Math.sin(person.walkPhase));
+    // sit va de 0 (debout) à 1 (assis) : on ne balance plus les jambes, le corps descend.
+    const sit = person.sitAmount;
+    const legSwing = Math.sin(person.walkPhase) * 2.4 * (1 - sit);
+    const bob = Math.abs(Math.sin(person.walkPhase)) * (1 - sit);
+    const drop = SEATED_DROP * sit;
 
     // Ombre, et anneau orange si le passant est survolé.
     ctx.fillStyle = 'rgba(20,25,20,.25)';
@@ -41,36 +49,85 @@
       ctx.stroke();
     }
 
-    // Jambes.
+    // Jambes : chacune va de la hanche au pied en passant par le genou.
+    // Debout, la jambe est droite ; assis, la cuisse part vers l'avant et le tibia descend.
+    const hipY = -6 - bob + drop;
     ctx.strokeStyle = person.pants;
     ctx.lineWidth = 2.2;
     ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
     ctx.beginPath();
-    ctx.moveTo(-1.5, -6 - bob);
-    ctx.lineTo(-1.5 + legSwing, -0.5);
-    ctx.moveTo(1.5, -6 - bob);
-    ctx.lineTo(1.5 - legSwing, -0.5);
+    for (const side of [-1, 1]) {
+      const hipX = side * 1.5;
+      const standingFoot = [hipX - side * legSwing, -0.5];
+      const standingKnee = [(hipX + standingFoot[0]) / 2, (hipY + standingFoot[1]) / 2];
+      const seatedKnee = [hipX * 0.5 + SEATED_THIGH * person.facing, hipY];
+      const seatedFoot = [seatedKnee[0], hipY + SEATED_SHIN];
+      const knee = lerpPoint(standingKnee, seatedKnee, sit);
+      const foot = lerpPoint(standingFoot, seatedFoot, sit);
+      ctx.moveTo(hipX, hipY);
+      ctx.lineTo(knee[0], knee[1]);
+      ctx.lineTo(foot[0], foot[1]);
+    }
     ctx.stroke();
 
-    // Buste, tête, cheveux.
+    // Buste, et jupe pour les filles.
+    const top = -bob + drop;
     ctx.fillStyle = person.shirt;
-    roundedRectPath(ctx, -3.8, -12.5 - bob, 7.6, 7.5, 2.5);
+    roundedRectPath(ctx, -3.8, -12.5 + top, 7.6, 7.5, 2.5);
     ctx.fill();
-    circle(ctx, 0, -16 - bob, 3.4, person.skin);
-    ctx.fillStyle = person.hair;
-    ctx.beginPath();
-    ctx.arc(0, -16.8 - bob, 3.5, Math.PI * 1.05, Math.PI * 1.95);
-    ctx.fill();
+    if (person.skirt) {
+      ctx.fillStyle = person.skirt;
+      ctx.beginPath();
+      ctx.moveTo(-3.6, -7.2 + top);
+      ctx.lineTo(3.6, -7.2 + top);
+      ctx.lineTo(5, -3 + top);
+      ctx.lineTo(-5, -3 + top);
+      ctx.closePath();
+      ctx.fill();
+    }
 
-    // En sortant d'une boutique, il porte un sac.
+    drawHead(ctx, person, -16 + top);
+
+    // En sortant d'une boutique, on porte un sac.
     if (person.state === PERSON_STATE.RETURNING || person.state === PERSON_STATE.LEAVING) {
       ctx.fillStyle = '#f2c14e';
-      ctx.fillRect(3, -10 - bob, 5, 5);
+      ctx.fillRect(3, -10 + top, 5, 5);
       ctx.strokeStyle = '#a0673c';
       ctx.lineWidth = 1;
-      ctx.strokeRect(3, -10 - bob, 5, 5);
+      ctx.strokeRect(3, -10 + top, 5, 5);
     }
     ctx.restore();
+  }
+
+  // Tête et coiffure (centre de la tête en (0, headY)).
+  function drawHead(ctx, person, headY) {
+    // Queue de cheval : dessinée derrière la tête, du côté opposé au regard.
+    ctx.fillStyle = person.hair;
+    if (person.hairStyle === 'ponytail') {
+      const back = -person.facing;
+      circle(ctx, back * 3.6, headY - 1, 1.9, person.hair);
+      ctx.beginPath();
+      ctx.ellipse(back * 4.4, headY + 2, 1.3, 2.8, back * 0.3, 0, FULL_TURN);
+      ctx.fill();
+    }
+    circle(ctx, 0, headY, 3.4, person.skin);
+    // Frange (commune à tous).
+    ctx.fillStyle = person.hair;
+    ctx.beginPath();
+    ctx.arc(0, headY - 0.8, 3.5, Math.PI * 1.05, Math.PI * 1.95);
+    ctx.fill();
+    // Cheveux longs : deux mèches qui encadrent le visage et tombent sur les épaules.
+    if (person.hairStyle === 'long') {
+      for (const side of [-1, 1]) {
+        roundedRectPath(ctx, side > 0 ? 2.2 : -4.3, headY - 2, 2.1, 7.2, 1);
+        ctx.fill();
+      }
+    }
+  }
+
+  function lerpPoint(from, to, amount) {
+    return [from[0] + (to[0] - from[0]) * amount, from[1] + (to[1] - from[1]) * amount];
   }
 
   // Dessine tous les passants, du haut vers le bas pour que les plus proches passent devant.

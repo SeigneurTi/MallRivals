@@ -26,6 +26,10 @@
     const slot = interior.slots[person.slotIndex];
     const activity = slot.activity || interior.activity;
     person.activity = activity;
+    // Assis à une table, on se tourne vers elle.
+    if (slot.facing) {
+      person.facing = slot.facing;
+    }
 
     // Toutes les durées sont tirées, puis on garde celle de l'activité :
     // cela conserve exactement la suite de tirages au hasard de la v2.4.

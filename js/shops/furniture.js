@@ -10,13 +10,31 @@
   // Une place pour un client, en coordonnées normalisées (voir geometry.js).
   // activity remplace, pour cette place seulement, l'activité de la boutique
   // (à la piscine : nager ou s'allonger sur un transat).
-  function slot(u, v, activity) {
-    return { u, v, activity };
+  // facing (facultatif) : 1 ou -1, sens dans lequel le client regarde une fois assis.
+  function slot(u, v, activity, facing) {
+    return { u, v, activity, facing };
   }
 
-  // Deux chaises de part et d'autre de chaque table (tables aux abscisses tableUs).
+  // Deux chaises de part et d'autre de chaque table (tables aux abscisses tableUs),
+  // chaque client tourné vers sa table.
   function seatPairs(tableUs, v, offset) {
-    return tableUs.flatMap(u => [slot(u - offset, v), slot(u + offset, v)]);
+    return tableUs.flatMap(u => [slot(u - offset, v, undefined, 1), slot(u + offset, v, undefined, -1)]);
+  }
+
+  // Rapport hauteur / largeur de l'intérieur (toutes les cases ont la même taille) :
+  // sert à placer des chaises en cercle autour d'une table sans les écraser.
+  const [, , LOT_WIDTH, LOT_HEIGHT] = Game.map.lotRects[0];
+  const WALL = Game.shopGeometry.wallThickness(LOT_HEIGHT);
+  const INTERIOR_ASPECT = (LOT_HEIGHT - 2 * WALL) / (LOT_WIDTH - 2 * WALL);
+
+  // Chaise autour d'une table ronde en (table.u, table.v).
+  // angleDegrees : 0 à droite de la table, 90 côté porte, 180 à gauche, 270 côté fond.
+  // distance : en hauteur d'intérieur. Le client assis regarde la table.
+  function chairAround(table, angleDegrees, distance) {
+    const angle = angleDegrees * Math.PI / 180;
+    const u = table.u + Math.cos(angle) * distance * INTERIOR_ASPECT;
+    const v = table.v + Math.sin(angle) * distance;
+    return slot(u, v, undefined, Math.cos(angle) > 0 ? -1 : 1);
   }
 
   // Carrelage en damier : `rows` carreaux sur la hauteur, des carreaux carrés.
@@ -71,6 +89,7 @@
     MAGAZINE_COLORS,
     slot,
     seatPairs,
+    chairAround,
     checkerFloor,
     plankFloor,
     horizontalShelf,

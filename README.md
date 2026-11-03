@@ -73,6 +73,9 @@ bourg-les-bonhommes/
 | Fréquence des incendies, monstres, OVNI | `js/config.js` | `events` |
 | Effets de l'incendie, du monstre, de l'OVNI | `js/config.js` | `fire`, `monster`, `ufo` |
 | Nombre de places d'une boutique | `js/shops/interiors-*.js` | `slots` de la boutique |
+| Disposition des tables du café | `js/shops/interiors-food.js` | `CAFE_TABLES` (position et angle des chaises) |
+| Activités où l'on s'assoit, durée pour s'asseoir | `js/config.js` | `people.SEATED_ACTIVITIES`, `people.SIT_DOWN_SECONDS` |
+| Prénoms, coiffures, couleurs des passants | `js/people/person.js` | `GIRL_NAMES`, `BOY_NAMES`, `GIRL_HAIR_STYLES`… |
 | Mobilier d'une boutique | `js/shops/interiors-*.js` | `drawFurniture` (et `drawAnimated`) |
 | Nombre de passants au démarrage | `js/config.js` et `index.html` | `people.DEFAULT_COUNT` et la valeur du curseur `#pop` |
 

@@ -134,8 +134,22 @@
     Game.feedback.floatText(lot, '+' + income, lot.owner != null ? Game.config.players.COLORS[lot.owner] : '#555');
   }
 
+  // S'asseoir une fois à sa place (si l'activité s'y prête), se relever en partant.
+  function updateSitting(person, dt) {
+    const isSeated = person.state === PERSON_STATE.INSIDE
+      && person.insidePhase === 'active'
+      && PEOPLE.SEATED_ACTIVITIES.includes(person.activity);
+    const step = dt / PEOPLE.SIT_DOWN_SECONDS;
+    if (isSeated) {
+      person.sitAmount = Math.min(1, person.sitAmount + step);
+    } else {
+      person.sitAmount = Math.max(0, person.sitAmount - step);
+    }
+  }
+
   // Une image de la vie d'un passant. Renvoie false quand il a quitté la ville.
   function update(person, dt) {
+    updateSitting(person, dt);
     switch (person.state) {
       case PERSON_STATE.ENTERING:
         if (moveToward(person, dt)) {
