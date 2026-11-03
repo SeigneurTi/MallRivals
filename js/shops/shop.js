@@ -148,6 +148,14 @@
     c.restore();
   }
 
+  // Ce qui se dessine par-dessus les clients (lumière tamisée de la discothèque…).
+  function drawOverPeopleLayer(lot, time) {
+    const interior = Game.interiors[lot.shop.id];
+    if (interior.drawOverPeople) {
+      withPainter(Game.view.ctx, frameOfLot(lot), g => interior.drawOverPeople(g, lot, time));
+    }
+  }
+
   // Ce qui change à chaque image : parties animées, « Complet », compte à rebours du cinéma.
   function drawLiveLayer(lot, time) {
     const ctx = Game.view.ctx;
@@ -184,5 +192,5 @@
     ctx.fillText(label, labelX, labelY + 0.5);
   }
 
-  Game.shops = { open, hasFreeSlot, update, drawBuilding, drawLiveLayer };
+  Game.shops = { open, hasFreeSlot, update, drawBuilding, drawLiveLayer, drawOverPeopleLayer };
 })();

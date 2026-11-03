@@ -7,8 +7,12 @@
   const PLAYERS = Game.config.players;
   const { circle, roundedRectPath } = Game.draw;
 
+  // 24 cartes en 12 rangées de 2, entre le nom du joueur (en haut) et son argent (en bas).
   const CARD_WIDTH = 55;
-  const CARD_HEIGHT = 44;
+  const CARD_HEIGHT = 42;
+  const FIRST_ROW_Y = 46;
+  const ROW_STEP = 54;
+  const ICON_Y = 15;   // centre de l'icône, depuis le haut de la carte
 
   function trayLeft(player) {
     return player ? BOARD.WIDTH - BOARD.TRAY_WIDTH : 0;
@@ -18,7 +22,7 @@
   function cardRect(player, cardIndex) {
     const column = cardIndex % 2;
     const row = Math.floor(cardIndex / 2);
-    return [trayLeft(player) + 8 + column * 59, 50 + row * 58, CARD_WIDTH, CARD_HEIGHT];
+    return [trayLeft(player) + 8 + column * 59, FIRST_ROW_Y + row * ROW_STEP, CARD_WIDTH, CARD_HEIGHT];
   }
 
   function isSelected(player, cardIndex) {
@@ -44,10 +48,10 @@
       c.stroke();
     }
     if (card.isAction) {
-      Game.sprites.drawActionIcon(c, card, x + width / 2 - 13, y + 3, 26);
+      Game.sprites.drawActionIcon(c, card, x + width / 2 - 12, y + 3, 24);
     } else {
-      circle(c, x + width / 2, y + 16, 12, '#ffffff');
-      Game.icons.draw(c, card.icon, x + width / 2, y + 16, 8.5, card.color);
+      circle(c, x + width / 2, y + ICON_Y, 11.5, '#ffffff');
+      Game.icons.draw(c, card.icon, x + width / 2, y + ICON_Y, 8.2, card.color);
     }
     // Prix dans la carte, nom en petit dessous.
     c.fillStyle = card.isAction ? '#c0392b' : '#23272b';

@@ -2,6 +2,15 @@
 
 Les versions les plus récentes sont en haut.
 
+## v2.7 — Casino, discothèque, spectateurs face à l'écran (4 novembre 2026)
+
+- Deux nouvelles boutiques, les plus chères du jeu :
+  - **Casino** (700 $, 9 places) : 5 machines à sous dont l'écran fait défiler des symboles et la lampe clignote quand quelqu'un joue, et une table de roulette qui tourne, avec 4 joueurs assis.
+  - **Discothèque** (800 $, 8 places) : piste de danse aux dalles colorées, boule à facettes, spots qui balaient la salle, lumière tamisée ; les clients dansent bras levés.
+- Cinéma : les spectateurs regardent l'écran. On les voit de dos (cheveux, jambes cachées) quand l'écran est en haut, de face quand la salle est retournée. Les dossiers des fauteuils sont du côté opposé à l'écran.
+- Bacs de cartes : 24 cartes au lieu de 22, cartes légèrement plus compactes.
+- Fichiers : `js/catalog.js`, `js/names.js`, `js/icons.js` (dé, boule à facettes), `js/config.js` (durée de danse), nouveau `js/shops/interiors-night.js`, `js/shops/interiors-leisure.js`, `js/shops/shop.js` et `js/main.js` (couche dessinée par-dessus les clients), `js/people/activities.js`, `js/people/draw.js`, `js/people/behaviour.js`, `js/people/person.js`, `js/render/trays.js`, `index.html`.
+
 ## v2.6 — Filles, clients assis, café réaménagé (4 novembre 2026)
 
 - Des filles parmi les passants (une sur deux) : cheveux longs ou queue de cheval, jupe, et un prénom de fille. Les garçons ont un prénom de garçon.

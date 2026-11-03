@@ -30,6 +30,12 @@
     if (slot.facing) {
       person.facing = slot.facing;
     }
+    // Face à un écran (cinéma) : on voit le spectateur de dos, ou de face si la salle
+    // est retournée (porte en haut, écran en bas).
+    person.seatView = null;
+    if (slot.facesScreen) {
+      person.seatView = frameOfLot(lot).flipped ? 'front' : 'back';
+    }
 
     // Toutes les durées sont tirées, puis on garde celle de l'activité :
     // cela conserve exactement la suite de tirages au hasard de la v2.4.
@@ -65,6 +71,15 @@
       const strokePhase = gameTime * 0.5 + person.slotIndex * 1.9;
       [person.x, person.y] = clampInside(lot, lotPointToBoard(lot, 0.5 + 0.38 * Math.sin(strokePhase), slot.v));
       person.facing = Math.cos(strokePhase) > 0 ? 1 : -1;
+    }
+    if (person.activity === 'dance') {
+      // Sur la piste : on se dandine d'un côté à l'autre et on change souvent de sens.
+      const beat = gameTime * 6 + person.slotIndex * 1.3;
+      const [slotX, slotY] = slotPosition(person);
+      person.x = slotX + Math.sin(beat * 0.5) * 3;
+      person.y = slotY;
+      person.walkPhase = beat;
+      person.facing = Math.sin(beat * 0.25 + person.slotIndex) > 0 ? 1 : -1;
     }
     if (person.activity === 'session') {
       // Au cinéma, on reste jusqu'à la fin du film.

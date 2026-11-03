@@ -24,6 +24,8 @@
     piscine: 'la ',
     manege: 'le ',
     hotel: "l'",
+    casino: 'le ',
+    discotheque: 'la ',
   };
 
   // « le Cinéma », « la boutique de vêtements ».

@@ -267,6 +267,40 @@
       dot(c, cx, cy, r * 0.18);
     },
 
+    dice(c, cx, cy, r) {
+      roundedRectPath(c, cx - r * 0.65, cy - r * 0.65, r * 1.3, r * 1.3, r * 0.25);
+      c.fill();
+      c.fillStyle = '#fff';
+      for (const [u, v] of [[-0.32, -0.32], [0.32, -0.32], [0, 0], [-0.32, 0.32], [0.32, 0.32]]) {
+        dot(c, cx + u * r, cy + v * r, r * 0.13);   // les 5 points du dé
+      }
+    },
+
+    discoball(c, cx, cy, r, color) {
+      c.fillStyle = '#c9ced6';
+      dot(c, cx, cy + r * 0.1, r * 0.6);
+      // Facettes.
+      c.strokeStyle = '#7d8590';
+      c.lineWidth = r * 0.08;
+      c.beginPath();
+      for (const offset of [-0.3, 0, 0.3]) {
+        c.moveTo(cx - r * 0.55, cy + r * (0.1 + offset));
+        c.lineTo(cx + r * 0.55, cy + r * (0.1 + offset));
+        c.moveTo(cx + r * offset, cy - r * 0.45);
+        c.lineTo(cx + r * offset, cy + r * 0.65);
+      }
+      c.stroke();
+      // Fil et reflet coloré.
+      c.strokeStyle = color;
+      c.lineWidth = r * 0.12;
+      c.beginPath();
+      c.moveTo(cx, cy - r * 0.5);
+      c.lineTo(cx, cy - r * 0.85);
+      c.stroke();
+      c.fillStyle = color;
+      dot(c, cx - r * 0.2, cy - r * 0.1, r * 0.14);
+    },
+
     H(c, cx, cy, r) {
       c.font = `800 ${r * 1.5}px "Baloo 2", system-ui, sans-serif`;
       c.textAlign = 'center';

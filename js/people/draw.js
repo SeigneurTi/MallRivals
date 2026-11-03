@@ -61,8 +61,17 @@
       const hipX = side * 1.5;
       const standingFoot = [hipX - side * legSwing, -0.5];
       const standingKnee = [(hipX + standingFoot[0]) / 2, (hipY + standingFoot[1]) / 2];
-      const seatedKnee = [hipX * 0.5 + SEATED_THIGH * person.facing, hipY];
-      const seatedFoot = [seatedKnee[0], hipY + SEATED_SHIN];
+      // Assis de profil, les cuisses partent vers l'avant. Assis de dos, les jambes sont cachées ;
+      // assis de face, on voit deux petites jambes repliées vers nous.
+      let seatedKnee = [hipX * 0.5 + SEATED_THIGH * person.facing, hipY];
+      let seatedFoot = [seatedKnee[0], hipY + SEATED_SHIN];
+      if (person.seatView === 'back') {
+        seatedKnee = [hipX, hipY];
+        seatedFoot = [hipX, hipY];
+      } else if (person.seatView === 'front') {
+        seatedKnee = [hipX * 1.2, hipY + 1.5];
+        seatedFoot = [hipX * 1.2, hipY + SEATED_SHIN];
+      }
       const knee = lerpPoint(standingKnee, seatedKnee, sit);
       const foot = lerpPoint(standingFoot, seatedFoot, sit);
       ctx.moveTo(hipX, hipY);
@@ -87,7 +96,21 @@
       ctx.fill();
     }
 
-    drawHead(ctx, person, -16 + top);
+    // Danseur : bras levés qui s'agitent en rythme.
+    if (person.activity === 'dance' && person.state === PERSON_STATE.INSIDE && person.insidePhase === 'active') {
+      const wave = Math.sin(person.walkPhase * 1.5) * 1.5;
+      ctx.strokeStyle = person.skin;
+      ctx.lineWidth = 1.6;
+      ctx.beginPath();
+      ctx.moveTo(-3.4, -11.5 + top);
+      ctx.lineTo(-5.5, -16.5 + top + wave);
+      ctx.moveTo(3.4, -11.5 + top);
+      ctx.lineTo(5.5, -16.5 + top - wave);
+      ctx.stroke();
+    }
+
+    const seenFromBack = person.seatView === 'back' && sit > 0.5;
+    drawHead(ctx, person, -16 + top, seenFromBack);
 
     // En sortant d'une boutique, on porte un sac.
     if (person.state === PERSON_STATE.RETURNING || person.state === PERSON_STATE.LEAVING) {
@@ -101,9 +124,22 @@
   }
 
   // Tête et coiffure (centre de la tête en (0, headY)).
-  function drawHead(ctx, person, headY) {
-    // Queue de cheval : dessinée derrière la tête, du côté opposé au regard.
+  function drawHead(ctx, person, headY, seenFromBack) {
     ctx.fillStyle = person.hair;
+    if (seenFromBack) {
+      // De dos : on ne voit que les cheveux.
+      circle(ctx, 0, headY - 0.2, 3.6, person.hair);
+      if (person.hairStyle === 'long') {
+        roundedRectPath(ctx, -3.8, headY - 1, 7.6, 6.5, 2);
+        ctx.fill();
+      } else if (person.hairStyle === 'ponytail') {
+        ctx.beginPath();
+        ctx.ellipse(0, headY + 2.8, 1.3, 2.8, 0, 0, FULL_TURN);
+        ctx.fill();
+      }
+      return;
+    }
+    // Queue de cheval : dessinée derrière la tête, du côté opposé au regard.
     if (person.hairStyle === 'ponytail') {
       const back = -person.facing;
       circle(ctx, back * 3.6, headY - 1, 1.9, person.hair);

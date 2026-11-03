@@ -6,7 +6,7 @@
 
 - [ ] La page s'ouvre sans message d'erreur rouge sous le titre.
 - [ ] Le plateau montre 4 routes qui sortent du cadre, 36 cases grises, quelques ronds roses et 4 boutiques déjà ouvertes (2 par joueur, contour orange ou bleu).
-- [ ] Chaque bac affiche 22 cartes avec leur prix et leur nom en petit dessous, et « 1000 bucks » en bas.
+- [ ] Chaque bac affiche 24 cartes avec leur prix et leur nom en petit dessous, et « 1000 bucks » en bas.
 - [ ] Les accents s'affichent correctement (« Météorite », « Hôtel », « Manège »).
 - [ ] Des passants arrivent par les 4 routes et se promènent.
 
@@ -40,6 +40,9 @@
 - [ ] **Piscine** : 3 nageurs font des longueurs (seule la tête dépasse), 2 clients sur les transats.
 - [ ] **Manège** : le plateau tourne et les clients tournent avec lui.
 - [ ] **Arcade** : l'écran d'une borne s'allume en couleurs quand un client y joue.
+- [ ] **Cinéma** : les spectateurs regardent l'écran (vus de dos si l'écran est en haut de la case, de face s'il est en bas).
+- [ ] **Casino** (700 $) : les machines à sous font défiler des symboles et clignotent quand on y joue ; la roulette tourne ; 4 joueurs assis autour de la table.
+- [ ] **Discothèque** (800 $) : dalles de couleur, boule à facettes, spots qui tournent, salle plus sombre ; les clients dansent bras levés.
 
 ## Malus
 

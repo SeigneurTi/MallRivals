@@ -69,6 +69,7 @@
         lobby: [5, 8],                 // hall de l'hôtel
         swim: [8, 12],
         ride: [8, 11],                 // manège
+        dance: [8, 12],                // piste de danse de la discothèque
       },
       DEFAULT_STAY_SECONDS: 6,
       SEATED_ACTIVITIES: ['sit', 'session'],   // activités où le client s'assoit (tables, fauteuils de cinéma…)

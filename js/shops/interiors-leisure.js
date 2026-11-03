@@ -104,7 +104,8 @@
     // 18 fauteuils en 3 rangées. Séances : voir Game.shops.update.
     cinema: {
       activity: 'session',
-      slots: CINEMA_ROWS_V.flatMap(v => CINEMA_SEATS_U.map(u => slot(u, v))),
+      // Les spectateurs regardent l'écran (facesScreen), pas sur le côté.
+      slots: CINEMA_ROWS_V.flatMap(v => CINEMA_SEATS_U.map(u => Object.assign(slot(u, v), { facesScreen: true }))),
       drawFurniture(g) {
         const { c, x, y, w, h } = g;
         rect(c, g.left, g.top, g.width, g.height, '#2b1f2a');
@@ -112,7 +113,7 @@
         for (const v of CINEMA_ROWS_V) {
           for (const u of CINEMA_SEATS_U) {
             rect(c, x(u - 0.05), y(v - 0.06), w(0.1), h(0.11), '#d22f3b');
-            rect(c, x(u - 0.05), y(v - 0.06), w(0.1), h(0.03), '#9e1f29');   // dossier
+            rect(c, x(u - 0.05), y(v + 0.02), w(0.1), h(0.03), '#9e1f29');   // dossier, côté opposé à l'écran
           }
         }
       },

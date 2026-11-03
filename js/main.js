@@ -42,6 +42,11 @@
       }
     }
     Game.people.drawAll(Game.state.hoveredPerson);
+    for (const lot of Game.state.lots) {
+      if (lot.shop) {
+        Game.shops.drawOverPeopleLayer(lot, timestamp / 1000);
+      }
+    }
     Game.events.drawAnimations(ctx);
     Game.overlay.drawFloatingTexts(ctx);
     if (Game.state.menuLot && Game.state.menuLot.shop) {

@@ -144,6 +144,9 @@
       person.sitAmount = Math.min(1, person.sitAmount + step);
     } else {
       person.sitAmount = Math.max(0, person.sitAmount - step);
+      if (person.sitAmount === 0) {
+        person.seatView = null;   // relevé : on retrouve la vue de profil
+      }
     }
   }
 

@@ -5,7 +5,7 @@
 
   const config = Game.config;
 
-  // Les 20 boutiques, de la moins chère à la plus chère.
+  // Les 22 boutiques, de la moins chère à la plus chère.
   // color : couleur de l'enseigne et des murs ; icon : voir js/icons.js.
   const SHOPS = [
     { id: 'fleuriste', name: 'Fleuriste', price: 60, color: '#e8578f', icon: 'flower' },
@@ -28,6 +28,8 @@
     { id: 'piscine', name: 'Piscine', price: 480, color: '#4fa8de', icon: 'pool' },
     { id: 'manege', name: 'Manège', price: 520, color: '#e9b92e', icon: 'carousel' },
     { id: 'hotel', name: 'Hôtel', price: 600, color: '#b08a2e', icon: 'H' },
+    { id: 'casino', name: 'Casino', price: 700, color: '#1f8a4c', icon: 'dice' },
+    { id: 'discotheque', name: 'Discothèque', price: 800, color: '#b83dd1', icon: 'discoball' },
   ];
 
   // Les 2 malus, qui se jouent sur une boutique adverse.

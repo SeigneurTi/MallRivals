@@ -22,7 +22,7 @@ bourg-les-bonhommes/
 │   ├── canvas.js            Canvas, mise à l'échelle de l'écran (Game.view)
 │   ├── draw.js              Primitives : rectangle, disque, ellipse, rectangle arrondi
 │   ├── map.js               Carrefours, rues, sorties, cases, recherche de trajet
-│   ├── catalog.js           ★ Les 20 boutiques et 2 malus, formules de gains
+│   ├── catalog.js           ★ Les 22 boutiques et 2 malus, formules de gains
 │   ├── names.js             « le Cinéma », « au Cinéma », « du Cinéma »…
 │   ├── icons.js             Icônes des enseignes et des cartes
 │   ├── sprites.js           Bouclier, voiture, icônes des malus
@@ -33,6 +33,7 @@ bourg-les-bonhommes/
 │   │   │                         jouets, vêtements, bijouterie
 │   │   ├── interiors-food.js     Café, glacier, pizzeria, burger, restaurant
 │   │   ├── interiors-leisure.js  Coiffeur, arcade, bowling, cinéma, piscine, manège, hôtel
+│   │   ├── interiors-night.js    Casino, discothèque
 │   │   └── shop.js          Ouverture, places libres, séances, pistes, dessin du bâtiment
 │   ├── state.js             État de la partie (Game.state), nouvelle partie, destruction
 │   ├── feedback.js          Journal, bannière, textes flottants
@@ -76,7 +77,7 @@ bourg-les-bonhommes/
 | Disposition des tables du café | `js/shops/interiors-food.js` | `CAFE_TABLES` (position et angle des chaises) |
 | Activités où l'on s'assoit, durée pour s'asseoir | `js/config.js` | `people.SEATED_ACTIVITIES`, `people.SIT_DOWN_SECONDS` |
 | Prénoms, coiffures, couleurs des passants | `js/people/person.js` | `GIRL_NAMES`, `BOY_NAMES`, `GIRL_HAIR_STYLES`… |
-| Mobilier d'une boutique | `js/shops/interiors-*.js` | `drawFurniture` (et `drawAnimated`) |
+| Mobilier d'une boutique | `js/shops/interiors-*.js` | `drawFurniture`, `drawAnimated` (ce qui bouge), `drawOverPeople` (par-dessus les clients, ex. lumière de la discothèque) |
 | Nombre de passants au démarrage | `js/config.js` et `index.html` | `people.DEFAULT_COUNT` et la valeur du curseur `#pop` |
 
 ### Ajouter une boutique
@@ -84,7 +85,7 @@ bourg-les-bonhommes/
 1. Ajouter une ligne dans `SHOPS` (`js/catalog.js`), avec un `id` unique et une icône existante de `js/icons.js` (ou en créer une).
 2. Ajouter son intérieur dans le fichier `js/shops/interiors-*.js` qui convient : `activity`, `slots`, `drawFurniture(g)`.
 3. Ajouter son article dans `js/names.js` (« le », « la », « l' »…).
-4. Le bac de cartes est dimensionné pour 22 cartes en 2 colonnes : au-delà, il faut revoir `js/render/trays.js`.
+4. Le bac de cartes est dimensionné pour 24 cartes (12 rangées de 2) : au-delà, il faut revoir `FIRST_ROW_Y` et `ROW_STEP` dans `js/render/trays.js`.
 
 ## Organisation du code
 
