@@ -1,0 +1,158 @@
+// Passants : création, trajet dans la ville et arrivée de nouveaux passants.
+//
+// Un passant arrive par une sortie, passe par deux carrefours tirés au hasard puis repart
+// par une sortie (en général une autre). Il avance le long de son trajet, segment par segment.
+(function () {
+  'use strict';
+
+  const PEOPLE = Game.config.people;
+  const { randomBetween, pickRandom } = Game.utils;
+
+  const SHIRT_COLORS = ['#e85d4a', '#3d7dd8', '#f2b134', '#47a36b', '#9a5fd1', '#ef7fb0', '#2bb3b1', '#ff8c42', '#3b4a6b'];
+  const PANTS_COLORS = ['#3b4a6b', '#2d2d34', '#6b5440'];
+  const SKIN_COLORS = ['#f5d0b0', '#e0ac80', '#b97a52', '#8a5536', '#f0c8a0'];
+  const HAIR_COLORS = ['#2b1d14', '#5a3a22', '#c9a26b', '#111111', '#8b4513', '#d6d6d6'];
+  const FIRST_NAMES = ['Léa', 'Hugo', 'Chloé', 'Louis', 'Inès', 'Jules', 'Manon', 'Adam', 'Zoé', 'Nathan', 'Camille', 'Lucas', 'Jade', 'Tom',
+    'Emma', 'Noé', 'Sarah', 'Malo', 'Lina', 'Gabin', 'Rose', 'Sacha', 'Yasmine', 'Théo', 'Alice', 'Bilal', 'Margot', 'Arthur'];
+
+  // États successifs d'un passant.
+  const PERSON_STATE = {
+    WALKING: 'walking',       // dans la rue, le long de son trajet
+    ENTERING: 'entering',     // de la rue jusqu'à la porte d'une boutique
+    INSIDE: 'inside',         // dans la boutique (rejoint sa place, puis son activité)
+    LEAVING: 'leaving',       // de sa place jusqu'à la porte
+    RETURNING: 'returning',   // de la porte jusqu'à la rue
+  };
+
+  // Crée un passant. Avec `alreadyInTown`, il est placé au hasard au milieu de son trajet
+  // (début de partie) ; sinon il apparaît à sa sortie de départ.
+  function create(alreadyInTown) {
+    const map = Game.map;
+    const from = pickRandom(map.exits);
+    let to = pickRandom(map.exits);
+    if (to === from && Math.random() < PEOPLE.AVOID_SAME_EXIT_CHANCE) {
+      to = pickRandom(map.exits.filter(id => id !== from));
+    }
+    const firstStop = pickRandom(map.intersections);
+    const secondStop = pickRandom(map.intersections);
+    const routeNodes = [
+      ...map.findPath(from, firstStop),
+      ...map.findPath(firstStop, secondStop).slice(1),
+      ...map.findPath(secondStop, to).slice(1),
+    ];
+
+    // L'ordre des tirages au hasard ci-dessous est celui de la v2.4.
+    const person = {
+      routeNodes,
+      routePoints: routeNodes.map(id => map.nodes[id]),
+      segmentIndex: 0,          // segment du trajet en cours
+      distanceOnSegment: 0,     // distance parcourue sur ce segment
+      state: PERSON_STATE.WALKING,
+      from,
+      to,
+      visitedLots: new Set(),   // boutiques déjà devant lesquelles il est passé
+      offsetX: randomBetween(-PEOPLE.ROAD_OFFSET, PEOPLE.ROAD_OFFSET),   // écart au milieu de la rue
+      offsetY: randomBetween(-PEOPLE.ROAD_OFFSET, PEOPLE.ROAD_OFFSET),
+      speed: randomBetween(PEOPLE.WALK_SPEED_MIN, PEOPLE.WALK_SPEED_MAX),
+      walkPhase: randomBetween(0, 6.28),                                  // balancement des jambes
+      shirt: pickRandom(SHIRT_COLORS),
+      pants: pickRandom(PANTS_COLORS),
+      skin: pickRandom(SKIN_COLORS),
+      hair: pickRandom(HAIR_COLORS),
+      name: pickRandom(FIRST_NAMES),
+      x: 0,
+      y: 0,
+      facing: 1,                // 1 : vers la droite, -1 : vers la gauche
+      drawScale: 1,             // plus petit dans les boutiques
+      // Remplis quand il entre dans une boutique :
+      lot: null,
+      door: null,               // porte de la boutique
+      returnPoint: null,        // point de la rue où il reprendra son trajet
+      target: null,             // point vers lequel il marche
+      slotIndex: null,          // sa place dans la boutique
+      insidePhase: null,        // 'toSlot' puis 'active'
+      activity: null,           // browse, sit, bowl… (voir js/people/activities.js)
+      stayTimer: 0,
+      sessionOver: false,       // cinéma : la séance est finie
+      isRemoved: false,         // emporté par un OVNI
+    };
+    if (alreadyInTown) {
+      person.segmentIndex = Math.floor(randomBetween(1, person.routePoints.length - 2));
+      person.distanceOnSegment = randomBetween(0, 1) * segmentLength(person);
+    }
+    placeOnRoute(person);
+    return person;
+  }
+
+  function segmentLength(person) {
+    const start = person.routePoints[person.segmentIndex];
+    const end = person.routePoints[person.segmentIndex + 1];
+    return Math.hypot(end[0] - start[0], end[1] - start[1]);
+  }
+
+  // Met à jour x, y et l'orientation d'après la position sur le trajet.
+  function placeOnRoute(person) {
+    const start = person.routePoints[person.segmentIndex];
+    const end = person.routePoints[person.segmentIndex + 1];
+    const length = segmentLength(person) || 1;
+    const progress = Math.min(1, person.distanceOnSegment / length);
+    person.x = start[0] + (end[0] - start[0]) * progress + person.offsetX;
+    person.y = start[1] + (end[1] - start[1]) * progress + person.offsetY;
+    if (end[0] !== start[0]) {
+      person.facing = end[0] > start[0] ? 1 : -1;
+    }
+  }
+
+  // Avance dans la rue. Renvoie false quand le passant a quitté la ville.
+  function walkAlongRoute(person, dt) {
+    const previousDistance = person.distanceOnSegment;
+    person.distanceOnSegment += person.speed * dt;
+    person.walkPhase += person.speed * dt * 0.28;
+    if (Game.people.tryEnterShop(person, previousDistance)) {
+      return true;
+    }
+    while (person.distanceOnSegment >= segmentLength(person)) {
+      person.distanceOnSegment -= segmentLength(person);
+      person.segmentIndex++;
+      if (person.segmentIndex >= person.routePoints.length - 1) {
+        return false;
+      }
+    }
+    placeOnRoute(person);
+    return true;
+  }
+
+  // Fait arriver un nouveau passant de temps en temps, jusqu'au nombre demandé.
+  function spawnIfNeeded(dt) {
+    const state = Game.state;
+    state.spawnTimer -= dt;
+    if (state.people.length < state.targetPopulation && state.spawnTimer <= 0) {
+      state.people.push(create(false));
+      state.spawnTimer = randomBetween(PEOPLE.SPAWN_DELAY_MIN, PEOPLE.SPAWN_DELAY_MAX);
+    }
+  }
+
+  // Passant le plus proche d'un point (pour l'info-bulle), ou null.
+  function findNear(x, y) {
+    let nearest = null;
+    let nearestDistance = PEOPLE.HOVER_RADIUS;
+    for (const person of Game.state.people) {
+      // On vise le buste, une dizaine d'unités au-dessus des pieds.
+      const distance = Math.hypot(person.x - x, person.y - 10 - y);
+      if (distance < nearestDistance) {
+        nearestDistance = distance;
+        nearest = person;
+      }
+    }
+    return nearest;
+  }
+
+  Game.people = {
+    PERSON_STATE,
+    create,
+    placeOnRoute,
+    walkAlongRoute,
+    spawnIfNeeded,
+    findNear,
+  };
+})();

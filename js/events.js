@@ -31,7 +31,7 @@ function randomEvent(kind){
     Game.state.animations.push({k:'ufo',t:0,dur:2,from:[rr(0,BW),-80],to:[cx,cy-60],then(){
       Game.state.animations.push({k:'ufo',t:0,dur:2.6,from:[cx,cy-60],to:[cx,cy-60],beam:l,end(){l.isBusy=false;
         if(l.shop){const r=Math.random();
-          if(r<.35&&l.shields===0){for(const p of Game.state.people)if(p.lot===l&&p.state==='inside'){release(p);p.gone=true}log(`L'OVNI a emporté ${nom(l)} !`);destroy(l)}
+          if(r<.35&&l.shields===0){for(const p of Game.state.people)if(p.lot===l&&p.state==='inside'){Game.people.takeAway(p)}log(`L'OVNI a emporté ${nom(l)} !`);destroy(l)}
           else if(r<.35){l.shields--;drawBoard();log(`Le bouclier ${deNom(l)} a repoussé l'OVNI.`)}
           else{const g=Math.round(l.shop.price*.6);if(l.owner!=null)Game.state.bucks[l.owner]+=g;float(l,'+'+g,'#6ad07a');log(`Les extraterrestres ont fait leurs courses ${aNom(l)} : +${g} $ !`)}}
         Game.state.animations.push({k:'ufo',t:0,dur:1.4,from:[cx,cy-60],to:[rr(0,BW),-90]})}})}})}

@@ -1,0 +1,196 @@
+// Comportement d'un passant, image par image :
+// rue → (entrée) → porte → place dans la boutique → activité → porte → rue → sortie de la ville.
+(function () {
+  'use strict';
+
+  const PEOPLE = Game.config.people;
+  const { PERSON_STATE } = Game.people;
+
+  // Marche en ligne droite vers person.target. Renvoie true une fois arrivé.
+  function moveToward(person, dt, speedFactor = 1) {
+    const dx = person.target[0] - person.x;
+    const dy = person.target[1] - person.y;
+    const distance = Math.hypot(dx, dy);
+    const step = person.speed * dt * speedFactor;
+    person.walkPhase += step * 0.28;
+    if (distance <= step) {
+      person.x = person.target[0];
+      person.y = person.target[1];
+      return true;
+    }
+    person.x += dx / distance * step;
+    person.y += dy / distance * step;
+    if (Math.abs(dx) > 1) {
+      person.facing = dx > 0 ? 1 : -1;
+    }
+    return false;
+  }
+
+  // En passant devant une boutique ouverte et pas complète, le passant peut décider d'entrer
+  // (une seule fois par boutique). previousDistance : sa position sur le segment à l'image précédente.
+  function tryEnterShop(person, previousDistance) {
+    const nodes = Game.map.nodes;
+    const fromNode = person.routeNodes[person.segmentIndex];
+    const toNode = person.routeNodes[person.segmentIndex + 1];
+    const lotsHere = Game.map.lotsAlongStreet(fromNode, toNode);
+    if (!lotsHere || !lotsHere.length) {
+      return false;
+    }
+    // Position le long de la rue (abscisse si elle est horizontale, ordonnée sinon).
+    const start = nodes[fromNode];
+    const end = nodes[toNode];
+    const isHorizontal = start[1] === end[1];
+    const direction = isHorizontal ? Math.sign(end[0] - start[0]) : Math.sign(end[1] - start[1]);
+    const origin = isHorizontal ? start[0] : start[1];
+    const positionBefore = origin + direction * previousDistance;
+    const positionNow = origin + direction * person.distanceOnSegment;
+
+    for (const access of lotsHere) {
+      const lot = Game.state.lots[access.lotIndex];
+      if (!lot.shop || person.visitedLots.has(lot) || !Game.shops.hasFreeSlot(lot)) {
+        continue;
+      }
+      // La porte vient-elle d'être dépassée pendant cette image ?
+      const justPassedDoor = (access.positionAlong - positionBefore) * direction > 0
+        && (access.positionAlong - positionNow) * direction <= 0;
+      if (!justPassedDoor) {
+        continue;
+      }
+      person.visitedLots.add(lot);
+      if (Math.random() < Game.catalog.entryChance(lot)) {
+        // On le replace exactement face à la porte.
+        person.distanceOnSegment = Math.abs(access.positionAlong - origin);
+        Game.people.placeOnRoute(person);
+        person.state = PERSON_STATE.ENTERING;
+        person.lot = lot;
+        person.door = access.door;
+        person.returnPoint = [person.x, person.y];
+        person.target = access.door;
+        return true;
+      }
+    }
+    return false;
+  }
+
+  // Libère la place occupée dans la boutique.
+  function releaseSlot(person) {
+    const lot = person.lot;
+    if (lot && lot.occupants && person.slotIndex != null && lot.occupants[person.slotIndex] === person) {
+      lot.occupants[person.slotIndex] = null;
+    }
+    person.slotIndex = null;
+  }
+
+  // Sortie immédiate (boutique détruite) : le passant réapparaît sur le pas de la porte.
+  function exitShopNow(person) {
+    releaseSlot(person);
+    person.x = person.door[0];
+    person.y = person.door[1];
+    person.state = PERSON_STATE.RETURNING;
+    person.target = person.returnPoint;
+    person.drawScale = 1;
+    person.activity = null;
+  }
+
+  // Fin de l'activité : le passant regagne la porte à pied.
+  function leaveShop(person) {
+    releaseSlot(person);
+    person.state = PERSON_STATE.LEAVING;
+    person.target = person.door;
+    person.activity = null;
+  }
+
+  // Enlevé par un OVNI : il disparaît à la prochaine image.
+  function takeAway(person) {
+    releaseSlot(person);
+    person.isRemoved = true;
+  }
+
+  function isInOrEnteringShop(person) {
+    return person.state === PERSON_STATE.INSIDE || person.state === PERSON_STATE.ENTERING || person.state === PERSON_STATE.LEAVING;
+  }
+
+  // Arrivé à la porte : il prend une place libre (et paie), ou fait demi-tour si c'est complet.
+  function arriveAtDoor(person) {
+    const lot = person.lot;
+    const freeSlots = lot.shop ? lot.occupants.map((occupant, index) => (occupant ? -1 : index)).filter(index => index >= 0) : [];
+    if (!lot.shop || !Game.shops.hasFreeSlot(lot) || !freeSlots.length) {
+      person.state = PERSON_STATE.RETURNING;
+      person.target = person.returnPoint;
+      return;
+    }
+    person.slotIndex = Game.utils.pickRandom(freeSlots);
+    lot.occupants[person.slotIndex] = person;
+    person.state = PERSON_STATE.INSIDE;
+    person.insidePhase = 'toSlot';
+    person.drawScale = PEOPLE.INSIDE_SCALE;
+    person.sessionOver = false;
+    person.target = Game.people.slotPosition(person);
+
+    const income = Game.catalog.incomePerCustomer(lot);
+    if (lot.owner != null) {
+      Game.state.bucks[lot.owner] += income;
+    }
+    Game.feedback.floatText(lot, '+' + income, lot.owner != null ? Game.config.players.COLORS[lot.owner] : '#555');
+  }
+
+  // Une image de la vie d'un passant. Renvoie false quand il a quitté la ville.
+  function update(person, dt) {
+    switch (person.state) {
+      case PERSON_STATE.ENTERING:
+        if (moveToward(person, dt)) {
+          arriveAtDoor(person);
+        }
+        return true;
+
+      case PERSON_STATE.INSIDE:
+        if (!person.lot.shop) {
+          exitShopNow(person);
+          return true;
+        }
+        if (person.insidePhase === 'toSlot') {
+          // La cible est recalculée à chaque image (le manège tourne, la nageuse avance…).
+          person.target = Game.people.slotPosition(person);
+          if (moveToward(person, dt, PEOPLE.INSIDE_WALK_FACTOR)) {
+            person.insidePhase = 'active';
+            Game.people.startActivity(person, person.lot);
+          }
+          return true;
+        }
+        Game.people.updateActivity(person, dt);
+        return true;
+
+      case PERSON_STATE.LEAVING:
+        if (moveToward(person, dt, PEOPLE.LEAVING_WALK_FACTOR)) {
+          person.state = PERSON_STATE.RETURNING;
+          person.target = person.returnPoint;
+          person.drawScale = 1;
+        }
+        return true;
+
+      case PERSON_STATE.RETURNING:
+        if (moveToward(person, dt)) {
+          person.state = PERSON_STATE.WALKING;
+          person.lot = null;
+        }
+        return true;
+
+      default:
+        return Game.people.walkAlongRoute(person, dt);
+    }
+  }
+
+  // Met à jour tous les passants et retire ceux qui sont partis.
+  function updateAll(dt) {
+    Game.state.people = Game.state.people.filter(person => !person.isRemoved && update(person, dt));
+  }
+
+  Object.assign(Game.people, {
+    tryEnterShop,
+    leaveShop,
+    exitShopNow,
+    takeAway,
+    isInOrEnteringShop,
+    updateAll,
+  });
+})();

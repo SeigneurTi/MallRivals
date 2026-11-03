@@ -9,8 +9,8 @@ function frameInner(t){
   const raw=Math.min(.05,(t-last)/1000||0);last=t;const dt=raw*Game.state.speedMultiplier;
   if(Game.state.isRunning){
     Game.state.gameTime+=dt;for(const l of Game.state.lots)updateShop(l,dt);
-    Game.state.people=Game.state.people.filter(p=>!p.gone&&step(p,dt));
-    Game.state.spawnTimer-=dt;if(Game.state.people.length<Game.state.targetPopulation&&Game.state.spawnTimer<=0){Game.state.people.push(makePerson(false));Game.state.spawnTimer=rr(.25,.7)}
+    Game.people.updateAll(dt);
+    Game.people.spawnIfNeeded(dt);
     for(const a of Game.state.animations.slice())updateAnim(a,dt);Game.state.animations=Game.state.animations.filter(a=>!a.done);
     if(Math.random()<.004*dt)randomEvent('fire');
     if(Math.random()<.011*dt)randomEvent('monster');
@@ -24,7 +24,7 @@ function frameInner(t){
   if(Game.state.selection){const card=CATALOG[Game.state.selection.i];ctx.lineWidth=2.5;ctx.setLineDash([8,6]);ctx.lineDashOffset=-t/40;
     for(const l of Game.state.lots){if(card.isAction?(l.shop&&l.owner===1-Game.state.selection.p&&!l.isBusy):!l.shop){ctx.strokeStyle=card.isAction?'#c0392b':PCOL[Game.state.selection.p];rrect(ctx,l.x+2,l.y+2,l.width-4,l.height-4,6);ctx.stroke()}}ctx.setLineDash([])}
   for(const l of Game.state.lots)if(l.shop)drawLive(l,t/1000);
-  for(const p of Game.state.people.slice().sort((a,b)=>a.y-b.y))drawPerson(p,p===Game.state.hoveredPerson);
+  Game.people.drawAll(Game.state.hoveredPerson);
   for(const a of Game.state.animations)if(a.k!=='ufo'&&a.k!=='monster')drawAnim(a);
   for(const a of Game.state.animations)if(a.k==='ufo'||a.k==='monster')drawAnim(a);
   ctx.textAlign='center';ctx.textBaseline='middle';
