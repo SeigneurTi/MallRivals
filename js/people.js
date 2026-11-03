@@ -27,19 +27,19 @@ function tryEnter(p,oldD){
       if(Math.random()<attraction(l)){p.d=Math.abs(e.positionAlong-start);place(p);p.state='toShop';p.lot=l;p.door=e.door;p.back=[p.x,p.y];p.target=e.door;return true}}}
   return false;
 }
-function clampIn(l,[x,y]){const G=geomOf(l);return[x,Math.max(G.Y+15,Math.min(G.Y+G.H-1,y))]}
+function clampIn(l,[x,y]){const G=geomOf(l);return[x,Math.max(G.top+15,Math.min(G.top+G.height-1,y))]}
 function slotTarget(p){const l=p.lot,s=SPEC[l.shop.id].slots[p.slot];return clampIn(l,toWorld(l,s.u,s.v))}
-function startAct(p,l){const sp=SPEC[l.shop.id],s=sp.slots[p.slot],k=s.k||sp.kind;p.mode=k;
+function startAct(p,l){const sp=SPEC[l.shop.id],s=sp.slots[p.slot],k=s.activity||sp.activity;p.mode=k;
   p.stay={browse:rr(3,6),sit:rr(6,10),play:rr(6,9),lobby:rr(5,8),swim:rr(8,12),ride:rr(8,11)}[k]||6;
   if(k==='bowl'){p.throws=0;p.bph='aim';p.bt=1}}
 function actStep(p,dt){
   const l=p.lot,sp=SPEC[l.shop.id],s=sp.slots[p.slot];
-  if(p.mode==='ride'){const a=Game.state.gameTime*.9+p.slot*Math.PI/4,G=geomOf(l),r=.3;[p.x,p.y]=clampIn(l,toWorld(l,.5+Math.cos(a)*r*G.H/G.W,.47+Math.sin(a)*r+.04))}
+  if(p.mode==='ride'){const a=Game.state.gameTime*.9+p.slot*Math.PI/4,G=geomOf(l),r=.3;[p.x,p.y]=clampIn(l,toWorld(l,.5+Math.cos(a)*r*G.height/G.width,.47+Math.sin(a)*r+.04))}
   if(p.mode==='swim'){[p.x,p.y]=clampIn(l,toWorld(l,.5+.38*Math.sin(Game.state.gameTime*.5+p.slot*1.9),s.v));p.dir=Math.cos(Game.state.gameTime*.5+p.slot*1.9)>0?1:-1}
-  if(p.mode==='session'){if(p.done)leaveShop(p);return}
+  if(p.mode==='session'){if(p.sessionOver)leaveShop(p);return}
   if(p.mode==='bowl'){const ln=l.bowlingLanes[p.slot];p.bt-=dt;
-    if(p.bph==='aim'&&p.bt<=0){p.bph='roll';ln.ball=0}
-    else if(p.bph==='roll'){ln.ball+=dt/1.1;if(ln.ball>=1){ln.ball=-1;ln.down=1.4;p.bph='wait';p.bt=1.5;const n=Math.random()<.35?10:Math.floor(rr(4,10));float(l,n===10?'Strike !':n+' quilles','#d6336c')}}
+    if(p.bph==='aim'&&p.bt<=0){p.bph='roll';ln.ballProgress=0}
+    else if(p.bph==='roll'){ln.ballProgress+=dt/1.1;if(ln.ballProgress>=1){ln.ballProgress=-1;ln.pinsDownTimer=1.4;p.bph='wait';p.bt=1.5;const n=Math.random()<.35?10:Math.floor(rr(4,10));float(l,n===10?'Strike !':n+' quilles','#d6336c')}}
     else if(p.bph==='wait'&&p.bt<=0){p.throws++;if(p.throws>=3)leaveShop(p);else{p.bph='aim';p.bt=1}}
     return}
   p.stay-=dt;if(p.stay<=0)leaveShop(p);
@@ -49,7 +49,7 @@ function moveTo(p,dt,f=1){const dx=p.target[0]-p.x,dy=p.target[1]-p.y,d=Math.hyp
 function step(p,dt){
   if(p.state==='toShop'){if(moveTo(p,dt)){const l=p.lot,free=l.shop?l.occupants.map((o,i)=>o?-1:i).filter(i=>i>=0):[];
       if(!l.shop||!hasRoom(l)||!free.length){p.state='fromShop';p.target=p.back;return true}
-      p.slot=pick(free);l.occupants[p.slot]=p;p.state='inside';p.sub='walk';p.k=.8;p.done=false;p.target=slotTarget(p);
+      p.slot=pick(free);l.occupants[p.slot]=p;p.state='inside';p.sub='walk';p.k=.8;p.sessionOver=false;p.target=slotTarget(p);
       const g=income(l);if(l.owner!=null)Game.state.bucks[l.owner]+=g;float(l,'+'+g,l.owner!=null?PCOL[l.owner]:'#555')}return true}
   if(p.state==='inside'){
     if(!p.lot.shop){exitShop(p);return true}

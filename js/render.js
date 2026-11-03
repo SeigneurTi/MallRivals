@@ -6,9 +6,9 @@ function drawBoard(){
   const seg=([a,b],h)=>{const p=N[a],q=N[b];return[Math.min(p[0],q[0])-h,Math.min(p[1],q[1])-h,Math.abs(p[0]-q[0])+2*h,Math.abs(p[1]-q[1])+2*h]};
   c.fillStyle='#c6c9c1';for(const e of EDGES)c.fillRect(...seg(e,RH+2));
   c.fillStyle='#f5f5f1';for(const e of EDGES)c.fillRect(...seg(e,RH));
-  for(const l of Game.state.lots){c.fillStyle='#b8bbb3';rrect(c,l.x,l.y,l.w,l.h,6);c.fill();c.fillStyle='rgba(255,255,255,.12)';rrect(c,l.x+3,l.y+3,l.w-6,l.h*.4,4);c.fill();
-    if(l.isHot){const cx=l.x+l.w/2,cy=l.y+l.h/2,R=Math.min(l.w,l.h)*.46,g=c.createRadialGradient(cx,cy,0,cx,cy,R);g.addColorStop(0,'rgba(242,120,150,.6)');g.addColorStop(1,'rgba(242,120,150,0)');c.fillStyle=g;c.beginPath();c.arc(cx,cy,R,0,7);c.fill()}
-    if(l.shop)drawShop(c,l.shop,l.x,l.y,l.w,l.h,l)}
+  for(const l of Game.state.lots){c.fillStyle='#b8bbb3';rrect(c,l.x,l.y,l.width,l.height,6);c.fill();c.fillStyle='rgba(255,255,255,.12)';rrect(c,l.x+3,l.y+3,l.width-6,l.height*.4,4);c.fill();
+    if(l.isHot){const cx=l.x+l.width/2,cy=l.y+l.height/2,R=Math.min(l.width,l.height)*.46,g=c.createRadialGradient(cx,cy,0,cx,cy,R);g.addColorStop(0,'rgba(242,120,150,.6)');g.addColorStop(1,'rgba(242,120,150,0)');c.fillStyle=g;c.beginPath();c.arc(cx,cy,R,0,7);c.fill()}
+    if(l.shop)Game.shops.drawBuilding(c,l)}
 }
 
 // ================= Bacs (même catalogue des deux côtés) =================
@@ -38,17 +38,17 @@ function menuLayout(l){
   }
   items.push({label:'Fermer',cost:null,act:'close'});
   const h=58+items.length*36;
-  let x=tx+l.w/2-w/2,y=ty+l.h+8;if(y+h>LH-6)y=ty-h-8;x=Math.max(6,Math.min(BW-w-6,x));y=Math.max(6,y);
+  let x=tx+l.width/2-w/2,y=ty+l.height+8;if(y+h>LH-6)y=ty-h-8;x=Math.max(6,Math.min(BW-w-6,x));y=Math.max(6,y);
   items.forEach((it,k)=>it.r=[x+10,y+50+k*36,w-20,30]);
-  return {x,y,w,h,items};
+  return {x,y,width:w,height:h,items};
 }
 function drawMenu(c,l){
   const m=menuLayout(l);
-  c.fillStyle='rgba(20,25,20,.25)';rrect(c,m.x+3,m.y+4,m.w,m.h,12);c.fill();
-  c.fillStyle='#ffffff';rrect(c,m.x,m.y,m.w,m.h,12);c.fill();
+  c.fillStyle='rgba(20,25,20,.25)';rrect(c,m.x+3,m.y+4,m.width,m.height,12);c.fill();
+  c.fillStyle='#ffffff';rrect(c,m.x,m.y,m.width,m.height,12);c.fill();
   c.textAlign='left';c.textBaseline='middle';c.fillStyle='#23272b';c.font='800 17px "Baloo 2", system-ui, sans-serif';c.fillText(l.shop.name,m.x+12,m.y+18);
   c.fillStyle='#5d6560';c.font='600 12px Nunito, system-ui, sans-serif';
-  c.font='600 11px Nunito, system-ui, sans-serif';c.fillText(`${l.owner!=null?PNAME[l.owner]:'Sans propriétaire'} · niv. ${l.level} · ${capOf(l.shop)} places · ${income(l)} $/client`,m.x+12,m.y+37,m.w-20);
+  c.font='600 11px Nunito, system-ui, sans-serif';c.fillText(`${l.owner!=null?PNAME[l.owner]:'Sans propriétaire'} · niv. ${l.level} · ${capOf(l.shop)} places · ${income(l)} $/client`,m.x+12,m.y+37,m.width-20);
   for(const it of m.items){const [x,y,w,h]=it.r,ok=it.act==='close'||(it.act&&Game.state.bucks[l.owner]>=it.cost);
     c.fillStyle=it.act==='close'?'#eef0ec':ok?(it.act==='shield'?'#e3edff':'#fff1e6'):'#f2f2f2';rrect(c,x,y,w,h,8);c.fill();
     c.fillStyle=ok?'#23272b':'#9aa0a6';c.font='700 13px Nunito, system-ui, sans-serif';c.textAlign='left';c.fillText(it.label,x+10,y+h/2+.5);

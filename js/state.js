@@ -9,7 +9,7 @@ Game.state = {
 };
 
 function reset(){
-  Game.state.lots=LOT_RECTS.map(([x,y,w,h],idx)=>({index:idx,x,y,w,h,shop:null,owner:null,level:1,shields:0,isHot:false,isBusy:false}));
+  Game.state.lots=LOT_RECTS.map(([x,y,w,h],idx)=>({index:idx,x,y,width:w,height:h,shop:null,owner:null,level:1,shields:0,isHot:false,isBusy:false}));
   const big=Game.state.lots;
   big.slice().sort(()=>Math.random()-.5).slice(0,5).forEach(l=>l.isHot=true);
   big.slice().sort(()=>Math.random()-.5).slice(0,4).forEach((l,k)=>setShop(l,pick(SHOPS.slice(0,10)),k%2));
@@ -20,8 +20,8 @@ function reset(){
 }
 const logEl=document.getElementById('log');
 function log(txt){Game.state.banner={txt,t:0};const li=document.createElement('li');li.textContent=txt;logEl.prepend(li);while(logEl.children.length>8)logEl.lastChild.remove()}
-const center=l=>[l.x+l.w/2,l.y+l.h/2];
-function float(l,txt,col){Game.state.floatingTexts.push({x:l.x+l.w/2,y:l.y,txt,col,t:0})}
+const center=l=>[l.x+l.width/2,l.y+l.height/2];
+function float(l,txt,col){Game.state.floatingTexts.push({x:l.x+l.width/2,y:l.y,txt,col,t:0})}
 
 function destroy(l){
   for(const p of Game.state.people)if(p.lot===l&&(p.state==='inside'||p.state==='toShop'||p.state==='leaving'))exitShop(p);

@@ -48,7 +48,7 @@ function drawAnim(a){
   else if(a.k==='car'){const p=a.pts[a.i],q=a.pts[Math.min(a.i+1,a.pts.length-1)],L=Math.hypot(q[0]-p[0],q[1]-p[1])||1,t=Math.min(1,a.d/L);
     car(c,p[0]+(q[0]-p[0])*t,p[1]+(q[1]-p[1])*t,Math.atan2(q[1]-p[1],q[0]-p[0]),30,'#2c3e50');
     c.fillStyle=a.col;c.beginPath();c.arc(p[0]+(q[0]-p[0])*t,p[1]+(q[1]-p[1])*t,3,0,7);c.fill()}
-  else if(a.k==='fire'){const x=a.l.x,y=a.l.y,s=a.l.h,W=a.l.w;for(let k=0;k<7;k++){const fx=x+W*(.1+k*.13),h=s*(.3+.15*Math.sin(a.t*12+k*1.7)),fy=y+s*(.5+.25*Math.sin(k*2.3));
+  else if(a.k==='fire'){const x=a.l.x,y=a.l.y,s=a.l.height,W=a.l.width;for(let k=0;k<7;k++){const fx=x+W*(.1+k*.13),h=s*(.3+.15*Math.sin(a.t*12+k*1.7)),fy=y+s*(.5+.25*Math.sin(k*2.3));
       c.fillStyle=k%2?'rgba(255,90,30,.9)':'rgba(255,190,40,.9)';c.beginPath();c.moveTo(fx-s*.07,fy);c.quadraticCurveTo(fx-s*.05,fy-h*.6,fx,fy-h);c.quadraticCurveTo(fx+s*.05,fy-h*.6,fx+s*.07,fy);c.closePath();c.fill()}
     c.fillStyle='rgba(90,90,90,.35)';c.beginPath();c.arc(x+W/2,y-10-(a.t*20%30),s*.18,0,7);c.fill()}
   else if(a.k==='monster'){const x=a.from[0]+(a.to[0]-a.from[0])*u,y=a.from[1]+(a.to[1]-a.from[1])*u-Math.abs(Math.sin(a.t*8))*8;
@@ -59,7 +59,7 @@ function drawAnim(a){
     c.fillStyle='#fff';c.beginPath();c.arc(x-9,y-14,6,0,7);c.arc(x+9,y-14,6,0,7);c.fill();c.fillStyle='#111';c.beginPath();c.arc(x-8,y-13,3,0,7);c.arc(x+10,y-13,3,0,7);c.fill();
     c.fillStyle='#2d5a26';c.beginPath();c.arc(x,y+4,9,0,Math.PI);c.fill();c.fillStyle='#fff';c.fillRect(x-6,y+4,4,4);c.fillRect(x+2,y+4,4,4)}
   else if(a.k==='ufo'){const x=a.from[0]+(a.to[0]-a.from[0])*u,y=a.from[1]+(a.to[1]-a.from[1])*u+Math.sin(a.t*4)*3;
-    if(a.beam){const tx=a.beam.x,ty=a.beam.y,s=a.beam.h,sw2=a.beam.w,al=.25+.15*Math.sin(a.t*10),g=c.createLinearGradient(0,y,0,ty+s);g.addColorStop(0,`rgba(180,255,170,${al+.2})`);g.addColorStop(1,`rgba(180,255,170,${al*.4})`);
+    if(a.beam){const tx=a.beam.x,ty=a.beam.y,s=a.beam.height,sw2=a.beam.width,al=.25+.15*Math.sin(a.t*10),g=c.createLinearGradient(0,y,0,ty+s);g.addColorStop(0,`rgba(180,255,170,${al+.2})`);g.addColorStop(1,`rgba(180,255,170,${al*.4})`);
       c.fillStyle=g;c.beginPath();c.moveTo(x-12,y+6);c.lineTo(x+12,y+6);c.lineTo(tx+sw2+6,ty+s);c.lineTo(tx-6,ty+s);c.closePath();c.fill()}
     c.fillStyle='rgba(160,220,255,.85)';c.beginPath();c.ellipse(x,y-6,14,12,0,Math.PI,0);c.fill();
     c.fillStyle='#8e9aa8';c.beginPath();c.ellipse(x,y,36,10,0,0,7);c.fill();c.fillStyle='#c7d0da';c.beginPath();c.ellipse(x,y-2,30,6,0,0,7);c.fill();

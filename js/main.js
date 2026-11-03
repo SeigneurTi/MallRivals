@@ -23,7 +23,7 @@ function frameInner(t){
   ctx.setTransform(Game.view.pixelRatio*Game.view.scale,0,0,Game.view.pixelRatio*Game.view.scale,0,0);
   ctx.save();ctx.translate(BX,0);ctx.beginPath();ctx.rect(0,0,BW,LH);ctx.clip();
   if(Game.state.selection){const card=CATALOG[Game.state.selection.i];ctx.lineWidth=2.5;ctx.setLineDash([8,6]);ctx.lineDashOffset=-t/40;
-    for(const l of Game.state.lots){if(card.isAction?(l.shop&&l.owner===1-Game.state.selection.p&&!l.isBusy):!l.shop){ctx.strokeStyle=card.isAction?'#c0392b':PCOL[Game.state.selection.p];rrect(ctx,l.x+2,l.y+2,l.w-4,l.h-4,6);ctx.stroke()}}ctx.setLineDash([])}
+    for(const l of Game.state.lots){if(card.isAction?(l.shop&&l.owner===1-Game.state.selection.p&&!l.isBusy):!l.shop){ctx.strokeStyle=card.isAction?'#c0392b':PCOL[Game.state.selection.p];rrect(ctx,l.x+2,l.y+2,l.width-4,l.height-4,6);ctx.stroke()}}ctx.setLineDash([])}
   for(const l of Game.state.lots)if(l.shop)drawLive(l,t/1000);
   for(const p of Game.state.people.slice().sort((a,b)=>a.y-b.y))drawPerson(p,p===Game.state.hoveredPerson);
   for(const a of Game.state.animations)if(a.k!=='ufo'&&a.k!=='monster')drawAnim(a);
@@ -54,9 +54,9 @@ cv.addEventListener('pointerdown',e=>{
       else if(it.act==='shield'&&Game.state.bucks[l.owner]>=it.cost){Game.state.bucks[l.owner]-=it.cost;l.shields++;drawBoard();float(l,'Bouclier +1','#3a86ff')}
       else if(it.act&&it.act!=='close'){Game.state.menuLot=l;float(l,'Pas assez de bucks','#c0392b')}
       return}
-    if(inR(bx,y,[m.x,m.y,m.w,m.h]))return}
+    if(inR(bx,y,[m.x,m.y,m.width,m.height]))return}
   for(const p of [0,1])for(let i=0;i<CATALOG.length;i++)if(inR(x,y,cardRect(p,i))){Game.state.selection=(Game.state.selection&&Game.state.selection.p===p&&Game.state.selection.i===i)?null:{p,i};return}
-  const l=Game.state.lots.find(l=>inR(bx,y,[l.x,l.y,l.w,l.h]));
+  const l=Game.state.lots.find(l=>inR(bx,y,[l.x,l.y,l.width,l.height]));
   if(Game.state.selection&&l){const card=CATALOG[Game.state.selection.i],p=Game.state.selection.p;
     if(Game.state.bucks[p]<card.price){float(l,'Pas assez de bucks','#c0392b');return}
     if(!card.isAction&&!l.shop){Game.state.bucks[p]-=card.price;setShop(l,card,p);Game.state.selection=null;drawBoard();log(`${PNAME[p]} ouvre ${nom(l)}.`);return}
