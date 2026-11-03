@@ -20,7 +20,6 @@ function reset(){
 }
 const logEl=document.getElementById('log');
 function log(txt){Game.state.banner={txt,t:0};const li=document.createElement('li');li.textContent=txt;logEl.prepend(li);while(logEl.children.length>8)logEl.lastChild.remove()}
-const tileOf=l=>tileOfRect([l.x,l.y,l.w,l.h]);
 const center=l=>[l.x+l.w/2,l.y+l.h/2];
 const ART={fleuriste:'le ',kiosque:'le ',boulangerie:'la ',cafe:'le ',glacier:'le ',librairie:'la ',pharmacie:'la ',pizzeria:'la ',jouets:'le magasin de ',coiffeur:'le ',burger:'le ',vetements:'la boutique de ',arcade:"l'",restaurant:'le ',bowling:'le ',cinema:'le ',bijouterie:'la ',piscine:'la ',manege:'le ',hotel:"l'"};
 const nom=l=>{const a=ART[l.b.id];return a+(a.endsWith('de ')?l.b.name.toLowerCase():l.b.name)};

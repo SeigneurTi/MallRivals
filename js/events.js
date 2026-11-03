@@ -5,9 +5,8 @@ function launchMeteor(p,l){l.busy=true;const [cx,cy]=center(l);log(`${PNAME[p]} 
     if(!l.b)return;if(l.shields>0){l.shields--;drawBoard();float(l,'Bouclier !','#3a86ff');log(`Le bouclier ${deNom(l)} a arrêté la météorite.`)}
     else{log(`${l.b.name} détruit par la météorite !`);destroy(l)}}})}
 function launchThief(p,l){l.busy=true;log(`${PNAME[p]} envoie une voiture-voleur vers ${nom(l)}…`);
-  const e=Object.entries(EDGE_SHOPS).find(([k,list])=>list.some(x=>x.idx===l.idx));
-  let pts;const [cx,cy]=center(l);
-  if(e){const [a]=e[0].split('|'),it=e[1].find(x=>x.idx===l.idx);pts=[...bfs(p?'xE':'xO',a).map(k=>N[k]),it.street,it.door]}else pts=[[p?BW+40:-40,cy],[cx,cy]];
+  const street=Game.map.lotStreet[l.idx];
+  const pts=[...bfs(p?'east':'west',street.right).map(k=>N[k]),street.access.streetPoint,street.access.door];
   Game.state.animations.push({k:'car',pts,i:0,d:0,col:PCOL[p],end(){l.busy=false;if(!l.b)return;
     const chance=Math.max(.1,.75-.22*l.shields);
     if(Math.random()<chance){const old=l.owner;l.owner=p;l.shields=0;drawBoard();float(l,'Volé !',PCOL[p]);log(`Vol réussi : ${l.b.name} passe de ${PNAME[old]} à ${PNAME[p]} !`)}

@@ -19,12 +19,12 @@ function release(p){const l=p.lot;if(l&&l.occ&&p.slot!=null&&l.occ[p.slot]===p)l
 function exitShop(p){release(p);p.x=p.door[0];p.y=p.door[1];p.state='fromShop';p.target=p.back;p.k=1;p.mode=null}
 function leaveShop(p){release(p);p.state='leaving';p.target=p.door;p.mode=null}
 function tryEnter(p,oldD){
-  const a=p.ids[p.i],b=p.ids[p.i+1],list=EDGE_SHOPS[a+'|'+b];if(!list||!list.length)return false;
+  const a=p.ids[p.i],b=p.ids[p.i+1],list=Game.map.lotsAlongStreet(a,b);if(!list||!list.length)return false;
   const A=N[a],B=N[b],hz=A[1]===B[1],dir=hz?Math.sign(B[0]-A[0]):Math.sign(B[1]-A[1]),start=hz?A[0]:A[1];
   const s0=start+dir*oldD,s1=start+dir*p.d;
-  for(const e of list){const l=Game.state.lots[e.idx];if(!l.b||l.closed>0||p.visited.has(l)||!hasRoom(l))continue;
-    if((e.along-s0)*dir>0&&(e.along-s1)*dir<=0){p.visited.add(l);
-      if(Math.random()<attraction(l)){p.d=Math.abs(e.along-start);place(p);p.state='toShop';p.lot=l;p.door=e.door;p.back=[p.x,p.y];p.target=e.door;return true}}}
+  for(const e of list){const l=Game.state.lots[e.lotIndex];if(!l.b||l.closed>0||p.visited.has(l)||!hasRoom(l))continue;
+    if((e.positionAlong-s0)*dir>0&&(e.positionAlong-s1)*dir<=0){p.visited.add(l);
+      if(Math.random()<attraction(l)){p.d=Math.abs(e.positionAlong-start);place(p);p.state='toShop';p.lot=l;p.door=e.door;p.back=[p.x,p.y];p.target=e.door;return true}}}
   return false;
 }
 function clampIn(l,[x,y]){const G=geomOf(l);return[x,Math.max(G.Y+15,Math.min(G.Y+G.H-1,y))]}
