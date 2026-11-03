@@ -1,0 +1,54 @@
+<title>Bourg-les-Bonhommes 2</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&family=Nunito:wght@400;600;700;800&display=swap">
+<link rel="stylesheet" href="css/styles.css">
+
+
+<div class="wrap">
+  <div>
+    <h1>Bourg-les-Bonhommes 2</h1>
+    <p id="err" hidden style="margin:6px 0 0;color:#b42318;font-weight:700"></p>
+    <p class="sub">Deux joueurs construisent des boutiques. Les passants arrivent par les quatre routes, entrent dans les magasins qui les attirent, y restent un moment puis repartent.</p>
+  </div>
+
+  <div class="tablet"><canvas id="c" aria-label="Plateau de jeu : carte de la ville et cartes des deux joueurs"></canvas></div>
+
+  <div class="bar">
+    <div class="field"><label for="pop">Passants</label><input id="pop" type="range" min="5" max="120" value="40"><output id="popv">40</output></div>
+    <div class="field"><label for="spd">Vitesse</label><input id="spd" type="range" min="0.25" max="3" step="0.25" value="1"><output id="spdv">×1</output></div>
+    <div class="btns"><button id="play" type="button">Pause</button><button id="reset" type="button">Recommencer</button></div>
+  </div>
+
+  <div class="cols">
+    <div class="card">
+      <h2>Comment jouer</h2>
+      <ul class="rules">
+        <li><b>Construire :</b> les deux joueurs ont exactement les mêmes cartes. Touche une carte boutique, puis un terrain gris libre. 20 boutiques, du fleuriste à l'hôtel : plus elle coûte cher, plus elle attire et plus elle rapporte.</li>
+        <li><b>Améliorer et protéger :</b> touche une de tes boutiques pour monter de niveau (jusqu'au niveau 3) ou ajouter un bouclier (3 au maximum).</li>
+        <li><b>Météorite :</b> détruit une boutique adverse. Un bouclier l'arrête, mais il est perdu.</li>
+        <li><b>Voiture-voleur :</b> tente de voler une boutique adverse. Plus elle a de boucliers, moins ça marche.</li>
+        <li><b>Hasard :</b> monstres, OVNI et, très rarement, incendies. Un incendie ne détruit pas toujours la boutique.</li>
+        <li><b>Places limitées :</b> chaque boutique a un nombre de places (2 places par table au café, 3 pistes au bowling, une salle de cinéma avec séances). Quand c'est complet, personne n'entre. Moins il y a de places, plus chaque client rapporte.</li>
+        <li>Les terrains avec un rond rose rapportent le double.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h2>Journal de la ville</h2>
+      <ol id="log"><li>La ville se réveille.</li></ol>
+    </div>
+  </div>
+</div>
+
+
+<script src="js/polyfills.js"></script>
+<script src="js/config.js"></script>
+<script src="js/map.js"></script>
+<script src="js/catalog.js"></script>
+<script src="js/icons.js"></script>
+<script src="js/shops.js"></script>
+<script src="js/state.js"></script>
+<script src="js/render.js"></script>
+<script src="js/people.js"></script>
+<script src="js/events.js"></script>
+<script src="js/main.js"></script>

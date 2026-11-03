@@ -1,0 +1,39 @@
+# Journal des modifications
+
+Les versions les plus récentes sont en haut.
+
+## v2.4 — Mise en dépôt git (3 novembre 2026)
+
+- Le jeu, qui tenait dans une seule page, est découpé en fichiers : `index.html`, `css/styles.css` et onze fichiers dans `js/`.
+- Ajout du README (arborescence, où régler quoi) et de ce journal.
+- Aucun changement de règle ni d'affichage.
+
+## v2.3 — Plus de clients, séances plus longues
+
+- Les passants entrent beaucoup plus souvent dans les boutiques : au moins une fois sur deux, presque toujours pour les boutiques chères.
+- Cinéma : 40 s d'attente avant la séance (au lieu de 15 s) et 25 s de film (au lieu de 20 s).
+
+## v2.2 — Capacités et activités dans les boutiques
+
+- Chaque boutique a un nombre de places. Complète, elle affiche « Complet » et personne n'entre.
+- Café, pizzeria et burger : 3 tables de 2 places. Restaurant : 4 tables de 2.
+- Bowling : 3 pistes. Le client vise, lance la boule, fait tomber les quilles, 3 lancers puis il repart.
+- Cinéma : séances avec compte à rebours, film animé à l'écran, sortie de toute la salle à la fin.
+- Piscine (nageurs et transats), manège (les clients tournent), arcade (bornes allumées quand on joue).
+- Moins une boutique a de places, plus chaque client rapporte.
+- Bâtiments et intérieurs sur toute la largeur de la case (fin des bandes de couleur sur les côtés).
+
+## v2.1 — Noms sous les cartes
+
+- Le nom de chaque boutique et malus s'affiche en petit sous sa carte.
+
+## v2.0 — Cases rectangulaires identiques
+
+- Nouvelle carte : 36 cases rectangulaires de même taille, chacune ouverte sur une rue.
+- L'intérieur de la boutique s'oriente selon le côté de la porte.
+
+## v1 — Bourg-les-Bonhommes (première page)
+
+- Ville avec 4 routes, passants qui entrent et repartent.
+- 20 boutiques vues de l'intérieur, mêmes cartes pour les deux joueurs.
+- Niveaux, boucliers, météorite, voiture-voleur, monstre, OVNI, incendie.
