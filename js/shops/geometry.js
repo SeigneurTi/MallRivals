@@ -59,8 +59,4 @@
   }
 
   Game.shopGeometry = { wallThickness, frameOfLot, withPainter, lotPointToBoard };
-
-  // --- Alias temporaires pour le code pas encore refactorisé (retirés à la fin) ---
-  window.geomOf = frameOfLot;
-  window.toWorld = lotPointToBoard;
 })();

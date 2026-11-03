@@ -70,13 +70,4 @@
   }
 
   Game.catalog = { SHOPS, ACTIONS, CARDS, capacityOf, incomePerCustomer, entryChance, upgradeCost, shieldCost };
-
-  // --- Alias temporaires pour le code pas encore refactorisé (retirés à la fin) ---
-  window.SHOPS = SHOPS;
-  window.CATALOG = CARDS;
-  window.capOf = capacityOf;
-  window.income = incomePerCustomer;
-  window.attraction = entryChance;
-  window.upCost = upgradeCost;
-  window.shieldCost = shieldCost;
 })();

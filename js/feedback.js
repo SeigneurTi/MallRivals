@@ -42,8 +42,4 @@
   }
 
   Game.feedback = { log, clearLog, floatText, update };
-
-  // --- Alias temporaires pour le code pas encore refactorisé (retirés à la fin) ---
-  window.log = log;
-  window.float = floatText;
 })();

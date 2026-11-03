@@ -147,14 +147,4 @@
     lotStreet,
     lotsAlongStreet,
   };
-
-  // --- Alias temporaires pour le code pas encore refactorisé (retirés à la fin) ---
-  window.N = nodes;
-  window.EDGES = STREETS;
-  window.EXIT_LABEL = EXIT_NAMES;
-  window.inner = intersections;
-  window.exits = exits;
-  window.bfs = findPath;
-  window.LOT_RECTS = lotRects;
-  window.LOT_DOOR = lotDoorSide;
 })();

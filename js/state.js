@@ -92,9 +92,4 @@
   }
 
   Game.world = { reset, lotCenter, destroyShop };
-
-  // --- Alias temporaires pour le code pas encore refactorisé (retirés à la fin) ---
-  window.reset = reset;
-  window.center = lotCenter;
-  window.destroy = destroyShop;
 })();

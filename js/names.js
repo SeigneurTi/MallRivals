@@ -51,9 +51,4 @@
   }
 
   Game.names = { shopName, shopNameAfterA, shopNameAfterDe };
-
-  // --- Alias temporaires pour le code pas encore refactorisé (retirés à la fin) ---
-  window.nom = shopName;
-  window.aNom = shopNameAfterA;
-  window.deNom = shopNameAfterDe;
 })();

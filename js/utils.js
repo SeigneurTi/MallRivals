@@ -30,9 +30,4 @@
   }
 
   Game.utils = { randomBetween, pickRandom, shuffled, mixColor };
-
-  // --- Alias temporaires pour le code pas encore refactorisé (retirés à la fin) ---
-  window.rr = randomBetween;
-  window.pick = pickRandom;
-  window.mix = mixColor;
 })();

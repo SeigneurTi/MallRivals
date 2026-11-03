@@ -89,9 +89,4 @@
   }
 
   Game.sprites = { drawShield, drawCar, drawActionIcon };
-
-  // --- Alias temporaires pour le code pas encore refactorisé (retirés à la fin) ---
-  window.shield = drawShield;
-  window.car = drawCar;
-  window.drawActionIcon = drawActionIcon;
 })();

@@ -31,10 +31,4 @@
   }
 
   Game.draw = { FULL_TURN, rect, circle, ellipse, roundedRectPath };
-
-  // --- Alias temporaires pour le code pas encore refactorisé (retirés à la fin) ---
-  window.R = rect;
-  window.O = circle;
-  window.E = ellipse;
-  window.rrect = roundedRectPath;
 })();

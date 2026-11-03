@@ -288,7 +288,4 @@
   }
 
   Game.icons = { draw: drawIcon };
-
-  // --- Alias temporaires pour le code pas encore refactorisé (retirés à la fin) ---
-  window.icon = drawIcon;
 })();

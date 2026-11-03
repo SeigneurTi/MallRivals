@@ -185,11 +185,4 @@
   }
 
   Game.shops = { open, hasFreeSlot, update, drawBuilding, drawLiveLayer };
-
-  // --- Alias temporaires pour le code pas encore refactorisé (retirés à la fin) ---
-  window.SPEC = Game.interiors;
-  window.setShop = open;
-  window.hasRoom = hasFreeSlot;
-  window.updateShop = update;
-  window.drawLive = drawLiveLayer;
 })();

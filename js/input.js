@@ -1,0 +1,153 @@
+// Interactions : toucher les cartes, les cases et le menu ; survoler les passants ;
+// curseurs et boutons sous le plateau.
+(function () {
+  'use strict';
+
+  const BOARD = Game.config.board;
+  const PLAYER_NAMES = Game.config.players.NAMES;
+  const { log, floatText } = Game.feedback;
+  const { shopName } = Game.names;
+
+  // Position du pointeur en unités logiques du plateau.
+  function toBoardPoint(event) {
+    const bounds = Game.view.canvas.getBoundingClientRect();
+    return [(event.clientX - bounds.left) / Game.view.scale, (event.clientY - bounds.top) / Game.view.scale];
+  }
+
+  function isInside(x, y, [left, top, width, height]) {
+    return x >= left && x <= left + width && y >= top && y <= top + height;
+  }
+
+  function chooseMenuItem(lot, item) {
+    const bucks = Game.state.bucks;
+    if (item.action === 'upgrade' && bucks[lot.owner] >= item.cost) {
+      bucks[lot.owner] -= item.cost;
+      lot.level++;
+      Game.board.draw();
+      floatText(lot, 'Niveau ' + lot.level, '#b7791f');
+      log(`${PLAYER_NAMES[lot.owner]} améliore ${shopName(lot)} au niveau ${lot.level}.`);
+    } else if (item.action === 'shield' && bucks[lot.owner] >= item.cost) {
+      bucks[lot.owner] -= item.cost;
+      lot.shields++;
+      Game.board.draw();
+      floatText(lot, 'Bouclier +1', '#3a86ff');
+    } else if (item.action && item.action !== 'close') {
+      // Pas assez d'argent : le menu reste ouvert.
+      Game.state.menuLot = lot;
+      floatText(lot, 'Pas assez de bucks', '#c0392b');
+    }
+  }
+
+  // Joue la carte choisie sur une case. Renvoie false si rien ne s'est passé.
+  function playSelectedCard(lot) {
+    const state = Game.state;
+    const card = Game.catalog.CARDS[state.selection.cardIndex];
+    const player = state.selection.player;
+    if (state.bucks[player] < card.price) {
+      floatText(lot, 'Pas assez de bucks', '#c0392b');
+      return true;
+    }
+    if (!card.isAction && !lot.shop) {
+      state.bucks[player] -= card.price;
+      Game.shops.open(lot, card, player);
+      state.selection = null;
+      Game.board.draw();
+      log(`${PLAYER_NAMES[player]} ouvre ${shopName(lot)}.`);
+      return true;
+    }
+    if (card.isAction && lot.shop && !lot.isBusy) {
+      if (lot.owner !== 1 - player) {
+        floatText(lot, 'Vise une boutique adverse', '#c0392b');
+        return true;
+      }
+      state.bucks[player] -= card.price;
+      state.selection = null;
+      if (card.id === 'meteorite') {
+        Game.events.launchMeteor(player, lot);
+      } else {
+        Game.events.launchThief(player, lot);
+      }
+      return true;
+    }
+    return false;
+  }
+
+  function onPointerDown(event) {
+    const state = Game.state;
+    const [x, y] = toBoardPoint(event);
+    const mapX = x - BOARD.MAP_LEFT;
+
+    // Un menu est ouvert : tout clic le ferme, et active la ligne touchée.
+    if (state.menuLot) {
+      const lot = state.menuLot;
+      const menu = Game.menu.layout(lot);
+      state.menuLot = null;
+      for (const item of menu.items) {
+        if (isInside(mapX, y, item.rect)) {
+          chooseMenuItem(lot, item);
+          return;
+        }
+      }
+      if (isInside(mapX, y, [menu.x, menu.y, menu.width, menu.height])) {
+        return;
+      }
+    }
+
+    // Une carte d'un bac : la choisir, ou la reposer si elle était déjà choisie.
+    for (const player of [0, 1]) {
+      for (let cardIndex = 0; cardIndex < Game.catalog.CARDS.length; cardIndex++) {
+        if (isInside(x, y, Game.trays.cardRect(player, cardIndex))) {
+          const alreadySelected = state.selection && state.selection.player === player && state.selection.cardIndex === cardIndex;
+          state.selection = alreadySelected ? null : { player, cardIndex };
+          return;
+        }
+      }
+    }
+
+    // Une case : jouer la carte choisie, ou ouvrir le menu de la boutique.
+    const lot = state.lots.find(candidate => isInside(mapX, y, [candidate.x, candidate.y, candidate.width, candidate.height]));
+    if (state.selection && lot && playSelectedCard(lot)) {
+      return;
+    }
+    if (lot && lot.shop && !state.selection) {
+      state.menuLot = lot;
+      return;
+    }
+    // Sinon (sur tablette, pas de survol) : toucher un passant affiche son info-bulle.
+    state.hoveredPerson = Game.people.findNear(mapX, y);
+  }
+
+  function syncPlayButton() {
+    document.getElementById('play').textContent = Game.state.isRunning ? 'Pause' : 'Lecture';
+  }
+
+  function bind() {
+    const canvas = Game.view.canvas;
+    canvas.addEventListener('pointerdown', onPointerDown);
+    canvas.addEventListener('pointermove', event => {
+      const [x, y] = toBoardPoint(event);
+      Game.state.hoveredPerson = Game.people.findNear(x - BOARD.MAP_LEFT, y);
+    });
+    canvas.addEventListener('pointerleave', () => {
+      Game.state.hoveredPerson = null;
+    });
+
+    const populationSlider = document.getElementById('pop');
+    const speedSlider = document.getElementById('spd');
+    populationSlider.addEventListener('input', () => {
+      Game.state.targetPopulation = +populationSlider.value;
+      document.getElementById('popv').textContent = Game.state.targetPopulation;
+    });
+    speedSlider.addEventListener('input', () => {
+      Game.state.speedMultiplier = +speedSlider.value;
+      document.getElementById('spdv').textContent = '×' + Game.state.speedMultiplier;
+    });
+    document.getElementById('play').addEventListener('click', () => {
+      Game.state.isRunning = !Game.state.isRunning;
+      syncPlayButton();
+    });
+    document.getElementById('reset').addEventListener('click', Game.world.reset);
+  }
+
+  Game.input = { bind, syncPlayButton };
+})();

@@ -141,15 +141,4 @@
       MAX_FRAME_SECONDS: 0.05,         // évite les sauts après un onglet en arrière-plan
     },
   };
-
-  // --- Alias temporaires pour le code pas encore refactorisé (retirés à la fin) ---
-  const board = Game.config.board;
-  window.LW = board.WIDTH;
-  window.LH = board.HEIGHT;
-  window.TW = board.TRAY_WIDTH;
-  window.BX = board.MAP_LEFT;
-  window.BW = board.MAP_WIDTH;
-  window.RH = board.ROAD_HALF_WIDTH;
-  window.PCOL = Game.config.players.COLORS;
-  window.PNAME = Game.config.players.NAMES;
 })();
