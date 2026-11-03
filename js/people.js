@@ -76,3 +76,5 @@ function drawPerson(p,hl){
   ctx.restore();
 }
 
+// Pont temporaire vers la future API Game.people (retiré à l'étape des passants).
+Game.people = { create: makePerson, exitShopNow: exitShop, isInOrEnteringShop: p => p.state === 'inside' || p.state === 'toShop' || p.state === 'leaving' };

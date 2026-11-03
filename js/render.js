@@ -55,3 +55,5 @@ function drawMenu(c,l){
     if(it.cost!=null){c.textAlign='right';c.fillStyle=ok?'#c05621':'#9aa0a6';c.fillText(it.cost+' $',x+w-10,y+h/2+.5)}}
 }
 
+// Pont temporaire vers la future API Game.board (retiré à l'étape du rendu).
+Game.board = { draw: drawBoard };

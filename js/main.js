@@ -16,8 +16,7 @@ function frameInner(t){
     if(Math.random()<.011*dt)randomEvent('monster');
     if(Math.random()<.009*dt)randomEvent('ufo');
   }
-  for(const f of Game.state.floatingTexts)f.t+=raw;Game.state.floatingTexts=Game.state.floatingTexts.filter(f=>f.t<1.4);
-  if(Game.state.banner){Game.state.banner.t+=raw;if(Game.state.banner.t>4)Game.state.banner=null}
+  Game.feedback.update(raw);
 
   ctx.setTransform(1,0,0,1,0,0);ctx.clearRect(0,0,cv.width,cv.height);ctx.drawImage(bg,0,0);
   ctx.setTransform(Game.view.pixelRatio*Game.view.scale,0,0,Game.view.pixelRatio*Game.view.scale,0,0);
@@ -29,15 +28,15 @@ function frameInner(t){
   for(const a of Game.state.animations)if(a.k!=='ufo'&&a.k!=='monster')drawAnim(a);
   for(const a of Game.state.animations)if(a.k==='ufo'||a.k==='monster')drawAnim(a);
   ctx.textAlign='center';ctx.textBaseline='middle';
-  for(const f of Game.state.floatingTexts){ctx.globalAlpha=1-f.t/1.4;ctx.font='800 18px "Baloo 2", system-ui, sans-serif';ctx.lineWidth=4;ctx.strokeStyle='#ffffff';ctx.strokeText(f.txt,f.x,f.y-f.t*30);ctx.fillStyle=f.col;ctx.fillText(f.txt,f.x,f.y-f.t*30)}
+  for(const f of Game.state.floatingTexts){ctx.globalAlpha=1-f.age/1.4;ctx.font='800 18px "Baloo 2", system-ui, sans-serif';ctx.lineWidth=4;ctx.strokeStyle='#ffffff';ctx.strokeText(f.text,f.x,f.y-f.age*30);ctx.fillStyle=f.color;ctx.fillText(f.text,f.x,f.y-f.age*30)}
   ctx.globalAlpha=1;
   if(Game.state.menuLot&&Game.state.menuLot.shop)drawMenu(ctx,Game.state.menuLot);
   if(Game.state.hoveredPerson&&Game.state.people.includes(Game.state.hoveredPerson)){
     const txt=(Game.state.hoveredPerson.state==='inside'||Game.state.hoveredPerson.state==='leaving')&&Game.state.hoveredPerson.lot&&Game.state.hoveredPerson.lot.shop?`${Game.state.hoveredPerson.name} · ${Game.state.hoveredPerson.lot.shop.name}`:`${Game.state.hoveredPerson.name} · de ${EXIT_LABEL[Game.state.hoveredPerson.from]} vers ${EXIT_LABEL[Game.state.hoveredPerson.to]}`;
     ctx.font='700 14px Nunito, system-ui, sans-serif';const w=ctx.measureText(txt).width+18,bx=Math.max(6,Math.min(BW-w-6,Game.state.hoveredPerson.x-w/2)),by=Math.max(6,Game.state.hoveredPerson.y-52);
     ctx.fillStyle='#ffffff';rrect(ctx,bx,by,w,26,8);ctx.fill();ctx.fillStyle='#23272b';ctx.textAlign='left';ctx.fillText(txt,bx+9,by+13.5)}
-  if(Game.state.banner){ctx.font='800 16px Nunito, system-ui, sans-serif';const w=Math.min(BW-40,ctx.measureText(Game.state.banner.txt).width+30),a=Math.min(1,Game.state.banner.t*4,(4-Game.state.banner.t)*2);
-    ctx.globalAlpha=a;ctx.fillStyle='rgba(30,34,40,.88)';rrect(ctx,BW/2-w/2,LH-52,w,34,17);ctx.fill();ctx.fillStyle='#fff';ctx.textAlign='center';ctx.fillText(Game.state.banner.txt,BW/2,LH-34.5,w-20);ctx.globalAlpha=1}
+  if(Game.state.banner){ctx.font='800 16px Nunito, system-ui, sans-serif';const w=Math.min(BW-40,ctx.measureText(Game.state.banner.text).width+30),a=Math.min(1,Game.state.banner.age*4,(4-Game.state.banner.age)*2);
+    ctx.globalAlpha=a;ctx.fillStyle='rgba(30,34,40,.88)';rrect(ctx,BW/2-w/2,LH-52,w,34,17);ctx.fill();ctx.fillStyle='#fff';ctx.textAlign='center';ctx.fillText(Game.state.banner.text,BW/2,LH-34.5,w-20);ctx.globalAlpha=1}
   if(!Game.state.isRunning){ctx.fillStyle='rgba(30,34,40,.75)';rrect(ctx,BW/2-50,14,100,30,15);ctx.fill();ctx.fillStyle='#fff';ctx.font='800 15px Nunito, system-ui, sans-serif';ctx.textAlign='center';ctx.fillText('Pause',BW/2,29.5)}
   ctx.restore();
   drawTray(0);drawTray(1);

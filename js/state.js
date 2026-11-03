@@ -1,31 +1,100 @@
-// État de la partie : création, réinitialisation, destruction d'une boutique, journal.
-// ================= État =================
-// Tout ce qui change pendant une partie (rempli par reset()).
-Game.state = {
-  lots: [], bucks: [0, 0], selection: null, menuLot: null, people: [], floatingTexts: [], animations: [],
-  spawnTimer: 0, banner: null, gameTime: 0,
-  targetPopulation: Game.config.people.DEFAULT_COUNT, speedMultiplier: 1,
-  isRunning: !Game.view.prefersReducedMotion, hoveredPerson: null,
-};
+// État de la partie (Game.state) et opérations sur la ville (Game.world) :
+// nouvelle partie, destruction d'une boutique.
+(function () {
+  'use strict';
 
-function reset(){
-  Game.state.lots=LOT_RECTS.map(([x,y,w,h],idx)=>({index:idx,x,y,width:w,height:h,shop:null,owner:null,level:1,shields:0,isHot:false,isBusy:false}));
-  const big=Game.state.lots;
-  big.slice().sort(()=>Math.random()-.5).slice(0,5).forEach(l=>l.isHot=true);
-  big.slice().sort(()=>Math.random()-.5).slice(0,4).forEach((l,k)=>setShop(l,pick(SHOPS.slice(0,10)),k%2));
-  Game.state.bucks=[1000,1000];Game.state.selection=null;Game.state.menuLot=null;Game.state.floatingTexts=[];Game.state.animations=[];Game.state.spawnTimer=0;Game.state.banner=null;Game.state.people=[];
-  for(let k=0;k<Game.state.targetPopulation;k++)Game.state.people.push(makePerson(true));
-  logEl.innerHTML='<li>La ville se réveille.</li>';
-  drawBoard();
-}
-const logEl=document.getElementById('log');
-function log(txt){Game.state.banner={txt,t:0};const li=document.createElement('li');li.textContent=txt;logEl.prepend(li);while(logEl.children.length>8)logEl.lastChild.remove()}
-const center=l=>[l.x+l.width/2,l.y+l.height/2];
-function float(l,txt,col){Game.state.floatingTexts.push({x:l.x+l.width/2,y:l.y,txt,col,t:0})}
+  const START = Game.config.start;
 
-function destroy(l){
-  for(const p of Game.state.people)if(p.lot===l&&(p.state==='inside'||p.state==='toShop'||p.state==='leaving'))exitShop(p);
-  l.shop=null;l.owner=null;l.level=1;l.shields=0;l.occupants=[];
-  if(Game.state.menuLot===l)Game.state.menuLot=null;drawBoard();
-}
+  // Tout ce qui change pendant une partie.
+  Game.state = {
+    lots: [],                 // les 36 cases (voir createLots)
+    bucks: [0, 0],            // argent de chaque joueur
+    selection: null,          // carte choisie : { player, cardIndex }
+    menuLot: null,            // case dont le menu est ouvert
+    people: [],               // passants (voir js/people/person.js)
+    floatingTexts: [],        // « +42 », « Volé ! »… (voir js/feedback.js)
+    animations: [],           // météorites, voitures, monstres… (voir js/events/animations.js)
+    spawnTimer: 0,            // délai avant l'arrivée du prochain passant
+    banner: null,             // dernier message du journal, affiché sur le plateau
+    gameTime: 0,              // temps de jeu écoulé (s), sert à faire tourner le manège
+    targetPopulation: Game.config.people.DEFAULT_COUNT,   // curseur « Passants »
+    speedMultiplier: 1,       // curseur « Vitesse »
+    isRunning: !Game.view.prefersReducedMotion,           // bouton Pause / Lecture
+    hoveredPerson: null,      // passant survolé (info-bulle)
+  };
 
+  function createLots() {
+    return Game.map.lotRects.map(([x, y, width, height], index) => ({
+      index,
+      x,
+      y,
+      width,
+      height,
+      shop: null,             // entrée du catalogue, ou null si la case est libre
+      owner: null,            // 0, 1, ou null (boutique sans propriétaire)
+      level: 1,
+      shields: 0,
+      isHot: false,           // rond rose : gains doublés
+      isBusy: false,          // une attaque ou un événement est en cours sur cette case
+    }));
+  }
+
+  // Nouvelle partie.
+  function reset() {
+    const state = Game.state;
+    state.lots = createLots();
+
+    Game.utils.shuffled(state.lots).slice(0, START.HOT_LOT_COUNT).forEach(lot => {
+      lot.isHot = true;
+    });
+
+    // Quelques boutiques bon marché déjà ouvertes, une sur deux pour chaque joueur.
+    const cheapShops = Game.catalog.SHOPS.slice(0, START.PREBUILT_SHOP_CHOICES);
+    Game.utils.shuffled(state.lots).slice(0, START.PREBUILT_SHOP_COUNT).forEach((lot, k) => {
+      Game.shops.open(lot, Game.utils.pickRandom(cheapShops), k % 2);
+    });
+
+    state.bucks = [START.BUCKS, START.BUCKS];
+    state.selection = null;
+    state.menuLot = null;
+    state.floatingTexts = [];
+    state.animations = [];
+    state.spawnTimer = 0;
+    state.banner = null;
+    state.people = [];
+    for (let k = 0; k < state.targetPopulation; k++) {
+      state.people.push(Game.people.create(true));
+    }
+    Game.feedback.clearLog();
+    Game.board.draw();
+  }
+
+  function lotCenter(lot) {
+    return [lot.x + lot.width / 2, lot.y + lot.height / 2];
+  }
+
+  // Détruit la boutique d'une case : ses clients ressortent, la case redevient libre.
+  function destroyShop(lot) {
+    for (const person of Game.state.people) {
+      if (person.lot === lot && Game.people.isInOrEnteringShop(person)) {
+        Game.people.exitShopNow(person);
+      }
+    }
+    lot.shop = null;
+    lot.owner = null;
+    lot.level = 1;
+    lot.shields = 0;
+    lot.occupants = [];
+    if (Game.state.menuLot === lot) {
+      Game.state.menuLot = null;
+    }
+    Game.board.draw();
+  }
+
+  Game.world = { reset, lotCenter, destroyShop };
+
+  // --- Alias temporaires pour le code pas encore refactorisé (retirés à la fin) ---
+  window.reset = reset;
+  window.center = lotCenter;
+  window.destroy = destroyShop;
+})();
