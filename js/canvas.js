@@ -4,7 +4,7 @@
   'use strict';
 
   const BOARD = Game.config.board;
-  const canvas = document.getElementById('c');
+  const canvas = document.getElementById('board');
   const backgroundCanvas = document.createElement('canvas');
 
   // Adapte les deux canvas à la largeur disponible et à la densité de l'écran.

@@ -8,16 +8,31 @@
 <div class="wrap">
   <div>
     <h1>Bourg-les-Bonhommes 2</h1>
-    <p id="err" hidden style="margin:6px 0 0;color:#b42318;font-weight:700"></p>
+    <p id="err" class="error" hidden></p>
     <p class="sub">Deux joueurs construisent des boutiques. Les passants arrivent par les quatre routes, entrent dans les magasins qui les attirent, y restent un moment puis repartent.</p>
   </div>
 
-  <div class="tablet"><canvas id="c" aria-label="Plateau de jeu : carte de la ville et cartes des deux joueurs"></canvas></div>
+  <!-- Plateau : tout le jeu est dessiné dans ce canvas (voir js/). -->
+  <div class="tablet">
+    <canvas id="board" aria-label="Plateau de jeu : carte de la ville et cartes des deux joueurs"></canvas>
+  </div>
 
   <div class="bar">
-    <div class="field"><label for="pop">Passants</label><input id="pop" type="range" min="5" max="120" value="40"><output id="popv">40</output></div>
-    <div class="field"><label for="spd">Vitesse</label><input id="spd" type="range" min="0.25" max="3" step="0.25" value="1"><output id="spdv">×1</output></div>
-    <div class="btns"><button id="play" type="button">Pause</button><button id="reset" type="button">Recommencer</button></div>
+    <div class="field">
+      <label for="pop">Passants</label>
+      <!-- La valeur initiale doit correspondre à Game.config.people.DEFAULT_COUNT. -->
+      <input id="pop" type="range" min="5" max="120" value="40">
+      <output id="popv">40</output>
+    </div>
+    <div class="field">
+      <label for="spd">Vitesse</label>
+      <input id="spd" type="range" min="0.25" max="3" step="0.25" value="1">
+      <output id="spdv">×1</output>
+    </div>
+    <div class="btns">
+      <button id="play" type="button">Pause</button>
+      <button id="reset" type="button">Recommencer</button>
+    </div>
   </div>
 
   <div class="cols">
@@ -41,35 +56,53 @@
 </div>
 
 
+<!-- Scripts classiques (pas de modules ES, pour que le jeu s'ouvre en double-cliquant
+     sur index.html). Chacun range sa partie dans l'objet global Game ; l'ordre compte. -->
+
+<!-- Socle -->
 <script src="js/polyfills.js"></script>
 <script src="js/game.js"></script>
 <script src="js/config.js"></script>
 <script src="js/utils.js"></script>
 <script src="js/canvas.js"></script>
 <script src="js/draw.js"></script>
+
+<!-- Données : plan de la ville, catalogue, noms, icônes -->
 <script src="js/map.js"></script>
 <script src="js/catalog.js"></script>
 <script src="js/names.js"></script>
 <script src="js/icons.js"></script>
 <script src="js/sprites.js"></script>
+
+<!-- Boutiques -->
 <script src="js/shops/geometry.js"></script>
 <script src="js/shops/furniture.js"></script>
 <script src="js/shops/interiors-shops.js"></script>
 <script src="js/shops/interiors-food.js"></script>
 <script src="js/shops/interiors-leisure.js"></script>
 <script src="js/shops/shop.js"></script>
+
+<!-- État de la partie et messages -->
 <script src="js/state.js"></script>
 <script src="js/feedback.js"></script>
+
+<!-- Rendu -->
 <script src="js/render/board.js"></script>
 <script src="js/render/trays.js"></script>
 <script src="js/render/menu.js"></script>
 <script src="js/render/overlay.js"></script>
+
+<!-- Passants -->
 <script src="js/people/person.js"></script>
 <script src="js/people/behaviour.js"></script>
 <script src="js/people/activities.js"></script>
 <script src="js/people/draw.js"></script>
+
+<!-- Attaques et événements -->
 <script src="js/events/animations.js"></script>
 <script src="js/events/attacks.js"></script>
 <script src="js/events/random-events.js"></script>
+
+<!-- Interactions et démarrage -->
 <script src="js/input.js"></script>
 <script src="js/main.js"></script>
