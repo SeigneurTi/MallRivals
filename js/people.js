@@ -3,7 +3,6 @@
 const SHIRT=['#e85d4a','#3d7dd8','#f2b134','#47a36b','#9a5fd1','#ef7fb0','#2bb3b1','#ff8c42','#3b4a6b'];
 const SKIN=['#f5d0b0','#e0ac80','#b97a52','#8a5536','#f0c8a0'], HAIR=['#2b1d14','#5a3a22','#c9a26b','#111111','#8b4513','#d6d6d6'];
 const NAMES=['Léa','Hugo','Chloé','Louis','Inès','Jules','Manon','Adam','Zoé','Nathan','Camille','Lucas','Jade','Tom','Emma','Noé','Sarah','Malo','Lina','Gabin','Rose','Sacha','Yasmine','Théo','Alice','Bilal','Margot','Arthur'];
-let target=40,speedMul=1,running=!reduce,hover=null;
 
 function makePerson(prefill){
   const from=pick(exits);let to=pick(exits);if(to===from&&Math.random()<.8)to=pick(exits.filter(k=>k!==from));
@@ -23,7 +22,7 @@ function tryEnter(p,oldD){
   const a=p.ids[p.i],b=p.ids[p.i+1],list=EDGE_SHOPS[a+'|'+b];if(!list||!list.length)return false;
   const A=N[a],B=N[b],hz=A[1]===B[1],dir=hz?Math.sign(B[0]-A[0]):Math.sign(B[1]-A[1]),start=hz?A[0]:A[1];
   const s0=start+dir*oldD,s1=start+dir*p.d;
-  for(const e of list){const l=lots[e.idx];if(!l.b||l.closed>0||p.visited.has(l)||!hasRoom(l))continue;
+  for(const e of list){const l=Game.state.lots[e.idx];if(!l.b||l.closed>0||p.visited.has(l)||!hasRoom(l))continue;
     if((e.along-s0)*dir>0&&(e.along-s1)*dir<=0){p.visited.add(l);
       if(Math.random()<attraction(l)){p.d=Math.abs(e.along-start);place(p);p.state='toShop';p.lot=l;p.door=e.door;p.back=[p.x,p.y];p.target=e.door;return true}}}
   return false;
@@ -35,8 +34,8 @@ function startAct(p,l){const sp=SPEC[l.b.id],s=sp.slots[p.slot],k=s.k||sp.kind;p
   if(k==='bowl'){p.throws=0;p.bph='aim';p.bt=1}}
 function actStep(p,dt){
   const l=p.lot,sp=SPEC[l.b.id],s=sp.slots[p.slot];
-  if(p.mode==='ride'){const a=gameT*.9+p.slot*Math.PI/4,G=geomOf(l),r=.3;[p.x,p.y]=clampIn(l,toWorld(l,.5+Math.cos(a)*r*G.H/G.W,.47+Math.sin(a)*r+.04))}
-  if(p.mode==='swim'){[p.x,p.y]=clampIn(l,toWorld(l,.5+.38*Math.sin(gameT*.5+p.slot*1.9),s.v));p.dir=Math.cos(gameT*.5+p.slot*1.9)>0?1:-1}
+  if(p.mode==='ride'){const a=Game.state.gameTime*.9+p.slot*Math.PI/4,G=geomOf(l),r=.3;[p.x,p.y]=clampIn(l,toWorld(l,.5+Math.cos(a)*r*G.H/G.W,.47+Math.sin(a)*r+.04))}
+  if(p.mode==='swim'){[p.x,p.y]=clampIn(l,toWorld(l,.5+.38*Math.sin(Game.state.gameTime*.5+p.slot*1.9),s.v));p.dir=Math.cos(Game.state.gameTime*.5+p.slot*1.9)>0?1:-1}
   if(p.mode==='session'){if(p.done)leaveShop(p);return}
   if(p.mode==='bowl'){const ln=l.lanes[p.slot];p.bt-=dt;
     if(p.bph==='aim'&&p.bt<=0){p.bph='roll';ln.ball=0}
@@ -51,7 +50,7 @@ function step(p,dt){
   if(p.state==='toShop'){if(moveTo(p,dt)){const l=p.lot,free=l.b?l.occ.map((o,i)=>o?-1:i).filter(i=>i>=0):[];
       if(!l.b||l.closed>0||!hasRoom(l)||!free.length){p.state='fromShop';p.target=p.back;return true}
       p.slot=pick(free);l.occ[p.slot]=p;p.state='inside';p.sub='walk';p.k=.8;p.done=false;p.target=slotTarget(p);
-      const g=income(l);if(l.owner!=null)bucks[l.owner]+=g;float(l,'+'+g,l.owner!=null?PCOL[l.owner]:'#555')}return true}
+      const g=income(l);if(l.owner!=null)Game.state.bucks[l.owner]+=g;float(l,'+'+g,l.owner!=null?PCOL[l.owner]:'#555')}return true}
   if(p.state==='inside'){
     if(!p.lot.b){exitShop(p);return true}
     if(p.sub==='walk'){p.target=slotTarget(p);if(moveTo(p,dt,.5)){p.sub='act';startAct(p,p.lot)}return true}

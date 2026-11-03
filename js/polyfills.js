@@ -1,4 +1,21 @@
-// Compléments pour les navigateurs anciens (roundRect sur iOS < 16).
-if(window.CanvasRenderingContext2D&&!CanvasRenderingContext2D.prototype.roundRect){
-  CanvasRenderingContext2D.prototype.roundRect=function(x,y,w,h,r){r=Math.max(0,Math.min(typeof r==='number'?r:(r&&r[0])||0,Math.abs(w)/2,Math.abs(h)/2));
-    this.moveTo(x+r,y);this.arcTo(x+w,y,x+w,y+h,r);this.arcTo(x+w,y+h,x,y+h,r);this.arcTo(x,y+h,x,y,r);this.arcTo(x,y,x+w,y,r);this.closePath();return this}}
+// Compléments pour les navigateurs anciens : roundRect n'existe pas sur iOS < 16.
+(function () {
+  'use strict';
+
+  if (!window.CanvasRenderingContext2D || CanvasRenderingContext2D.prototype.roundRect) {
+    return;
+  }
+
+  CanvasRenderingContext2D.prototype.roundRect = function (x, y, width, height, radii) {
+    // On ne gère qu'un seul rayon (le premier s'il s'agit d'un tableau).
+    const requested = typeof radii === 'number' ? radii : (radii && radii[0]) || 0;
+    const radius = Math.max(0, Math.min(requested, Math.abs(width) / 2, Math.abs(height) / 2));
+    this.moveTo(x + radius, y);
+    this.arcTo(x + width, y, x + width, y + height, radius);
+    this.arcTo(x + width, y + height, x, y + height, radius);
+    this.arcTo(x, y + height, x, y, radius);
+    this.arcTo(x, y, x + width, y, radius);
+    this.closePath();
+    return this;
+  };
+})();

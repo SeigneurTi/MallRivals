@@ -1,8 +1,5 @@
 // Intérieur de chaque boutique, places disponibles, bowling, séances de cinéma.
 // ================= Boutiques (vue de l'intérieur) =================
-const R=(c,x,y,w,h,col)=>{c.fillStyle=col;c.fillRect(x,y,w,h)};
-const O=(c,x,y,r,col)=>{c.fillStyle=col;c.beginPath();c.arc(x,y,r,0,7);c.fill()};
-const E=(c,x,y,rx,ry,col)=>{c.fillStyle=col;c.beginPath();c.ellipse(x,y,rx,ry,0,0,7);c.fill()};
 function checker(c,x,y,L,a,b,n){R(c,x,y,L,L,a);c.fillStyle=b;const q=L/n;for(let i=0;i<n;i++)for(let j=0;j<n;j++)if((i+j)%2)c.fillRect(x+i*q,y+j*q,q,q)}
 function planks(c,x,y,L,a,b){R(c,x,y,L,L,a);c.strokeStyle=b;c.lineWidth=1;for(let k=1;k<8;k++){c.beginPath();c.moveTo(x,y+k*L/8);c.lineTo(x+L,y+k*L/8);c.stroke()}}
 function chairsTable(c,x,y,r,cloth,chair){for(let k=0;k<4;k++){const a=k*Math.PI/2+Math.PI/4;O(c,x+Math.cos(a)*r*1.45,y+Math.sin(a)*r*1.45,r*.45,chair)}O(c,x,y,r,cloth)}
@@ -78,13 +75,12 @@ const SPEC={
    for(const u of [.06,.18,.82,.94])R(c,x(u-.04),y(.76),w(.08),h(.2),['#f2c14e','#ef7fb0','#2bb3b1','#ff8c42'][Math.round(u*10)%4])}},
  manege:{kind:'ride',slots:[0,1,2,3,4,5,6,7].map(k=>Sl(.5,.47,'ride')),draw(g){const{c,x,y,m}=g;R(c,g.X,g.Y,g.W,g.H,'#f6ebc6');O(c,x(.5),y(.47),m(.43),'#d9c48a');
    for(const u of [.06,.94])O(c,x(u),y(.2),m(.07),'#3f8a3a')},
-   live(g,l,t){const{c,x,y,m}=g;const cx=x(.5),cy=y(.47),Rr=m(.4),a0=gameT*.9;for(let k=0;k<12;k++){c.fillStyle=k%2?'#ffffff':(k%4?'#e9b92e':'#d64560');c.beginPath();c.moveTo(cx,cy);c.arc(cx,cy,Rr,a0+k*Math.PI/6,a0+(k+1)*Math.PI/6);c.closePath();c.fill()}
+   live(g,l,t){const{c,x,y,m}=g;const cx=x(.5),cy=y(.47),Rr=m(.4),a0=Game.state.gameTime*.9;for(let k=0;k<12;k++){c.fillStyle=k%2?'#ffffff':(k%4?'#e9b92e':'#d64560');c.beginPath();c.moveTo(cx,cy);c.arc(cx,cy,Rr,a0+k*Math.PI/6,a0+(k+1)*Math.PI/6);c.closePath();c.fill()}
      O(c,cx,cy,Rr*.2,'#d64560');O(c,cx,cy,Rr*.08,'#f2c14e')}},
  hotel:{kind:'lobby',slots:[Sl(.5,.36),Sl(.15,.4),Sl(.15,.62),Sl(.85,.4),Sl(.85,.62)],draw(g){const{c,x,y,w,h,m}=g;checkerR(g,'#efe9dc','#e4dccb',6);
    R(c,x(.3),y(.05),w(.4),h(.16),'#b08a2e');O(c,x(.65),y(.13),m(.025),'#fff');R(c,x(.03),y(.3),w(.07),h(.42),'#7d2a3a');R(c,x(.9),y(.3),w(.07),h(.42),'#7d2a3a');
    E(c,x(.5),y(.6),w(.16),h(.15),'#c8553d');E(c,x(.5),y(.6),w(.1),h(.09),'#e08a6a');O(c,x(.08),y(.13),m(.07),'#3f8a3a');O(c,x(.92),y(.13),m(.07),'#3f8a3a')}},
 };
-let gameT=0;
 function geomOf(l){const wt=Math.max(3,l.h*.06);return{X:l.x+wt,Y:l.y+wt,W:l.w-2*wt,H:l.h-2*wt,flip:LOT_DOOR[l.idx]==='top'}}
 function withG(c,G,fn){c.save();if(G.flip){c.translate(0,2*G.Y+G.H);c.scale(1,-1)}
   const {X,Y,W,H}=G;fn({c,X,Y,W,H,x:u=>X+u*W,y:v=>Y+v*H,w:u=>u*W,h:v=>v*H,m:r=>r*H});c.restore()}
