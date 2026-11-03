@@ -1,0 +1,89 @@
+// Cartes malus jouées par un joueur contre une boutique adverse : météorite et voiture-voleur.
+(function () {
+  'use strict';
+
+  const PLAYER_NAMES = Game.config.players.NAMES;
+  const PLAYER_COLORS = Game.config.players.COLORS;
+  const { log, floatText } = Game.feedback;
+  const { shopName, shopNameAfterDe } = Game.names;
+
+  // La météorite tombe en diagonale. Un bouclier l'arrête (et il est perdu) ;
+  // sinon la boutique est détruite.
+  function launchMeteor(player, lot) {
+    lot.isBusy = true;
+    const [centerX, centerY] = Game.world.lotCenter(lot);
+    log(`${PLAYER_NAMES[player]} envoie une météorite sur ${shopName(lot)} de ${PLAYER_NAMES[lot.owner]} !`);
+    Game.events.addAnimation({
+      kind: 'meteor',
+      elapsed: 0,
+      duration: Game.config.meteor.FALL_SECONDS,
+      from: [centerX + 380, centerY - 520],
+      to: [centerX, centerY],
+      onEnd() {
+        Game.events.addExplosion(centerX, centerY);
+        lot.isBusy = false;
+        if (!lot.shop) {
+          return;
+        }
+        if (lot.shields > 0) {
+          lot.shields--;
+          Game.board.draw();
+          floatText(lot, 'Bouclier !', '#3a86ff');
+          log(`Le bouclier ${shopNameAfterDe(lot)} a arrêté la météorite.`);
+        } else {
+          log(`${lot.shop.name} détruit par la météorite !`);
+          Game.world.destroyShop(lot);
+        }
+      },
+    });
+  }
+
+  // La voiture part de la sortie du joueur (ouest pour le joueur 1, est pour le joueur 2),
+  // rejoint le carrefour de droite de la rue de la boutique, puis la porte.
+  // Réussite : la boutique change de propriétaire et perd ses boucliers.
+  // Échec : la boutique perd quand même un bouclier si elle en a.
+  function launchThief(player, lot) {
+    lot.isBusy = true;
+    log(`${PLAYER_NAMES[player]} envoie une voiture-voleur vers ${shopName(lot)}…`);
+    const street = Game.map.lotStreet[lot.index];
+    const startExit = player ? 'east' : 'west';
+    const points = [
+      ...Game.map.findPath(startExit, street.right).map(id => Game.map.nodes[id]),
+      street.access.streetPoint,
+      street.access.door,
+    ];
+    Game.events.addAnimation({
+      kind: 'car',
+      points,
+      segmentIndex: 0,
+      distance: 0,
+      color: PLAYER_COLORS[player],
+      onEnd() {
+        lot.isBusy = false;
+        if (!lot.shop) {
+          return;
+        }
+        const thief = Game.config.thief;
+        const successChance = Math.max(thief.MIN_SUCCESS, thief.BASE_SUCCESS - thief.SUCCESS_LOSS_PER_SHIELD * lot.shields);
+        if (Math.random() < successChance) {
+          const previousOwner = lot.owner;
+          lot.owner = player;
+          lot.shields = 0;
+          Game.board.draw();
+          floatText(lot, 'Volé !', PLAYER_COLORS[player]);
+          log(`Vol réussi : ${lot.shop.name} passe de ${PLAYER_NAMES[previousOwner]} à ${PLAYER_NAMES[player]} !`);
+        } else {
+          if (lot.shields > 0) {
+            lot.shields--;
+          }
+          Game.board.draw();
+          floatText(lot, 'Raté !', '#555');
+          log(`Le voleur a échoué devant ${shopName(lot)}.`);
+        }
+        Game.events.addSmoke(...Game.world.lotCenter(lot));
+      },
+    });
+  }
+
+  Object.assign(Game.events, { launchMeteor, launchThief });
+})();

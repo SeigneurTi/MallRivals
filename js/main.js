@@ -11,10 +11,8 @@ function frameInner(t){
     Game.state.gameTime+=dt;for(const l of Game.state.lots)updateShop(l,dt);
     Game.people.updateAll(dt);
     Game.people.spawnIfNeeded(dt);
-    for(const a of Game.state.animations.slice())updateAnim(a,dt);Game.state.animations=Game.state.animations.filter(a=>!a.done);
-    if(Math.random()<.004*dt)randomEvent('fire');
-    if(Math.random()<.011*dt)randomEvent('monster');
-    if(Math.random()<.009*dt)randomEvent('ufo');
+    Game.events.updateAnimations(dt);
+    Game.events.maybeTriggerRandomEvents(dt);
   }
   Game.feedback.update(raw);
 
@@ -25,8 +23,7 @@ function frameInner(t){
     for(const l of Game.state.lots){if(card.isAction?(l.shop&&l.owner===1-Game.state.selection.p&&!l.isBusy):!l.shop){ctx.strokeStyle=card.isAction?'#c0392b':PCOL[Game.state.selection.p];rrect(ctx,l.x+2,l.y+2,l.width-4,l.height-4,6);ctx.stroke()}}ctx.setLineDash([])}
   for(const l of Game.state.lots)if(l.shop)drawLive(l,t/1000);
   Game.people.drawAll(Game.state.hoveredPerson);
-  for(const a of Game.state.animations)if(a.k!=='ufo'&&a.k!=='monster')drawAnim(a);
-  for(const a of Game.state.animations)if(a.k==='ufo'||a.k==='monster')drawAnim(a);
+  Game.events.drawAnimations(ctx);
   ctx.textAlign='center';ctx.textBaseline='middle';
   for(const f of Game.state.floatingTexts){ctx.globalAlpha=1-f.age/1.4;ctx.font='800 18px "Baloo 2", system-ui, sans-serif';ctx.lineWidth=4;ctx.strokeStyle='#ffffff';ctx.strokeText(f.text,f.x,f.y-f.age*30);ctx.fillStyle=f.color;ctx.fillText(f.text,f.x,f.y-f.age*30)}
   ctx.globalAlpha=1;
@@ -62,7 +59,7 @@ cv.addEventListener('pointerdown',e=>{
     if(card.isAction&&l.shop&&!l.isBusy){
       if(l.owner!==1-p){float(l,'Vise une boutique adverse','#c0392b');return}
       Game.state.bucks[p]-=card.price;Game.state.selection=null;
-      if(card.id==='meteorite')launchMeteor(p,l);else launchThief(p,l);return}
+      if(card.id==='meteorite')Game.events.launchMeteor(p,l);else Game.events.launchThief(p,l);return}
   }
   if(l&&l.shop&&!Game.state.selection){Game.state.menuLot=l;return}
   Game.state.hoveredPerson=nearest(bx,y);
