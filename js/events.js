@@ -1,39 +1,39 @@
 // Météorite, voiture-voleur, monstre, OVNI, incendie et leurs animations.
 // ================= Attaques et événements =================
-function launchMeteor(p,l){l.busy=true;const [cx,cy]=center(l);log(`${PNAME[p]} envoie une météorite sur ${nom(l)} de ${PNAME[l.owner]} !`);
-  Game.state.animations.push({k:'meteor',t:0,dur:1.3,from:[cx+380,cy-520],to:[cx,cy],end(){boom(cx,cy);l.busy=false;
-    if(!l.b)return;if(l.shields>0){l.shields--;drawBoard();float(l,'Bouclier !','#3a86ff');log(`Le bouclier ${deNom(l)} a arrêté la météorite.`)}
-    else{log(`${l.b.name} détruit par la météorite !`);destroy(l)}}})}
-function launchThief(p,l){l.busy=true;log(`${PNAME[p]} envoie une voiture-voleur vers ${nom(l)}…`);
-  const street=Game.map.lotStreet[l.idx];
+function launchMeteor(p,l){l.isBusy=true;const [cx,cy]=center(l);log(`${PNAME[p]} envoie une météorite sur ${nom(l)} de ${PNAME[l.owner]} !`);
+  Game.state.animations.push({k:'meteor',t:0,dur:1.3,from:[cx+380,cy-520],to:[cx,cy],end(){boom(cx,cy);l.isBusy=false;
+    if(!l.shop)return;if(l.shields>0){l.shields--;drawBoard();float(l,'Bouclier !','#3a86ff');log(`Le bouclier ${deNom(l)} a arrêté la météorite.`)}
+    else{log(`${l.shop.name} détruit par la météorite !`);destroy(l)}}})}
+function launchThief(p,l){l.isBusy=true;log(`${PNAME[p]} envoie une voiture-voleur vers ${nom(l)}…`);
+  const street=Game.map.lotStreet[l.index];
   const pts=[...bfs(p?'east':'west',street.right).map(k=>N[k]),street.access.streetPoint,street.access.door];
-  Game.state.animations.push({k:'car',pts,i:0,d:0,col:PCOL[p],end(){l.busy=false;if(!l.b)return;
+  Game.state.animations.push({k:'car',pts,i:0,d:0,col:PCOL[p],end(){l.isBusy=false;if(!l.shop)return;
     const chance=Math.max(.1,.75-.22*l.shields);
-    if(Math.random()<chance){const old=l.owner;l.owner=p;l.shields=0;drawBoard();float(l,'Volé !',PCOL[p]);log(`Vol réussi : ${l.b.name} passe de ${PNAME[old]} à ${PNAME[p]} !`)}
+    if(Math.random()<chance){const old=l.owner;l.owner=p;l.shields=0;drawBoard();float(l,'Volé !',PCOL[p]);log(`Vol réussi : ${l.shop.name} passe de ${PNAME[old]} à ${PNAME[p]} !`)}
     else{if(l.shields>0)l.shields--;drawBoard();float(l,'Raté !','#555');log(`Le voleur a échoué devant ${nom(l)}.`)}
     smoke(...center(l))}})}
 function boom(x,y){Game.state.animations.push({k:'boom',t:0,dur:.7,x,y})}
 function smoke(x,y){Game.state.animations.push({k:'smoke',t:0,dur:1,x,y})}
 
 function randomEvent(kind){
-  const cands=Game.state.lots.filter(l=>l.b&&!l.busy);if(!cands.length)return;const l=pick(cands),[cx,cy]=center(l);l.busy=true;
+  const cands=Game.state.lots.filter(l=>l.shop&&!l.isBusy);if(!cands.length)return;const l=pick(cands),[cx,cy]=center(l);l.isBusy=true;
   if(kind==='fire'){log(`Incendie ${aNom(l)} !`);
-    Game.state.animations.push({k:'fire',t:0,dur:6,l,end(){l.busy=false;if(!l.b)return;
+    Game.state.animations.push({k:'fire',t:0,dur:6,l,end(){l.isBusy=false;if(!l.shop)return;
       const burn=l.shields>0?.15:.45;
-      if(Math.random()<burn){log(`${l.b.name} a brûlé…`);smoke(cx,cy);destroy(l)}else{float(l,'Éteint !','#2b8fbd');log(`Les pompiers ont sauvé ${nom(l)}.`)}}})}
+      if(Math.random()<burn){log(`${l.shop.name} a brûlé…`);smoke(cx,cy);destroy(l)}else{float(l,'Éteint !','#2b8fbd');log(`Les pompiers ont sauvé ${nom(l)}.`)}}})}
   else if(kind==='monster'){log(`Un monstre attaque ${nom(l)} !`);const side=Math.random()<.5;
-    Game.state.animations.push({k:'monster',t:0,dur:2.6,from:[side?-60:BW+60,cy+rr(-80,80)],to:[cx,cy+8],end(){l.busy=false;boom(cx,cy);if(!l.b)return;
+    Game.state.animations.push({k:'monster',t:0,dur:2.6,from:[side?-60:BW+60,cy+rr(-80,80)],to:[cx,cy+8],end(){l.isBusy=false;boom(cx,cy);if(!l.shop)return;
       if(l.shields>0){l.shields--;drawBoard();float(l,'Bouclier !','#3a86ff');log(`Le bouclier ${deNom(l)} a repoussé le monstre.`)}
-      else if(l.level>1){l.level--;drawBoard();float(l,'Niveau −1','#c0392b');log(`${l.b.name} perd un niveau à cause du monstre.`)}
+      else if(l.level>1){l.level--;drawBoard();float(l,'Niveau −1','#c0392b');log(`${l.shop.name} perd un niveau à cause du monstre.`)}
       else{log(`Le monstre a détruit ${nom(l)} !`);destroy(l)}
       Game.state.animations.push({k:'monster',t:0,dur:1.8,from:[cx,cy+8],to:[side?BW+60:-60,cy-40]})}})}
   else{log(`Un OVNI survole ${nom(l)}…`);
     Game.state.animations.push({k:'ufo',t:0,dur:2,from:[rr(0,BW),-80],to:[cx,cy-60],then(){
-      Game.state.animations.push({k:'ufo',t:0,dur:2.6,from:[cx,cy-60],to:[cx,cy-60],beam:l,end(){l.busy=false;
-        if(l.b){const r=Math.random();
+      Game.state.animations.push({k:'ufo',t:0,dur:2.6,from:[cx,cy-60],to:[cx,cy-60],beam:l,end(){l.isBusy=false;
+        if(l.shop){const r=Math.random();
           if(r<.35&&l.shields===0){for(const p of Game.state.people)if(p.lot===l&&p.state==='inside'){release(p);p.gone=true}log(`L'OVNI a emporté ${nom(l)} !`);destroy(l)}
           else if(r<.35){l.shields--;drawBoard();log(`Le bouclier ${deNom(l)} a repoussé l'OVNI.`)}
-          else{const g=Math.round(l.b.price*.6);if(l.owner!=null)Game.state.bucks[l.owner]+=g;float(l,'+'+g,'#6ad07a');log(`Les extraterrestres ont fait leurs courses ${aNom(l)} : +${g} $ !`)}}
+          else{const g=Math.round(l.shop.price*.6);if(l.owner!=null)Game.state.bucks[l.owner]+=g;float(l,'+'+g,'#6ad07a');log(`Les extraterrestres ont fait leurs courses ${aNom(l)} : +${g} $ !`)}}
         Game.state.animations.push({k:'ufo',t:0,dur:1.4,from:[cx,cy-60],to:[rr(0,BW),-90]})}})}})}
 }
 

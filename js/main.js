@@ -23,17 +23,17 @@ function frameInner(t){
   ctx.setTransform(Game.view.pixelRatio*Game.view.scale,0,0,Game.view.pixelRatio*Game.view.scale,0,0);
   ctx.save();ctx.translate(BX,0);ctx.beginPath();ctx.rect(0,0,BW,LH);ctx.clip();
   if(Game.state.selection){const card=CATALOG[Game.state.selection.i];ctx.lineWidth=2.5;ctx.setLineDash([8,6]);ctx.lineDashOffset=-t/40;
-    for(const l of Game.state.lots){if(card.action?(l.b&&l.owner===1-Game.state.selection.p&&!l.busy):!l.b){ctx.strokeStyle=card.action?'#c0392b':PCOL[Game.state.selection.p];rrect(ctx,l.x+2,l.y+2,l.w-4,l.h-4,6);ctx.stroke()}}ctx.setLineDash([])}
-  for(const l of Game.state.lots)if(l.b)drawLive(l,t/1000);
+    for(const l of Game.state.lots){if(card.isAction?(l.shop&&l.owner===1-Game.state.selection.p&&!l.isBusy):!l.shop){ctx.strokeStyle=card.isAction?'#c0392b':PCOL[Game.state.selection.p];rrect(ctx,l.x+2,l.y+2,l.w-4,l.h-4,6);ctx.stroke()}}ctx.setLineDash([])}
+  for(const l of Game.state.lots)if(l.shop)drawLive(l,t/1000);
   for(const p of Game.state.people.slice().sort((a,b)=>a.y-b.y))drawPerson(p,p===Game.state.hoveredPerson);
   for(const a of Game.state.animations)if(a.k!=='ufo'&&a.k!=='monster')drawAnim(a);
   for(const a of Game.state.animations)if(a.k==='ufo'||a.k==='monster')drawAnim(a);
   ctx.textAlign='center';ctx.textBaseline='middle';
   for(const f of Game.state.floatingTexts){ctx.globalAlpha=1-f.t/1.4;ctx.font='800 18px "Baloo 2", system-ui, sans-serif';ctx.lineWidth=4;ctx.strokeStyle='#ffffff';ctx.strokeText(f.txt,f.x,f.y-f.t*30);ctx.fillStyle=f.col;ctx.fillText(f.txt,f.x,f.y-f.t*30)}
   ctx.globalAlpha=1;
-  if(Game.state.menuLot&&Game.state.menuLot.b)drawMenu(ctx,Game.state.menuLot);
+  if(Game.state.menuLot&&Game.state.menuLot.shop)drawMenu(ctx,Game.state.menuLot);
   if(Game.state.hoveredPerson&&Game.state.people.includes(Game.state.hoveredPerson)){
-    const txt=(Game.state.hoveredPerson.state==='inside'||Game.state.hoveredPerson.state==='leaving')&&Game.state.hoveredPerson.lot&&Game.state.hoveredPerson.lot.b?`${Game.state.hoveredPerson.name} · ${Game.state.hoveredPerson.lot.b.name}`:`${Game.state.hoveredPerson.name} · de ${EXIT_LABEL[Game.state.hoveredPerson.from]} vers ${EXIT_LABEL[Game.state.hoveredPerson.to]}`;
+    const txt=(Game.state.hoveredPerson.state==='inside'||Game.state.hoveredPerson.state==='leaving')&&Game.state.hoveredPerson.lot&&Game.state.hoveredPerson.lot.shop?`${Game.state.hoveredPerson.name} · ${Game.state.hoveredPerson.lot.shop.name}`:`${Game.state.hoveredPerson.name} · de ${EXIT_LABEL[Game.state.hoveredPerson.from]} vers ${EXIT_LABEL[Game.state.hoveredPerson.to]}`;
     ctx.font='700 14px Nunito, system-ui, sans-serif';const w=ctx.measureText(txt).width+18,bx=Math.max(6,Math.min(BW-w-6,Game.state.hoveredPerson.x-w/2)),by=Math.max(6,Game.state.hoveredPerson.y-52);
     ctx.fillStyle='#ffffff';rrect(ctx,bx,by,w,26,8);ctx.fill();ctx.fillStyle='#23272b';ctx.textAlign='left';ctx.fillText(txt,bx+9,by+13.5)}
   if(Game.state.banner){ctx.font='800 16px Nunito, system-ui, sans-serif';const w=Math.min(BW-40,ctx.measureText(Game.state.banner.txt).width+30),a=Math.min(1,Game.state.banner.t*4,(4-Game.state.banner.t)*2);
@@ -59,13 +59,13 @@ cv.addEventListener('pointerdown',e=>{
   const l=Game.state.lots.find(l=>inR(bx,y,[l.x,l.y,l.w,l.h]));
   if(Game.state.selection&&l){const card=CATALOG[Game.state.selection.i],p=Game.state.selection.p;
     if(Game.state.bucks[p]<card.price){float(l,'Pas assez de bucks','#c0392b');return}
-    if(!card.action&&!l.b){Game.state.bucks[p]-=card.price;setShop(l,card,p);Game.state.selection=null;drawBoard();log(`${PNAME[p]} ouvre ${nom(l)}.`);return}
-    if(card.action&&l.b&&!l.busy){
+    if(!card.isAction&&!l.shop){Game.state.bucks[p]-=card.price;setShop(l,card,p);Game.state.selection=null;drawBoard();log(`${PNAME[p]} ouvre ${nom(l)}.`);return}
+    if(card.isAction&&l.shop&&!l.isBusy){
       if(l.owner!==1-p){float(l,'Vise une boutique adverse','#c0392b');return}
       Game.state.bucks[p]-=card.price;Game.state.selection=null;
       if(card.id==='meteorite')launchMeteor(p,l);else launchThief(p,l);return}
   }
-  if(l&&l.b&&!Game.state.selection){Game.state.menuLot=l;return}
+  if(l&&l.shop&&!Game.state.selection){Game.state.menuLot=l;return}
   Game.state.hoveredPerson=nearest(bx,y);
 });
 function nearest(x,y){let best=null,bd=16;for(const p of Game.state.people){const d=Math.hypot(p.x-x,p.y-10-y);if(d<bd){bd=d;best=p}}return best}

@@ -51,20 +51,20 @@ const SPEC={
  arcade:{kind:'play',slots:[0,1,2,3,4].map(k=>Sl(.17+k*.165,.42)),draw(g){const{c,x,y,w,h}=g;R(c,g.X,g.Y,g.W,g.H,'#2a2340');
    for(let k=0;k<5;k++){R(c,x(.1+k*.165),y(.04),w(.14),h(.24),'#1b1630');R(c,x(.12+k*.165),y(.07),w(.1),h(.1),'#3a3355')}
    c.strokeStyle='#8c3fd1';c.lineWidth=2;c.strokeRect(x(.02),y(.02),w(.96),h(.96))},
-   live(g,l,t){const{c,x,y,w,h}=g;for(let k=0;k<5;k++){const on=!!l.occ[k];R(c,x(.12+k*.165),y(.07),w(.1),h(.1),on?`hsl(${(t*120+k*70)%360},90%,60%)`:'#3a3355')}}},
+   live(g,l,t){const{c,x,y,w,h}=g;for(let k=0;k<5;k++){const on=!!l.occupants[k];R(c,x(.12+k*.165),y(.07),w(.1),h(.1),on?`hsl(${(t*120+k*70)%360},90%,60%)`:'#3a3355')}}},
  restaurant:{kind:'sit',slots:[.14,.38,.62,.86].flatMap(u=>[Sl(u,.25),Sl(u,.68)]),draw(g){const{c,x,y,w,h,m}=g;checkerR(g,'#8a3a48','#7d2a3a',6);
    for(const u of [.14,.38,.62,.86]){O(c,x(u),y(.25),m(.07),'#3a2a1a');O(c,x(u),y(.68),m(.07),'#3a2a1a');R(c,x(u-.08),y(.35),w(.16),h(.22),'#ffffff');O(c,x(u),y(.46),m(.035),'#f2c14e')}}},
  bowling:{kind:'bowl',slots:[.2,.5,.8].map(u=>Sl(u,.88)),draw(g){const{c,x,y,w,h}=g;R(c,g.X,g.Y,g.W,g.H,'#3a3f5c');
    for(const u of [.2,.5,.8]){R(c,x(u-.12),y(.03),w(.24),h(.76),'#8a8f9c');R(c,x(u-.09),y(.03),w(.18),h(.76),'#e2c08d');R(c,x(u-.12),y(.78),w(.24),h(.015),'#c0392b')}
    R(c,x(.0),y(.8),w(.06),h(.18),'#555')},
-   live(g,l){const{c,x,y,m}=g;[.2,.5,.8].forEach((u,k)=>{const ln=l.lanes[k];
+   live(g,l){const{c,x,y,m}=g;[.2,.5,.8].forEach((u,k)=>{const ln=l.bowlingLanes[k];
      for(let r=0;r<4;r++)for(let q=0;q<=r;q++){const px=x(u+(q-r/2)*.035),py=y(.07+r*.045);
        if(ln.down>0&&(q+r)%5!==4){c.strokeStyle='#cfcfcf';c.lineWidth=m(.025);c.beginPath();c.moveTo(px-m(.03),py);c.lineTo(px+m(.03),py+m(.01));c.stroke()}else O(c,px,py,m(.022),'#ffffff')}
      if(ln.ball>=0)O(c,x(u),y(.76-ln.ball*.66),m(.045),['#d6336c','#3d7dd8','#47a36b'][k])})}},
  cinema:{kind:'session',slots:[.34,.52,.7].flatMap(v=>[.1,.24,.38,.62,.76,.9].map(u=>Sl(u,v))),draw(g){const{c,x,y,w,h}=g;R(c,g.X,g.Y,g.W,g.H,'#2b1f2a');
    R(c,x(.05),y(.03),w(.9),h(.1),'#4a4048');
    for(const v of [.34,.52,.7])for(const u of [.1,.24,.38,.62,.76,.9]){R(c,x(u-.05),y(v-.06),w(.1),h(.11),'#d22f3b');R(c,x(u-.05),y(v-.06),w(.1),h(.03),'#9e1f29')}},
-   live(g,l,t){const{c,x,y,w,h}=g;if(l.cine.phase==='film'){for(let k=0;k<8;k++)R(c,x(.07+k*.1075),y(.045),w(.11),h(.07),`hsl(${(t*60+k*25+Math.sin(t*3+k)*40)%360},70%,${55+20*Math.sin(t*5+k)}%)`);
+   live(g,l,t){const{c,x,y,w,h}=g;if(l.cinema.phase==='film'){for(let k=0;k<8;k++)R(c,x(.07+k*.1075),y(.045),w(.11),h(.07),`hsl(${(t*60+k*25+Math.sin(t*3+k)*40)%360},70%,${55+20*Math.sin(t*5+k)}%)`);
        c.fillStyle=`rgba(255,255,230,${.1+.06*Math.sin(t*7)})`;c.beginPath();c.moveTo(x(.07),y(.12));c.lineTo(x(.93),y(.12));c.lineTo(x(.98),y(.8));c.lineTo(x(.02),y(.8));c.closePath();c.fill()}
      else R(c,x(.07),y(.045),w(.86),h(.07),'#e9e6dc')}},
  bijouterie:{kind:'browse',slots:[Sl(.25,.38),Sl(.75,.38),Sl(.22,.7),Sl(.78,.7)],draw(g){const{c,x,y,w,h,m}=g;checkerR(g,'#f4efe4','#ebe3d2',6);
@@ -81,21 +81,21 @@ const SPEC={
    R(c,x(.3),y(.05),w(.4),h(.16),'#b08a2e');O(c,x(.65),y(.13),m(.025),'#fff');R(c,x(.03),y(.3),w(.07),h(.42),'#7d2a3a');R(c,x(.9),y(.3),w(.07),h(.42),'#7d2a3a');
    E(c,x(.5),y(.6),w(.16),h(.15),'#c8553d');E(c,x(.5),y(.6),w(.1),h(.09),'#e08a6a');O(c,x(.08),y(.13),m(.07),'#3f8a3a');O(c,x(.92),y(.13),m(.07),'#3f8a3a')}},
 };
-function geomOf(l){const wt=Math.max(3,l.h*.06);return{X:l.x+wt,Y:l.y+wt,W:l.w-2*wt,H:l.h-2*wt,flip:LOT_DOOR[l.idx]==='top'}}
+function geomOf(l){const wt=Math.max(3,l.h*.06);return{X:l.x+wt,Y:l.y+wt,W:l.w-2*wt,H:l.h-2*wt,flip:LOT_DOOR[l.index]==='top'}}
 function withG(c,G,fn){c.save();if(G.flip){c.translate(0,2*G.Y+G.H);c.scale(1,-1)}
   const {X,Y,W,H}=G;fn({c,X,Y,W,H,x:u=>X+u*W,y:v=>Y+v*H,w:u=>u*W,h:v=>v*H,m:r=>r*H});c.restore()}
 function toWorld(l,u,v){const G=geomOf(l);return[G.X+u*G.W,G.Y+(G.flip?1-v:v)*G.H]}
 function drawShop(c,t,x,y,W,H,st){
   c.save();
   c.fillStyle='rgba(20,25,20,.22)';rrect(c,x+3,y+4,W,H,6);c.fill();
-  const wt=Math.max(3,H*.06),wall=mix(t.col,-.3),side=st?LOT_DOOR[st.idx]:'bottom';
+  const wt=Math.max(3,H*.06),wall=mix(t.color,-.3),side=st?LOT_DOOR[st.index]:'bottom';
   c.save();rrect(c,x,y,W,H,5);c.clip();R(c,x,y,W,H,wall);
   withG(c,{X:x+wt,Y:y+wt,W:W-2*wt,H:H-2*wt,flip:side==='top'},g=>SPEC[t.id].draw(g));
   c.restore();
   c.strokeStyle=wall;c.lineWidth=wt;rrect(c,x+wt/2,y+wt/2,W-wt,H-wt,4);c.stroke();
   if(st){const g=W*.24,m=(W-g)/2;c.fillStyle='#e9e3d6';if(side==='top')c.fillRect(x+m,y-1,g,wt+2);else c.fillRect(x+m,y+H-wt-1,g,wt+2)}
   const bx=x+W-H*.17,by=side==='top'?y+H*.2:y+H*.8,br=Math.max(7,H*.1);
-  O(c,bx,by,br,'#ffffff');c.strokeStyle=wall;c.lineWidth=1.5;c.beginPath();c.arc(bx,by,br,0,7);c.stroke();icon(c,t.icon,bx,by,br*.72,t.col);
+  O(c,bx,by,br,'#ffffff');c.strokeStyle=wall;c.lineWidth=1.5;c.beginPath();c.arc(bx,by,br,0,7);c.stroke();icon(c,t.icon,bx,by,br*.72,t.color);
   if(st){
     if(st.owner!=null){c.strokeStyle=PCOL[st.owner];c.lineWidth=3;rrect(c,x-2,y-2,W+4,H+4,7);c.stroke()}
     const ty=side==='top'?y+H-19:y+4;
@@ -106,23 +106,23 @@ function drawShop(c,t,x,y,W,H,st){
   c.restore();
 }
 function drawLive(l,t){
-  const sp=SPEC[l.b.id];
+  const sp=SPEC[l.shop.id];
   if(sp.live)withG(ctx,geomOf(l),g=>sp.live(g,l,t));
-  const free=l.occ.filter(o=>!o).length;let txt=null,col='#c0392b';
-  if(sp.kind==='session'){const rem=Math.ceil((l.cine.phase==='open'?CINE_OPEN:CINE_FILM)-l.cine.t);txt=l.cine.phase==='open'?`Séance dans ${rem} s`:`Film · ${rem} s`;col=l.cine.phase==='open'?'#2f7d6d':'#d22f3b'}
+  const free=l.occupants.filter(o=>!o).length;let txt=null,col='#c0392b';
+  if(sp.kind==='session'){const rem=Math.ceil((l.cinema.phase==='open'?CINE_OPEN:CINE_FILM)-l.cinema.elapsed);txt=l.cinema.phase==='open'?`Séance dans ${rem} s`:`Film · ${rem} s`;col=l.cinema.phase==='open'?'#2f7d6d':'#d22f3b'}
   else if(!free)txt='Complet';
   if(txt){ctx.font='800 10px Nunito, system-ui, sans-serif';const tw=ctx.measureText(txt).width+12,[px,py]=toWorld(l,.5,.93);
     ctx.fillStyle=col;rrect(ctx,px-tw/2,py-7,tw,14,7);ctx.fill();ctx.fillStyle='#fff';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(txt,px,py+.5)}
 }
 const CINE_OPEN=40,CINE_FILM=25;
-function setShop(l,t,owner){l.b=t;l.owner=owner;l.occ=Array(SPEC[t.id].slots.length).fill(null);l.lanes=[0,1,2].map(()=>({ball:-1,down:0}));l.cine={phase:'open',t:0}}
-function hasRoom(l){return l.b&&l.occ.some(o=>!o)&&!(SPEC[l.b.id].kind==='session'&&l.cine.phase!=='open')}
+function setShop(l,t,owner){l.shop=t;l.owner=owner;l.occupants=Array(SPEC[t.id].slots.length).fill(null);l.bowlingLanes=[0,1,2].map(()=>({ball:-1,down:0}));l.cinema={phase:'open',elapsed:0}}
+function hasRoom(l){return l.shop&&l.occupants.some(o=>!o)&&!(SPEC[l.shop.id].kind==='session'&&l.cinema.phase!=='open')}
 function updateShop(l,dt){
-  if(!l.b)return;
-  for(const ln of l.lanes){if(ln.down>0)ln.down=Math.max(0,ln.down-dt)}
-  if(SPEC[l.b.id].kind==='session'){l.cine.t+=dt;
-    if(l.cine.phase==='open'&&l.cine.t>=CINE_OPEN){l.cine.phase='film';l.cine.t=0}
-    else if(l.cine.phase==='film'&&l.cine.t>=CINE_FILM){l.cine.phase='open';l.cine.t=0;for(const p of l.occ)if(p)p.done=true}}
+  if(!l.shop)return;
+  for(const ln of l.bowlingLanes){if(ln.down>0)ln.down=Math.max(0,ln.down-dt)}
+  if(SPEC[l.shop.id].kind==='session'){l.cinema.elapsed+=dt;
+    if(l.cinema.phase==='open'&&l.cinema.elapsed>=CINE_OPEN){l.cinema.phase='film';l.cinema.elapsed=0}
+    else if(l.cinema.phase==='film'&&l.cinema.elapsed>=CINE_FILM){l.cinema.phase='open';l.cinema.elapsed=0;for(const p of l.occupants)if(p)p.done=true}}
 }
 function shield(c,x,y,w){c.beginPath();c.moveTo(x,y);c.lineTo(x+w,y);c.lineTo(x+w,y+w*.55);c.quadraticCurveTo(x+w,y+w*1.05,x+w/2,y+w*1.25);c.quadraticCurveTo(x,y+w*1.05,x,y+w*.55);c.closePath();
   c.fillStyle='#3a86ff';c.fill();c.strokeStyle='#fff';c.lineWidth=1.4;c.stroke()}
@@ -140,3 +140,4 @@ function car(c,x,y,ang,len,col){c.save();c.translate(x,y);c.rotate(ang);const w=
   c.fillStyle='#111';c.fillRect(-len*.12,-w*.3,len*.12,w*.6);
   c.fillStyle='#fff3a0';c.fillRect(len*.44,-w*.4,len*.05,w*.18);c.fillRect(len*.44,w*.22,len*.05,w*.18);c.restore()}
 
+Game.interiors = SPEC; // alias temporaire (retiré à la fin)
