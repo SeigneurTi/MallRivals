@@ -344,6 +344,25 @@
       dot(c, cx + r * 0.8, cy - r * 0.04, r * 0.14);
     },
 
+    painting(c, cx, cy, r, color) {
+      // Tableau dans son cadre doré : montagne et soleil.
+      c.fillStyle = '#c9a23a';
+      c.fillRect(cx - r * 0.85, cy - r * 0.65, r * 1.7, r * 1.3);
+      c.fillStyle = '#ffffff';
+      c.fillRect(cx - r * 0.65, cy - r * 0.45, r * 1.3, r * 0.9);
+      c.fillStyle = color;
+      c.beginPath();
+      c.moveTo(cx - r * 0.65, cy + r * 0.45);
+      c.lineTo(cx - r * 0.15, cy - r * 0.2);
+      c.lineTo(cx + r * 0.15, cy + r * 0.1);
+      c.lineTo(cx + r * 0.35, cy - r * 0.05);
+      c.lineTo(cx + r * 0.65, cy + r * 0.45);
+      c.closePath();
+      c.fill();
+      c.fillStyle = '#f2c14e';
+      dot(c, cx + r * 0.35, cy - r * 0.22, r * 0.13);
+    },
+
     H(c, cx, cy, r) {
       c.font = `800 ${r * 1.5}px "Baloo 2", system-ui, sans-serif`;
       c.textAlign = 'center';

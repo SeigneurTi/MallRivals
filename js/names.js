@@ -28,6 +28,7 @@
     discotheque: 'la ',
     billard: 'la salle de ',
     banque: 'la ',
+    galerie: 'la ',
     lasergame: 'le ',
   };
 

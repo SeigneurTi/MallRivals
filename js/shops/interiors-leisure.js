@@ -10,6 +10,14 @@
   const ARCADE_ROWS_V = [0.05, 0.22, 0.39, 0.56, 0.73];   // haut de chaque borne, en colonne
   const BOWLING_LANE_U = [0.2, 0.5, 0.8];
   const BOWLING_BALL_COLORS = ['#d6336c', '#3d7dd8', '#47a36b'];
+  // Quilles en triangle : la pointe (quille n° 1) vers le lanceur, la rangée de 4 au fond.
+  const HEAD_PIN_V = 0.205;
+  const PIN_ROW_GAP_V = 0.045;
+  const PIN_GAP_U = 0.035;
+  // La boule va de v = 0,76 (ligne de lancer) à v = 0,04 (fosse, derrière les quilles).
+  const BALL_START_V = 0.76;
+  const BALL_END_V = 0.04;
+  const PIN_LENGTH = 0.06;   // longueur d'une quille couchée (proportion de la hauteur)
   const CINEMA_ROWS_V = [0.34, 0.52, 0.7];
   const CINEMA_SEATS_U = [0.1, 0.24, 0.38, 0.62, 0.76, 0.9];
   const CAROUSEL_SEATS = 8;
@@ -111,32 +119,52 @@
         }
         rect(c, x(0), y(0.8), w(0.06), h(0.18), '#555');                 // retour des boules
       },
+      // Moment où la boule touche la quille de tête (progression de 0 à 1).
+      ballHitsPinsAt: (BALL_START_V - HEAD_PIN_V) / (BALL_START_V - BALL_END_V),
       drawAnimated(g, lot) {
         const { c, x, y, radius } = g;
+        const BOWLING = Game.config.bowling;
         BOWLING_LANE_U.forEach((u, laneIndex) => {
           const lane = lot.bowlingLanes[laneIndex];
-          // 10 quilles en triangle (rangées de 1 à 4).
+          const sinceHit = BOWLING.PINS_DOWN_SECONDS - lane.pinsDownTimer;
+          // 10 quilles : rangées de 1 à 4, numérotées de la tête vers le fond.
+          let pinIndex = 0;
           for (let row = 0; row < 4; row++) {
             for (let q = 0; q <= row; q++) {
-              const pinX = x(u + (q - row / 2) * 0.035);
-              const pinY = y(0.07 + row * 0.045);
-              // Après un lancer, toutes les quilles tombent sauf celles où (q + row) % 5 === 4.
-              const isDown = lane.pinsDownTimer > 0 && (q + row) % 5 !== 4;
-              if (isDown) {
-                c.strokeStyle = '#cfcfcf';
-                c.lineWidth = radius(0.025);
+              const pinX = x(u + (q - row / 2) * PIN_GAP_U);
+              const pinY = y(HEAD_PIN_V - row * PIN_ROW_GAP_V);
+              const fall = lane.pinsDownTimer > 0 && lane.pins && lane.pins[pinIndex];
+              const sinceFall = fall ? sinceHit - fall.delay : 0;
+              const fallAmount = fall ? Math.min(1, Math.max(0, sinceFall / BOWLING.PIN_FALL_SECONDS)) : 0;
+              const sweptAmount = (sinceFall - BOWLING.PIN_FALL_SECONDS - BOWLING.PIN_LIE_SECONDS) / BOWLING.PIN_SWEEP_SECONDS;
+              if (fallAmount > 0 && sweptAmount < 1) {
+                // La quille bascule vers le fond (et un peu sur le côté), puis reste couchée.
+                const directionLength = Math.hypot(fall.sideways, 1);
+                const dx = fall.sideways / directionLength * radius(PIN_LENGTH);
+                const dy = -1 / directionLength * radius(PIN_LENGTH);
+                const baseX = pinX + dx * 0.3 * fallAmount;
+                const baseY = pinY + dy * 0.3 * fallAmount;
+                c.save();
+                c.globalAlpha = 1 - Math.max(0, sweptAmount);
+                c.strokeStyle = '#d8d8d8';
+                c.lineWidth = radius(0.03);
+                c.lineCap = 'round';
                 c.beginPath();
-                c.moveTo(pinX - radius(0.03), pinY);
-                c.lineTo(pinX + radius(0.03), pinY + radius(0.01));
+                c.moveTo(baseX, baseY);
+                c.lineTo(baseX + dx * fallAmount, baseY + dy * fallAmount);
                 c.stroke();
-              } else {
+                circle(c, baseX + dx * 0.7 * fallAmount, baseY + dy * 0.7 * fallAmount, radius(0.011), '#d22f3b');
+                c.restore();
+              } else if (fallAmount === 0) {
                 circle(c, pinX, pinY, radius(0.022), '#ffffff');
+                circle(c, pinX, pinY, radius(0.009), '#d22f3b');
               }
+              pinIndex++;
             }
           }
-          // La boule remonte la piste : ballProgress va de 0 (lancer) à 1 (quilles).
+          // La boule remonte la piste : ballProgress va de 0 (lancer) à 1 (fosse).
           if (lane.ballProgress >= 0) {
-            circle(c, x(u), y(0.76 - lane.ballProgress * 0.66), radius(0.045), BOWLING_BALL_COLORS[laneIndex]);
+            circle(c, x(u), y(BALL_START_V - lane.ballProgress * (BALL_START_V - BALL_END_V)), radius(0.045), BOWLING_BALL_COLORS[laneIndex]);
           }
         });
       },

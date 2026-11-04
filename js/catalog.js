@@ -26,6 +26,7 @@
     { id: 'bowling', name: 'Bowling', price: 360, color: '#d6336c', icon: 'pin' },
     { id: 'lasergame', name: 'Laser game', price: 380, color: '#2bd1a0', icon: 'laser' },
     { id: 'cinema', name: 'Cinéma', price: 400, color: '#d22f3b', icon: 'reel' },
+    { id: 'galerie', name: "Galerie d'art", price: 420, color: '#3b4a6b', icon: 'painting' },
     { id: 'bijouterie', name: 'Bijouterie', price: 450, color: '#2aa7b8', icon: 'diamond' },
     { id: 'piscine', name: 'Piscine', price: 480, color: '#4fa8de', icon: 'pool' },
     { id: 'manege', name: 'Manège', price: 520, color: '#e9b92e', icon: 'carousel' },

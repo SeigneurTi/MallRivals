@@ -36,6 +36,7 @@ bourg-les-bonhommes/
 │   │   ├── interiors-night.js    Billard, casino, discothèque
 │   │   ├── interiors-bank.js     Banque (coffre, lingots)
 │   │   ├── interiors-lasergame.js Laser game (équipes, tirs)
+│   │   ├── interiors-gallery.js  Galerie d'art (tableaux, mobile, visiteurs)
 │   │   └── shop.js          Ouverture, places libres, séances, pistes, dessin du bâtiment
 │   ├── state.js             État de la partie (Game.state), nouvelle partie, destruction
 │   ├── feedback.js          Journal, bannière, textes flottants
@@ -43,12 +44,13 @@ bourg-les-bonhommes/
 │   │   ├── board.js         Fond de carte
 │   │   ├── trays.js         Bacs de cartes
 │   │   ├── menu.js          Menu d'une boutique
-│   │   └── overlay.js       Cases jouables, info-bulle, bannière, « Pause »
+│   │   ├── overlay.js       Cases jouables, info-bulle, bannière, « Pause »
+│   │   └── magnifier.js     Loupe ×3 qui suit le curseur
 │   ├── people/
 │   │   ├── person.js        Création d'un passant, trajet, arrivée de nouveaux passants
 │   │   ├── behaviour.js     Machine à états : rue → boutique → rue
-│   │   ├── pathing.js       Trajets qui contournent les obstacles (tables de billard)
-│   │   ├── activities.js    Flâner, s'asseoir, nager, manège, séance, bowling
+│   │   ├── pathing.js       Trajets qui contournent les obstacles (tables de billard, socle de la galerie)
+│   │   ├── activities.js    Flâner, s'asseoir, nager, manège, séance, bowling, galerie
 │   │   └── draw.js          Dessin d'un passant
 │   ├── events/
 │   │   ├── animations.js    Mise à jour et dessin des animations
@@ -73,7 +75,9 @@ bourg-les-bonhommes/
 | Gain par client, coût d'amélioration et de bouclier, maximums | `js/config.js` | `economy` (formules dans `js/catalog.js`) |
 | Envie des passants d'entrer | `js/config.js` | `attraction` |
 | Vitesse des passants, durée de séjour par activité | `js/config.js` | `people` |
-| Bowling (lancers, durées, chance de strike) | `js/config.js` | `bowling` |
+| Bowling (lancers, durées, chance de strike, chute des quilles) | `js/config.js` | `bowling` |
+| Temps passé devant chaque tableau de la galerie d'art | `js/config.js` | `gallery` |
+| Grossissement et taille de la loupe | `js/config.js` | `magnifier` |
 | Durée de l'attente et du film au cinéma | `js/config.js` | `cinema` |
 | Durée de l'attente et de la partie au laser game, cadence de tir | `js/config.js` | `lasergame` |
 | Ce que les clients emportent (fleur, cornet) | `js/shops/interiors-*.js` | `souvenir` de la boutique |
@@ -96,7 +100,7 @@ bourg-les-bonhommes/
 1. Ajouter une ligne dans `SHOPS` (`js/catalog.js`), avec un `id` unique et une icône existante de `js/icons.js` (ou en créer une).
 2. Ajouter son intérieur dans le fichier `js/shops/interiors-*.js` qui convient : `activity`, `slots`, `drawFurniture(g)`.
 3. Ajouter son article dans `js/names.js` (« le », « la », « l' »…).
-4. Le bac de cartes s'adapte tout seul au nombre de cartes (`js/render/trays.js`) ; au-delà de 26 cartes environ, elles deviennent petites.
+4. Le bac de cartes s'adapte tout seul au nombre de cartes (`js/render/trays.js`) ; au-delà de 27 cartes environ, elles deviennent petites.
 
 ## Organisation du code
 

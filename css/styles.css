@@ -23,6 +23,7 @@ body {
   padding-left: max(16px, env(safe-area-inset-left, 0px));
   padding-right: max(16px, env(safe-area-inset-right, 0px));
   padding-block: 24px 40px;
+  overflow-x: hidden;              /* la loupe peut déborder de la tablette sur les bords */
 }
 
 .wrap {
@@ -57,6 +58,7 @@ h1 {
 /* ---------- Plateau ---------- */
 
 .tablet {
+  position: relative;
   background: #16181c;
   border-radius: 22px;
   padding: clamp(8px, 1.6vw, 16px);
@@ -70,6 +72,51 @@ canvas {
   border-radius: 8px;
   touch-action: manipulation;
   cursor: pointer;
+}
+
+/* Bouton de la loupe, sur le bord droit de la tablette. */
+.lens-button {
+  position: absolute;
+  top: 28px;
+  right: -14px;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  border: 2px solid #16181c;
+  background: #2a2e36;
+  color: #ffffff;
+  box-shadow: 0 3px 8px rgba(20, 25, 20, .3);
+}
+
+.lens-button:hover {
+  border-color: var(--accent);
+}
+
+.lens-button[aria-pressed="true"] {
+  background: var(--accent);
+  border-color: #16181c;
+  color: #ffffff;
+}
+
+/* Loupe active : le curseur devient une croix. */
+.tablet.is-magnifying #board {
+  cursor: crosshair;
+}
+
+/* Rond grossi : posé sur la carte, il laisse passer les clics. */
+.lens {
+  position: absolute;
+  left: 0;
+  top: 0;
+  pointer-events: none;
+  border-radius: 50%;
+}
+
+.lens[hidden] {
+  display: none;
 }
 
 /* ---------- Commandes ---------- */

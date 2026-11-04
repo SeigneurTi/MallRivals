@@ -2,6 +2,13 @@
 
 Les versions les plus récentes sont en haut.
 
+## v2.12 — Galerie d'art, bowling corrigé, loupe (4 novembre 2026)
+
+- **Galerie d'art** (420 $, 6 places) : 4 tableaux au mur du fond derrière un cordon rouge (paysage, aplats de couleurs, portrait, écran d'art vidéo animé), 2 tableaux sur chaque mur de côté, un mobile qui tourne sur un socle au centre, un accueil. Les visiteurs passent d'un tableau libre à l'autre, regardent chacun 2,5 à 4,5 s et contournent le socle ; devant le mur du fond, on les voit de dos.
+- **Bowling** : les quilles sont dans le bon sens (pointe du triangle vers le lanceur). Quand la boule touche la quille de tête, les quilles basculent en cascade, restent couchées un instant puis sont balayées. Le visuel correspond à l'annonce : « 7 quilles, 3 debout » laisse exactement 3 quilles debout (la quille de tête tombe toujours, celles du fond et des bords résistent plus souvent).
+- **Loupe** : un bouton rond sur le bord droit de la tablette. Allumée, elle montre un rond grossi ×3 qui suit le curseur ; le reste de la carte garde sa taille, et les clics passent à travers.
+- Fichiers : nouveaux `js/shops/interiors-gallery.js`, `js/render/magnifier.js` ; modifiés `js/shops/interiors-leisure.js`, `js/shops/shop.js`, `js/people/activities.js`, `js/people/draw.js`, `js/catalog.js`, `js/names.js`, `js/icons.js`, `js/config.js`, `js/main.js`, `index.html`, `css/styles.css`.
+
 ## v2.11 — Arcade : bornes en colonne (4 novembre 2026)
 
 - Les 5 bornes d'arcade sont rangées en colonne contre le mur de gauche ; chaque joueur se tient à droite de la sienne, tourné vers l'écran, qui s'allume quand il joue. Toujours 5 places.

@@ -60,6 +60,7 @@
 
     Game.trays.draw(0);
     Game.trays.draw(1);
+    Game.magnifier.draw();
   }
 
   function step(timestamp) {
@@ -91,6 +92,7 @@
   }
 
   Game.input.bind();
+  Game.magnifier.bind();
   Game.view.watchResize();
   Game.world.reset();
   Game.view.resize();

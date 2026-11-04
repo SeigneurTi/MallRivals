@@ -71,6 +71,7 @@
         ride: [8, 11],                 // manège
         dance: [8, 12],                // piste de danse de la discothèque
         billiard: [16, 26],            // une partie de billard
+        gallery: [14, 20],             // visite de la galerie d'art
       },
       DEFAULT_STAY_SECONDS: 6,
       SEATED_ACTIVITIES: ['sit', 'session'],   // activités où le client s'assoit (tables, fauteuils de cinéma…)
@@ -87,6 +88,15 @@
       STRIKE_CHANCE: 0.35,
       MIN_PINS: 4,                     // sans strike : entre 4 et 9 quilles
       MAX_PINS: 10,
+      PIN_FALL_SECONDS: 0.35,          // durée de la chute d'une quille
+      PIN_FALL_DELAY_PER_ROW: 0.07,    // la chute se propage de rangée en rangée
+      PIN_LIE_SECONDS: 0.45,           // les quilles tombées restent couchées…
+      PIN_SWEEP_SECONDS: 0.3,          // …puis sont balayées : seules les quilles debout restent
+    },
+
+    gallery: {
+      LOOK_SECONDS_MIN: 2.5,           // temps passé devant un tableau
+      LOOK_SECONDS_MAX: 4.5,
     },
 
     cinema: {
@@ -139,6 +149,11 @@
     },
 
     // Partie auto (bouton « Partie auto ») : les deux joueurs jouent tout seuls.
+    magnifier: {
+      ZOOM: 3,                         // grossissement de la loupe
+      DIAMETER: 220,                   // diamètre de la loupe, en pixels de l'écran
+    },
+
     autoplay: {
       DECISION_SECONDS: 3,             // un joueur réfléchit toutes les 3 s environ
       BUILD_CHANCE: 0.7,               // préfère construire quand c'est possible

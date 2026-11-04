@@ -17,7 +17,9 @@
     lot.occupants = Array(Game.interiors[shop.id].slots.length).fill(null);   // client assis à chaque place
     lot.bowlingLanes = Array.from({ length: BOWLING_LANE_COUNT }, () => ({
       ballProgress: -1,     // -1 : pas de boule sur la piste
-      pinsDownTimer: 0,     // > 0 : les quilles sont à terre
+      pinsDownTimer: 0,     // > 0 : des quilles sont à terre
+      pins: null,           // pour chaque quille : null (debout) ou sa chute { delay, sideways }
+      hasHitPins: false,    // la boule lancée a-t-elle déjà touché les quilles ?
     }));
     // Séances (cinéma, laser game) : 'waiting' (on entre) puis 'running' (film, partie).
     lot.session = { phase: 'waiting', elapsed: 0 };

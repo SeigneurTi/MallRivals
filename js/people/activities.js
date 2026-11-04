@@ -1,5 +1,5 @@
 // Ce que font les clients une fois à leur place : flâner, s'asseoir, jouer, nager,
-// tourner sur le manège, regarder un film ou jouer au bowling.
+// tourner sur le manège, regarder un film, jouer au bowling ou visiter la galerie d'art.
 (function () {
   'use strict';
 
@@ -52,6 +52,10 @@
       person.hitFlash = 0;
       person.muzzleFlash = 0;
     }
+    if (activity === 'gallery') {
+      person.viewpoint = slot.viewpoint;
+      person.lookTimer = randomBetween(Game.config.gallery.LOOK_SECONDS_MIN, Game.config.gallery.LOOK_SECONDS_MAX);
+    }
     if (activity === 'bowl') {
       person.throwCount = 0;
       person.bowlingPhase = 'aim';   // 'aim' → 'roll' → 'wait', trois fois
@@ -97,6 +101,9 @@
     }
     if (person.activity === 'billiard') {
       updateBilliardPlayer(person, dt, lot);
+    }
+    if (person.activity === 'gallery') {
+      updateGalleryVisitor(person, dt, lot);
     }
     if (person.activity === 'session') {
       // Au cinéma, on reste jusqu'à la fin du film.
@@ -184,22 +191,28 @@
     }
   }
 
-  // Viser, lancer (la boule roule), attendre que les quilles se relèvent ; trois lancers.
+  // Viser, lancer (la boule roule et renverse des quilles), attendre que les quilles
+  // se relèvent ; trois lancers.
   function updateBowling(person, dt, lot) {
     const lane = lot.bowlingLanes[person.slotIndex];
     person.bowlingTimer -= dt;
     if (person.bowlingPhase === 'aim' && person.bowlingTimer <= 0) {
       person.bowlingPhase = 'roll';
       lane.ballProgress = 0;
+      lane.hasHitPins = false;
     } else if (person.bowlingPhase === 'roll') {
       lane.ballProgress += dt / BOWLING.ROLL_SECONDS;
+      if (!lane.hasHitPins && lane.ballProgress >= Game.interiors.bowling.ballHitsPinsAt) {
+        lane.hasHitPins = true;
+        const pins = Math.random() < BOWLING.STRIKE_CHANCE ? 10 : Math.floor(randomBetween(BOWLING.MIN_PINS, BOWLING.MAX_PINS));
+        knockPins(lane, pins);
+        const standing = 10 - pins;
+        Game.feedback.floatText(lot, pins === 10 ? 'Strike !' : `${pins} quilles, ${standing} debout`, '#d6336c');
+      }
       if (lane.ballProgress >= 1) {
         lane.ballProgress = -1;
-        lane.pinsDownTimer = BOWLING.PINS_DOWN_SECONDS;
         person.bowlingPhase = 'wait';
         person.bowlingTimer = BOWLING.PAUSE_AFTER_THROW_SECONDS;
-        const pins = Math.random() < BOWLING.STRIKE_CHANCE ? 10 : Math.floor(randomBetween(BOWLING.MIN_PINS, BOWLING.MAX_PINS));
-        Game.feedback.floatText(lot, pins === 10 ? 'Strike !' : pins + ' quilles', '#d6336c');
       }
     } else if (person.bowlingPhase === 'wait' && person.bowlingTimer <= 0) {
       person.throwCount++;
@@ -209,6 +222,56 @@
         person.bowlingPhase = 'aim';
         person.bowlingTimer = BOWLING.AIM_SECONDS;
       }
+    }
+  }
+
+  // Choisit les quilles renversées : la quille de tête tombe toujours ; celles du fond et
+  // des bords restent plus souvent debout. Exactement count quilles tombent.
+  function knockPins(lane, count) {
+    const pins = [];
+    for (let row = 0; row < 4; row++) {
+      for (let q = 0; q <= row; q++) {
+        const isEdge = q === 0 || q === row;
+        const standChance = row === 0 ? -1 : Math.random() + row * 0.25 + (isEdge ? 0.4 : 0);
+        pins.push({ row, q, standChance });
+      }
+    }
+    const fallOrder = pins.map((pin, index) => index).sort((a, b) => pins[a].standChance - pins[b].standChance);
+    lane.pins = pins.map(() => null);
+    for (const index of fallOrder.slice(0, count)) {
+      const pin = pins[index];
+      lane.pins[index] = {
+        delay: pin.row * BOWLING.PIN_FALL_DELAY_PER_ROW + randomBetween(0, 0.05),
+        sideways: (pin.q - pin.row / 2) * 0.7 + randomBetween(-0.4, 0.4),
+      };
+    }
+    lane.pinsDownTimer = BOWLING.PINS_DOWN_SECONDS;
+  }
+
+  // Galerie d'art : regarder un tableau un moment, puis aller devant un autre tableau libre.
+  function updateGalleryVisitor(person, dt, lot) {
+    const GALLERY = Game.config.gallery;
+    const interior = Game.interiors[lot.shop.id];
+    const viewpoint = interior.viewpoints[person.viewpoint];
+    const target = clampInside(lot, lotPointToBoard(lot, viewpoint.u, viewpoint.v));
+    if (!Game.people.walkAvoiding(person, target, dt, PEOPLE.INSIDE_WALK_FACTOR)) {
+      person.looksAtWall = false;
+      return;
+    }
+    person.facing = viewpoint.facing;
+    // Devant le mur du fond, on voit le visiteur de dos (de face si la salle est retournée).
+    person.looksAtWall = viewpoint.wall === 'back' && !frameOfLot(lot).flipped;
+    person.lookTimer -= dt;
+    if (person.lookTimer > 0) {
+      return;
+    }
+    person.lookTimer = randomBetween(GALLERY.LOOK_SECONDS_MIN, GALLERY.LOOK_SECONDS_MAX);
+    const taken = lot.occupants
+      .filter(other => other && other !== person)
+      .map(other => (other.insidePhase === 'active' ? other.viewpoint : interior.slots[other.slotIndex].viewpoint));
+    const free = interior.viewpoints.map((point, index) => index).filter(index => index !== person.viewpoint && !taken.includes(index));
+    if (free.length) {
+      person.viewpoint = Game.utils.pickRandom(free);
     }
   }
 

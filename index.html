@@ -20,6 +20,11 @@
   <!-- Plateau : tout le jeu est dessiné dans ce canvas (voir js/). -->
   <div class="tablet">
     <canvas id="board" aria-label="Plateau de jeu : carte de la ville et cartes des deux joueurs"></canvas>
+    <!-- Loupe : bouton sur le bord de la tablette, et rond grossi qui suit le curseur (js/render/magnifier.js). -->
+    <canvas id="lens" class="lens" hidden></canvas>
+    <button id="magnifier" class="lens-button" type="button" aria-pressed="false" aria-label="Loupe" title="Loupe : survole la carte pour la voir grossie ×3">
+      <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><circle cx="10" cy="10" r="6.5" fill="none" stroke="currentColor" stroke-width="2.6"/><line x1="15" y1="15" x2="21" y2="21" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>
+    </button>
   </div>
 
   <div class="bar">
@@ -45,7 +50,7 @@
     <div class="card">
       <h2>Comment jouer</h2>
       <ul class="rules">
-        <li><b>Construire :</b> les deux joueurs ont exactement les mêmes cartes. Touche une carte boutique, puis un terrain gris libre. 24 boutiques, du fleuriste à la discothèque : plus elle coûte cher, plus elle attire et plus elle rapporte.</li>
+        <li><b>Construire :</b> les deux joueurs ont exactement les mêmes cartes. Touche une carte boutique, puis un terrain gris libre. 25 boutiques, du fleuriste à la discothèque : plus elle coûte cher, plus elle attire et plus elle rapporte.</li>
         <li><b>Améliorer et protéger :</b> touche une de tes boutiques pour monter de niveau (jusqu'au niveau 3) ou ajouter un bouclier (3 au maximum).</li>
         <li><b>Météorite :</b> détruit une boutique adverse. Un bouclier l'arrête, mais il est perdu.</li>
         <li><b>Voiture-voleur :</b> tente de voler une boutique adverse. Plus elle a de boucliers, moins ça marche.</li>
@@ -91,6 +96,7 @@
 <script src="js/shops/interiors-night.js"></script>
 <script src="js/shops/interiors-bank.js"></script>
 <script src="js/shops/interiors-lasergame.js"></script>
+<script src="js/shops/interiors-gallery.js"></script>
 <script src="js/shops/shop.js"></script>
 
 <!-- État de la partie et messages -->
@@ -102,6 +108,7 @@
 <script src="js/render/trays.js"></script>
 <script src="js/render/menu.js"></script>
 <script src="js/render/overlay.js"></script>
+<script src="js/render/magnifier.js"></script>
 
 <!-- Passants -->
 <script src="js/people/person.js"></script>

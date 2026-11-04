@@ -35,7 +35,7 @@
 
 ## Boutiques animées
 
-- [ ] **Bowling** : 3 pistes ; le client vise, la boule remonte la piste, les quilles tombent, « Strike ! » ou « n quilles » s'affiche ; 3 lancers puis il repart.
+- [ ] **Bowling** : 3 pistes ; les quilles forment un triangle dont la pointe est tournée vers le lanceur. Le client vise, la boule remonte la piste et, en touchant la quille de tête, les quilles basculent l'une après l'autre ; « Strike ! » ou « n quilles, m debout » s'affiche, et il reste exactement m quilles debout une fois les quilles tombées balayées ; 3 lancers puis il repart.
 - [ ] **Cinéma** : pastille verte « Séance dans 40 s » qui décompte ; puis pastille rouge « Film · 25 s », écran coloré animé et faisceau du projecteur ; personne n'entre pendant le film ; à la fin, toute la salle sort.
 - [ ] **Piscine** : 3 nageurs font des longueurs (seule la tête dépasse), 2 clients sur les transats.
 - [ ] **Manège** : le plateau tourne et les clients tournent avec lui.
@@ -71,6 +71,16 @@
 - [ ] Le tireur marche avec sa queue jusque derrière la blanche, dans l'axe du coup ; la queue va de ses mains à la bille, recule, puis la blanche part. L'autre joueur attend, queue debout à la main.
 - [ ] Personne ne marche sur les tables : en entrant, en sortant ou pour aller tirer, les joueurs passent autour.
 - [ ] Quand toutes les billes sont rentrées : « Partie gagnée ! » et les billes sont remises en triangle.
+
+## Galerie d'art
+
+- [ ] Carte « Galerie d'art » (420 $) ; 6 places. 4 tableaux au fond derrière un cordon rouge (dont un écran d'art vidéo aux couleurs qui défilent), 2 tableaux sur chaque mur de côté, un mobile qui tourne sur un socle au centre, un accueil.
+- [ ] Les visiteurs vont d'un tableau à l'autre (jamais deux devant le même), regardent chacun quelques secondes, contournent le socle ; devant le mur du fond, on les voit de dos.
+
+## Loupe
+
+- [ ] Bouton rond à loupe sur le bord droit de la tablette : un clic l'allume (orange). En survolant le plateau, un rond montre la zone sous le curseur grossie ×3 ; autour, la carte reste normale.
+- [ ] Les clics passent à travers la loupe (on peut construire en loupe) ; un nouveau clic sur le bouton l'éteint ; la loupe disparaît quand le curseur quitte le plateau.
 
 ## Partie auto
 

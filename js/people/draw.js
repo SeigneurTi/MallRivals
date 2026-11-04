@@ -135,7 +135,8 @@
       ctx.stroke();
     }
 
-    const seenFromBack = person.seatView === 'back' && sit > 0.5;
+    // De dos : assis face à l'écran du cinéma, ou debout face à un tableau de la galerie.
+    const seenFromBack = (person.seatView === 'back' && sit > 0.5) || (isActiveInside && person.activity === 'gallery' && person.looksAtWall);
     drawHead(ctx, person, -16 + top, seenFromBack);
 
     // Souvenir (fleur, cornet) : gardé jusqu'à la sortie de la ville.
