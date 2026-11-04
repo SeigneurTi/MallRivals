@@ -175,7 +175,8 @@
   function updateBilliardPlayer(person, dt, lot) {
     const table = lot.billiardTables[Math.floor(person.slotIndex / 2)];
     const isShooter = Boolean(table.aim && table.shooterSlot === person.slotIndex);
-    walkTo(person, isShooter ? table.standPoint : slotPosition(person), dt, 0.6);
+    // En contournant les tables (voir js/people/pathing.js).
+    Game.people.walkAvoiding(person, isShooter ? table.standPoint : slotPosition(person), dt, 0.6);
     // Une fois en place, la queue est dessinée par la table, dans l'axe du coup.
     person.cueOnTable = isShooter && table.shooterReady;
     if (isShooter) {

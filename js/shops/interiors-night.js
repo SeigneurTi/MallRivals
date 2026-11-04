@@ -142,19 +142,70 @@
     return Game.shopGeometry.lotPointToBoard(lot, Math.min(0.97, Math.max(0.03, u)), Math.min(0.95, Math.max(0.1, v)));
   }
 
-  // Où doit se tenir le tireur : derrière la blanche, dans l'axe du coup, juste après le bord
-  // de la table ; ses pieds sont placés pour que ses mains tombent sur cet axe.
-  function placeShooter(lot, table, tableIndex) {
-    const cueBall = table.balls[0];
-    const backX = -table.aim.dx;
-    const backY = -table.aim.dy;
+  // Les deux tables (avec leur cadre en bois), en rectangles sur le plateau : les clients les
+  // contournent (voir js/people/pathing.js).
+  function tableRects(lot) {
+    const { lotPointToBoard } = Game.shopGeometry;
+    return BILLIARD_TABLES_U.map(u => {
+      const [x1, y1] = lotPointToBoard(lot, u - 0.03, FELT.v - 0.05);
+      const [x2, y2] = lotPointToBoard(lot, u + FELT.width + 0.03, FELT.v + FELT.height + 0.05);
+      return { left: Math.min(x1, x2), top: Math.min(y1, y2), right: Math.max(x1, x2), bottom: Math.max(y1, y2) };
+    });
+  }
+
+  // Marge autour des tables pour les pieds du tireur (un peu plus que pour les déplacements,
+  // voir js/people/pathing.js).
+  const STAND_MARGIN = 3.5;
+
+  function isNearTable(rects, [x, y]) {
+    return rects.some(rect => x > rect.left - STAND_MARGIN && x < rect.right + STAND_MARGIN
+      && y > rect.top - STAND_MARGIN && y < rect.bottom + STAND_MARGIN);
+  }
+
+  // Où se tenir pour jouer ce coup : derrière la blanche, dans l'axe, les mains sur cet axe.
+  // On recule depuis le bord de la table jusqu'à ce que les pieds soient hors des tables.
+  // Renvoie null si c'est impossible (par exemple coincé entre les deux tables).
+  function standPointFor(lot, tableIndex, cueBall, aim, rects) {
+    const backX = -aim.dx;
+    const backY = -aim.dy;
     // Distance jusqu'au bord de la table en reculant depuis la blanche.
     const toEdgeX = backX > 0 ? (TABLE_LENGTH - cueBall.x) / backX : backX < 0 ? -cueBall.x / backX : Infinity;
     const toEdgeY = backY > 0 ? (1 - cueBall.y) / backY : backY < 0 ? -cueBall.y / backY : Infinity;
-    const distance = Math.min(toEdgeX, toEdgeY) + 0.22;
-    const [handX, handY] = tableToBoard(lot, tableIndex, cueBall.x + backX * distance, cueBall.y + backY * distance);
-    table.standPoint = [handX, handY + HANDS_HEIGHT];
-    table.cueBallPoint = tableToBoard(lot, tableIndex, cueBall.x, cueBall.y);
+    const toEdge = Math.min(toEdgeX, toEdgeY);
+    for (let extra = 0.22; extra <= 1.2; extra += 0.04) {
+      const [handX, handY] = tableToBoard(lot, tableIndex, cueBall.x + backX * (toEdge + extra), cueBall.y + backY * (toEdge + extra));
+      const feet = [handX, handY + HANDS_HEIGHT];
+      if (!isNearTable(rects, feet)) {
+        return feet;
+      }
+    }
+    return null;
+  }
+
+  // Choisit le coup à jouer et la place du tireur. On essaie les billes une à une
+  // (avec une petite imprécision) jusqu'à trouver un coup qu'on peut jouer depuis un endroit libre.
+  function chooseShot(lot, table, tableIndex, remaining) {
+    const cueBall = table.balls[0];
+    const rects = tableRects(lot);
+    let fallbackAim = null;
+    for (const target of Game.utils.shuffled(remaining)) {
+      const angle = Math.atan2(target.y - cueBall.y, target.x - cueBall.x) + Game.utils.randomBetween(-0.1, 0.1);
+      const aim = { dx: Math.cos(angle), dy: Math.sin(angle) };
+      fallbackAim = fallbackAim || aim;
+      const stand = standPointFor(lot, tableIndex, cueBall, aim, rects);
+      if (stand) {
+        table.aim = aim;
+        table.standPoint = stand;
+        return;
+      }
+    }
+    // Aucun coup jouable proprement : on se met au-dessus ou en dessous de la table, face à la blanche.
+    table.aim = fallbackAim;
+    const rect = rects[tableIndex];
+    const [ballX, ballY] = tableToBoard(lot, tableIndex, cueBall.x, cueBall.y);
+    const above = rect.top - STAND_MARGIN - 0.5;
+    const below = rect.bottom + STAND_MARGIN + 0.5 + HANDS_HEIGHT;
+    table.standPoint = [ballX, Math.abs(ballY - above) < Math.abs(ballY - below) ? above : below];
   }
 
   function isPlayingBilliard(person) {
@@ -184,14 +235,10 @@
       // À deux, on joue chacun son tour ; seul, on s'entraîne.
       table.turn = players.length === 2 ? 1 - table.turn : players[0] % 2;
       table.shooterSlot = 2 * tableIndex + table.turn;
-      // On vise une bille au hasard, avec une petite imprécision.
-      const cueBall = table.balls[0];
-      const target = Game.utils.pickRandom(remaining);
-      const angle = Math.atan2(target.y - cueBall.y, target.x - cueBall.x) + Game.utils.randomBetween(-0.1, 0.1);
-      table.aim = { dx: Math.cos(angle), dy: Math.sin(angle) };
+      chooseShot(lot, table, tableIndex, remaining);
+      table.cueBallPoint = tableToBoard(lot, tableIndex, table.balls[0].x, table.balls[0].y);
       table.aimDuration = Game.utils.randomBetween(BILLIARD.AIM_SECONDS_MIN, BILLIARD.AIM_SECONDS_MAX);
       table.aimTimer = table.aimDuration;
-      placeShooter(lot, table, tableIndex);
     }
     // Le compte à rebours ne démarre qu'une fois le tireur en place, queue en main.
     const shooter = lot.occupants[table.shooterSlot];
@@ -215,6 +262,8 @@
       createState(lot) {
         lot.billiardTables = BILLIARD_TABLES_U.map(createBilliardTable);
       },
+      // Les clients marchent autour des tables, jamais dessus.
+      obstacles: tableRects,
       update(lot, dt) {
         lot.billiardTables.forEach((table, tableIndex) => updateBilliardTable(lot, table, tableIndex, dt));
       },

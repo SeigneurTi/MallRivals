@@ -47,6 +47,7 @@ bourg-les-bonhommes/
 │   ├── people/
 │   │   ├── person.js        Création d'un passant, trajet, arrivée de nouveaux passants
 │   │   ├── behaviour.js     Machine à états : rue → boutique → rue
+│   │   ├── pathing.js       Trajets qui contournent les obstacles (tables de billard)
 │   │   ├── activities.js    Flâner, s'asseoir, nager, manège, séance, bowling
 │   │   └── draw.js          Dessin d'un passant
 │   ├── events/
@@ -76,6 +77,7 @@ bourg-les-bonhommes/
 | Durée de l'attente et du film au cinéma | `js/config.js` | `cinema` |
 | Durée de l'attente et de la partie au laser game, cadence de tir | `js/config.js` | `lasergame` |
 | Ce que les clients emportent (fleur, cornet) | `js/shops/interiors-*.js` | `souvenir` de la boutique |
+| Obstacles que les clients contournent dans une boutique | `js/shops/interiors-*.js` | `obstacles(lot)` de la boutique |
 | Réussite de la voiture-voleur, vitesse de la voiture | `js/config.js` | `thief` |
 | Fréquence des incendies, monstres, OVNI | `js/config.js` | `events` |
 | Butin, emplacement et remplissage de la banque | `js/config.js` | `bank` |

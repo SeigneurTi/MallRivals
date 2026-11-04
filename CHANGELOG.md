@@ -2,6 +2,13 @@
 
 Les versions les plus récentes sont en haut.
 
+## v2.10 — Billard : on contourne les tables (4 novembre 2026)
+
+- Les clients du billard ne marchent plus sur les tables : en entrant, en sortant, pour aller tirer ou revenir à leur place, ils passent autour (par les coins des tables).
+- Le tireur se place toujours à un endroit libre : ses pieds restent hors des tables, et si un coup ne peut pas se jouer depuis un endroit libre (par exemple coincé entre les deux tables), il vise une autre bille.
+- Les autres boutiques ne changent pas (vérifié sur les parties de test).
+- Fichiers : nouveau `js/people/pathing.js` (trajets qui contournent les obstacles) ; modifiés `js/shops/interiors-night.js`, `js/people/behaviour.js`, `js/people/activities.js`, `index.html`.
+
 ## v2.9 — Fleuriste, souvenirs, laser game, billard corrigé (4 novembre 2026)
 
 - **Fleuriste** réaménagé : étagère de 8 pots fleuris, seaux de bouquets, jardinières suspendues, table de présentation, comptoir avec bouquet emballé, pétales au sol. Toujours 4 places.

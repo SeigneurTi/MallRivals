@@ -175,8 +175,7 @@
         }
         if (person.insidePhase === 'toSlot') {
           // La cible est recalculée à chaque image (le manège tourne, la nageuse avance…).
-          person.target = Game.people.slotPosition(person);
-          if (moveToward(person, dt, PEOPLE.INSIDE_WALK_FACTOR)) {
+          if (Game.people.walkAvoiding(person, Game.people.slotPosition(person), dt, PEOPLE.INSIDE_WALK_FACTOR)) {
             person.insidePhase = 'active';
             Game.people.startActivity(person, person.lot);
           }
@@ -186,7 +185,7 @@
         return true;
 
       case PERSON_STATE.LEAVING:
-        if (moveToward(person, dt, PEOPLE.LEAVING_WALK_FACTOR)) {
+        if (Game.people.walkAvoiding(person, person.door, dt, PEOPLE.LEAVING_WALK_FACTOR)) {
           person.state = PERSON_STATE.RETURNING;
           person.target = person.returnPoint;
           person.drawScale = 1;

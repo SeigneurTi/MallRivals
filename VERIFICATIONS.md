@@ -69,6 +69,7 @@
 
 - [ ] 2 tables ; un client à chaque bout. À deux, ils jouent chacun leur tour.
 - [ ] Le tireur marche avec sa queue jusque derrière la blanche, dans l'axe du coup ; la queue va de ses mains à la bille, recule, puis la blanche part. L'autre joueur attend, queue debout à la main.
+- [ ] Personne ne marche sur les tables : en entrant, en sortant ou pour aller tirer, les joueurs passent autour.
 - [ ] Quand toutes les billes sont rentrées : « Partie gagnée ! » et les billes sont remises en triangle.
 
 ## Partie auto
