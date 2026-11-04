@@ -39,7 +39,7 @@
 - [ ] **Cinéma** : pastille verte « Séance dans 40 s » qui décompte ; puis pastille rouge « Film · 25 s », écran coloré animé et faisceau du projecteur ; personne n'entre pendant le film ; à la fin, toute la salle sort.
 - [ ] **Piscine** : 3 nageurs font des longueurs (seule la tête dépasse), 2 clients sur les transats.
 - [ ] **Manège** : le plateau tourne et les clients tournent avec lui.
-- [ ] **Arcade** : l'écran d'une borne s'allume en couleurs quand un client y joue.
+- [ ] **Arcade** : 5 bornes en colonne contre le mur de gauche ; l'écran d'une borne s'allume en couleurs quand un client y joue ; à droite, machine à pince, flippers et comptoir à lots.
 - [ ] **Cinéma** : les spectateurs regardent l'écran (vus de dos si l'écran est en haut de la case, de face s'il est en bas).
 - [ ] **Casino** (700 $) : les machines à sous font défiler des symboles et clignotent quand on y joue ; la roulette tourne ; 4 joueurs assis autour de la table.
 - [ ] **Discothèque** (800 $) : dalles de couleur, boule à facettes, spots qui tournent, salle plus sombre ; les clients dansent bras levés.

@@ -7,7 +7,7 @@
   const { rect, circle, ellipse } = Game.draw;
   const { slot, checkerFloor } = Game.furniture;
 
-  const ARCADE_MACHINES = 5;
+  const ARCADE_ROWS_V = [0.05, 0.22, 0.39, 0.56, 0.73];   // haut de chaque borne, en colonne
   const BOWLING_LANE_U = [0.2, 0.5, 0.8];
   const BOWLING_BALL_COLORS = ['#d6336c', '#3d7dd8', '#47a36b'];
   const CINEMA_ROWS_V = [0.34, 0.52, 0.7];
@@ -32,27 +32,68 @@
     },
 
     // Une place devant chaque borne ; la borne s'allume quand elle est occupée.
+    // 5 bornes en colonne contre le mur de gauche ; chaque joueur se tient à droite de la sienne,
+    // tourné vers l'écran. À droite : machine à pince, flippers et comptoir à lots (décor).
     arcade: {
       activity: 'play',
-      slots: [0, 1, 2, 3, 4].map(k => slot(0.17 + k * 0.165, 0.42)),
+      slots: ARCADE_ROWS_V.map(v => slot(0.25, v + 0.11, undefined, -1)),
       drawFurniture(g) {
-        const { c, x, y, w, h } = g;
+        const { c, x, y, w, h, radius } = g;
         rect(c, g.left, g.top, g.width, g.height, '#2a2340');
-        for (let k = 0; k < ARCADE_MACHINES; k++) {
-          rect(c, x(0.1 + k * 0.165), y(0.04), w(0.14), h(0.24), '#1b1630');   // borne
-          rect(c, x(0.12 + k * 0.165), y(0.07), w(0.1), h(0.1), '#3a3355');    // écran éteint
+        // Bornes : caisse, écran (éteint) tourné vers la salle, panneau de commandes.
+        for (const v of ARCADE_ROWS_V) {
+          rect(c, x(0.03), y(v), w(0.13), h(0.14), '#1b1630');
+          rect(c, x(0.115), y(v + 0.02), w(0.035), h(0.1), '#3a3355');
+          rect(c, x(0.155), y(v + 0.035), w(0.035), h(0.07), '#45406a');
+          circle(c, x(0.172), y(v + 0.055), radius(0.014), '#e74c3c');   // joystick
+          circle(c, x(0.172), y(v + 0.085), radius(0.01), '#f2c14e');    // bouton
         }
+        // Machine à pince : vitrine remplie de peluches.
+        rect(c, x(0.76), y(0.05), w(0.2), h(0.26), '#8c3fd1');
+        rect(c, x(0.775), y(0.07), w(0.17), h(0.2), 'rgba(190,225,240,.35)');
+        ['#f2c14e', '#ef7fb0', '#47a36b', '#3d7dd8', '#ff8c42', '#e74c3c'].forEach((color, k) => {
+          circle(c, x(0.8 + (k % 3) * 0.055), y(0.2 + Math.floor(k / 3) * 0.045), radius(0.03), color);
+        });
+        // Deux flippers.
+        for (const u of [0.48, 0.63]) {
+          rect(c, x(u), y(0.38), w(0.1), h(0.3), '#1b1630');
+          rect(c, x(u + 0.01), y(0.4), w(0.08), h(0.24), '#3d7dd8');
+          rect(c, x(u + 0.02), y(0.6), w(0.025), h(0.015), '#ffffff');   // batteurs
+          rect(c, x(u + 0.055), y(0.6), w(0.025), h(0.015), '#ffffff');
+        }
+        // Comptoir à lots (à gauche de l'enseigne de la boutique).
+        rect(c, x(0.46), y(0.73), w(0.27), h(0.1), '#5a3a22');
+        ['#f2c14e', '#ef7fb0', '#2bb3b1', '#e74c3c'].forEach((color, k) => {
+          circle(c, x(0.5 + k * 0.062), y(0.78), radius(0.028), color);
+        });
         c.strokeStyle = '#8c3fd1';
         c.lineWidth = 2;
         c.strokeRect(x(0.02), y(0.02), w(0.96), h(0.96));   // néon
       },
       drawAnimated(g, lot, time) {
-        const { c, x, y, w, h } = g;
-        for (let k = 0; k < ARCADE_MACHINES; k++) {
+        const { c, x, y, w, h, radius } = g;
+        // Écrans des bornes : allumés et changeants quand quelqu'un joue.
+        ARCADE_ROWS_V.forEach((v, k) => {
           const isPlaying = !!lot.occupants[k];
           const screenColor = isPlaying ? `hsl(${(time * 120 + k * 70) % 360},90%,60%)` : '#3a3355';
-          rect(c, x(0.12 + k * 0.165), y(0.07), w(0.1), h(0.1), screenColor);
-        }
+          rect(c, x(0.115), y(v + 0.02), w(0.035), h(0.1), screenColor);
+        });
+        // Pince qui se balade dans la vitrine.
+        const clawU = 0.8 + (0.5 + 0.5 * Math.sin(time * 0.8)) * 0.11;
+        c.strokeStyle = '#cfd3da';
+        c.lineWidth = 0.8;
+        c.beginPath();
+        c.moveTo(x(clawU), y(0.07));
+        c.lineTo(x(clawU), y(0.13));
+        c.stroke();
+        circle(c, x(clawU), y(0.135), radius(0.018), '#cfd3da');
+        // Champignons des flippers qui clignotent.
+        [0.48, 0.63].forEach((u, k) => {
+          for (let b = 0; b < 3; b++) {
+            const lit = Math.floor(time * 5 + b + k * 2) % 3 === 0;
+            circle(c, x(u + 0.025 + b * 0.025), y(0.47 + (b % 2) * 0.05), radius(0.018), lit ? '#fff3a0' : '#e74c3c');
+          }
+        });
       },
     },
 

@@ -2,6 +2,12 @@
 
 Les versions les plus récentes sont en haut.
 
+## v2.11 — Arcade : bornes en colonne (4 novembre 2026)
+
+- Les 5 bornes d'arcade sont rangées en colonne contre le mur de gauche ; chaque joueur se tient à droite de la sienne, tourné vers l'écran, qui s'allume quand il joue. Toujours 5 places.
+- Nouveau décor à droite : machine à pince remplie de peluches (la pince se balade), deux flippers aux champignons clignotants, comptoir à lots.
+- Fichier : `js/shops/interiors-leisure.js`.
+
 ## v2.10 — Billard : on contourne les tables (4 novembre 2026)
 
 - Les clients du billard ne marchent plus sur les tables : en entrant, en sortant, pour aller tirer ou revenir à leur place, ils passent autour (par les coins des tables).
