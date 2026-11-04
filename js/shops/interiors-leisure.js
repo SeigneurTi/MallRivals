@@ -1,4 +1,4 @@
-// Intérieurs de loisirs et de services : coiffeur, arcade, bowling, cinéma, piscine,
+// Intérieurs de loisirs et de services : coiffeur, arcade, bowling, cinéma, piscine (vestiaire, jacuzzi),
 // manège, hôtel. Certains ont une partie animée (drawAnimated), redessinée à chaque image.
 // Coordonnées normalisées : voir js/shops/geometry.js.
 (function () {
@@ -21,6 +21,12 @@
   const CINEMA_ROWS_V = [0.34, 0.52, 0.7];
   const CINEMA_SEATS_U = [0.1, 0.24, 0.38, 0.62, 0.76, 0.9];
   const CAROUSEL_SEATS = 8;
+  // Piscine : bassin à droite, jacuzzi en haut à gauche, vestiaire en bas à gauche.
+  const POOL_CENTER_U = 0.65;
+  const POOL_SWIM_RANGE = 0.25;   // les nageurs vont de u = 0,40 à u = 0,90
+  const JACUZZI = { u: 0.16, v: 0.24, radius: 0.15 };
+  const CABINS = [{ u: 0.09, curtain: '#2b8fbd' }, { u: 0.21, curtain: '#e8578f' }];
+  const CABIN_DOOR_V = 0.83;
 
   Object.assign(Game.interiors, {
     coiffeur: {
@@ -216,36 +222,94 @@
       },
     },
 
-    // 3 nageurs (couloirs) et 2 transats.
+    // Piscine : vestiaire (2 cabines), jacuzzi, bassin de 3 couloirs et 2 transats.
+    // Les clients passent d'abord par une cabine (on ne les voit plus le temps de se changer),
+    // en ressortent en maillot de bain, puis y repassent avant de partir (js/people/behaviour.js).
     piscine: {
       activity: 'mix',
       slots: [
-        slot(0.5, 0.18, 'swim'),
-        slot(0.5, 0.38, 'swim'),
-        slot(0.5, 0.58, 'swim'),
-        slot(0.12, 0.86, 'sit'),
-        slot(0.88, 0.86, 'sit'),
+        Object.assign(slot(POOL_CENTER_U, 0.15, 'swim'), { swimRange: POOL_SWIM_RANGE }),
+        Object.assign(slot(POOL_CENTER_U, 0.31, 'swim'), { swimRange: POOL_SWIM_RANGE }),
+        Object.assign(slot(POOL_CENTER_U, 0.47, 'swim'), { swimRange: POOL_SWIM_RANGE }),
+        slot(JACUZZI.u - 0.055, JACUZZI.v - 0.01, 'soak', 1),
+        slot(JACUZZI.u + 0.055, JACUZZI.v - 0.01, 'soak', -1),
+        slot(JACUZZI.u, JACUZZI.v + 0.08, 'soak', 1),
+        slot(0.62, 0.74, 'sit'),
+        slot(0.8, 0.74, 'sit'),
       ],
+      // Entrée de chaque cabine du vestiaire : le client y disparaît pour se changer.
+      changingCabins: CABINS.map(cabin => ({ u: cabin.u, v: CABIN_DOOR_V })),
+      swimsuitColors: ['#e74c3c', '#2b8fbd', '#f2c14e', '#27a35a', '#9a4fd6', '#ff7a45'],
       drawFurniture(g) {
-        const { c, x, y, w, h } = g;
-        rect(c, g.left, g.top, g.width, g.height, '#e9e2d0');
-        rect(c, x(0.04), y(0.05), w(0.92), h(0.64), '#4fa8de');   // bassin
-        // Lignes d'eau en pointillés.
+        const { c, x, y, w, h, radius } = g;
+        // Carrelage clair autour des bassins.
+        checkerFloor(g, '#eef3f4', '#dde8ea', 8);
+        // Bassin : margelle, eau, lignes d'eau en pointillés.
+        rect(c, x(0.33), y(0.03), w(0.64), h(0.58), '#c9d6d9');
+        rect(c, x(0.345), y(0.05), w(0.61), h(0.54), '#4fa8de');
         c.strokeStyle = 'rgba(255,255,255,.8)';
         c.lineWidth = 1;
         c.setLineDash([3, 3]);
-        for (const v of [0.28, 0.48]) {
+        for (const v of [0.23, 0.39]) {
           c.beginPath();
-          c.moveTo(x(0.05), y(v));
+          c.moveTo(x(0.35), y(v));
           c.lineTo(x(0.95), y(v));
           c.stroke();
         }
         c.setLineDash([]);
-        // Serviettes de bain.
-        for (const u of [0.06, 0.18, 0.82, 0.94]) {
-          const towelColor = ['#f2c14e', '#ef7fb0', '#2bb3b1', '#ff8c42'][Math.round(u * 10) % 4];
-          rect(c, x(u - 0.04), y(0.76), w(0.08), h(0.2), towelColor);
+        // Échelle du bassin.
+        c.strokeStyle = '#9aa2ad';
+        c.lineWidth = radius(0.012);
+        c.beginPath();
+        c.moveTo(x(0.36), y(0.53));
+        c.lineTo(x(0.4), y(0.53));
+        c.moveTo(x(0.36), y(0.57));
+        c.lineTo(x(0.4), y(0.57));
+        c.stroke();
+        // Jacuzzi rond : bord en bois, eau turquoise.
+        circle(c, x(JACUZZI.u), y(JACUZZI.v), radius(JACUZZI.radius + 0.03), '#a0673c');
+        circle(c, x(JACUZZI.u), y(JACUZZI.v), radius(JACUZZI.radius), '#5fd0d6');
+        // Vestiaire : cloison, 2 cabines à rideau (dessinés dans drawAnimated) et un banc.
+        rect(c, x(0.03), y(0.66), w(0.26), h(0.3), '#d9c9a8');
+        rect(c, x(0.03), y(0.66), w(0.26), h(0.015), '#8a6a4a');
+        for (const cabin of CABINS) {
+          rect(c, x(cabin.u - 0.05), y(0.68), w(0.1), h(0.13), '#efe6d2');
+          rect(c, x(cabin.u + 0.05), y(0.68), w(0.008), h(0.13), '#8a6a4a');   // séparation
         }
+        rect(c, x(0.05), y(0.88), w(0.22), h(0.05), '#a0673c');   // banc
+        // Transats et serviettes.
+        for (const u of [0.62, 0.8]) {
+          rect(c, x(u - 0.06), y(0.68), w(0.12), h(0.2), '#ffffff');
+          rect(c, x(u - 0.05), y(0.7), w(0.1), h(0.16), ['#f2c14e', '#ef7fb0'][Math.round(u * 10) % 2]);
+        }
+        // Parasol.
+        circle(c, x(0.71), y(0.71), radius(0.07), '#e74c3c');
+        circle(c, x(0.71), y(0.71), radius(0.035), '#ffffff');
+      },
+      drawAnimated(g, lot, time) {
+        const { c, x, y, w, h, radius } = g;
+        // Bulles du jacuzzi.
+        for (let k = 0; k < 9; k++) {
+          const angle = k * 2.4 + time * 0.8;
+          const distance = ((k * 37) % 10) / 10 * JACUZZI.radius * 0.85;
+          const size = 0.01 + 0.008 * Math.sin(time * 6 + k);
+          circle(c, x(JACUZZI.u) + Math.cos(angle) * radius(distance), y(JACUZZI.v) + Math.sin(angle) * radius(distance),
+            radius(Math.max(0.004, size)), 'rgba(255,255,255,.75)');
+        }
+        // Rideaux des cabines : fermés quand quelqu'un se change (on voit ses pieds dessous).
+        CABINS.forEach((cabin, cabinIndex) => {
+          const isBusy = Game.state.people.some(person => person.lot === lot && person.isChanging && person.cabin === cabinIndex);
+          if (isBusy) {
+            rect(c, x(cabin.u - 0.05), y(0.68), w(0.1), h(0.12), cabin.curtain);
+            for (let fold = 1; fold < 4; fold++) {
+              rect(c, x(cabin.u - 0.05 + fold * 0.025), y(0.68), w(0.004), h(0.12), 'rgba(0,0,0,.15)');
+            }
+            circle(c, x(cabin.u - 0.015), y(0.81), radius(0.012), '#8a5a36');
+            circle(c, x(cabin.u + 0.015), y(0.81), radius(0.012), '#8a5a36');
+          } else {
+            rect(c, x(cabin.u - 0.05), y(0.68), w(0.02), h(0.12), cabin.curtain);   // rideau tiré
+          }
+        });
       },
     },
 

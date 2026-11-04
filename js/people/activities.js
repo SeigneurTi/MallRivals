@@ -80,7 +80,7 @@
     if (person.activity === 'swim') {
       // Longueurs de bassin, chacun dans son couloir.
       const strokePhase = gameTime * 0.5 + person.slotIndex * 1.9;
-      [person.x, person.y] = clampInside(lot, lotPointToBoard(lot, 0.5 + 0.38 * Math.sin(strokePhase), slot.v));
+      [person.x, person.y] = clampInside(lot, lotPointToBoard(lot, slot.u + (slot.swimRange || 0.38) * Math.sin(strokePhase), slot.v));
       person.facing = Math.cos(strokePhase) > 0 ? 1 : -1;
     }
     if (person.activity === 'dance') {

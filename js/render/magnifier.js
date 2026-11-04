@@ -1,9 +1,11 @@
 // Loupe : avec le bouton sur le bord de la tablette, un rond suit le curseur et montre
 // le plateau grossi (×3 par défaut) ; autour, la carte reste à sa taille normale.
 // Le rond est un petit canvas posé sur le plateau, qui laisse passer les clics.
+// Pour une image nette, la scène y est redessinée en grand (pas d'agrandissement de pixels).
 (function () {
   'use strict';
 
+  const BOARD = Game.config.board;
   const MAGNIFIER = Game.config.magnifier;
   const lens = document.getElementById('lens');
   const lensCtx = lens.getContext('2d');
@@ -33,14 +35,23 @@
     });
   }
 
-  // Appelé après chaque image du plateau : recopie la zone sous le curseur, grossie, dans le rond.
-  function draw() {
+  function strokeRing(radius, width, color) {
+    lensCtx.strokeStyle = color;
+    lensCtx.lineWidth = width;
+    lensCtx.beginPath();
+    lensCtx.arc(lens.width / 2, lens.height / 2, radius, 0, Game.draw.FULL_TURN);
+    lensCtx.stroke();
+  }
+
+  // Appelé après chaque image du plateau : redessine la zone sous le curseur, grossie, dans le rond.
+  function draw(timestamp) {
     if (!isActive || !pointer) {
       lens.hidden = true;
       return;
     }
-    const board = Game.view.canvas;
-    const pixelRatio = Game.view.pixelRatio;
+    const view = Game.view;
+    const board = view.canvas;
+    const pixelRatio = view.pixelRatio;
     const diameter = MAGNIFIER.DIAMETER;
     const lensPixels = Math.round(diameter * pixelRatio);
     if (lens.width !== lensPixels) {
@@ -54,13 +65,22 @@
     lens.style.top = (board.offsetTop + pointer[1] - diameter / 2) + 'px';
     lens.hidden = false;
 
-    // Zone source : un carré ZOOM fois plus petit que la loupe, centré sur le curseur.
-    const pixelsPerCssPixel = board.width / board.clientWidth;
-    const sourceSize = diameter / MAGNIFIER.ZOOM * pixelsPerCssPixel;
-    const sourceX = pointer[0] * pixelsPerCssPixel - sourceSize / 2;
-    const sourceY = pointer[1] * pixelsPerCssPixel - sourceSize / 2;
-
+    // Repère : le point du plateau sous le curseur arrive au centre du rond, ZOOM fois plus grand.
+    const pixelsPerUnit = pixelRatio * view.scale * MAGNIFIER.ZOOM;
+    const pointerX = pointer[0] / view.scale;
+    const pointerY = pointer[1] / view.scale;
     const middle = lensPixels / 2;
+    const offsetX = middle - pointerX * pixelsPerUnit;
+    const offsetY = middle - pointerY * pixelsPerUnit;
+    // Zone visible, en unités de la carte (pour ne redessiner que les cases utiles).
+    const halfSize = middle / pixelsPerUnit;
+    const visibleArea = {
+      left: pointerX - BOARD.MAP_LEFT - halfSize,
+      right: pointerX - BOARD.MAP_LEFT + halfSize,
+      top: pointerY - halfSize,
+      bottom: pointerY + halfSize,
+    };
+
     lensCtx.setTransform(1, 0, 0, 1, 0, 0);
     lensCtx.clearRect(0, 0, lensPixels, lensPixels);
     lensCtx.save();
@@ -69,33 +89,22 @@
     lensCtx.clip();
     lensCtx.fillStyle = '#16181c';   // hors du plateau (bords) : couleur de la tablette
     lensCtx.fillRect(0, 0, lensPixels, lensPixels);
-    lensCtx.imageSmoothingEnabled = true;
-    // La source peut dépasser du plateau : on la recadre et on décale la destination d'autant.
-    const clippedLeft = Math.max(0, sourceX);
-    const clippedTop = Math.max(0, sourceY);
-    const clippedRight = Math.min(board.width, sourceX + sourceSize);
-    const clippedBottom = Math.min(board.height, sourceY + sourceSize);
-    if (clippedRight > clippedLeft && clippedBottom > clippedTop) {
-      const scale = lensPixels / sourceSize;
-      lensCtx.drawImage(
-        board,
-        clippedLeft, clippedTop, clippedRight - clippedLeft, clippedBottom - clippedTop,
-        (clippedLeft - sourceX) * scale, (clippedTop - sourceY) * scale,
-        (clippedRight - clippedLeft) * scale, (clippedBottom - clippedTop) * scale
-      );
-    }
+    // Fond de carte, puis tout ce qui bouge, comme sur le plateau.
+    lensCtx.setTransform(pixelsPerUnit, 0, 0, pixelsPerUnit, offsetX, offsetY);
+    lensCtx.save();
+    lensCtx.beginPath();
+    lensCtx.rect(BOARD.MAP_LEFT, 0, BOARD.MAP_WIDTH, BOARD.HEIGHT);
+    lensCtx.clip();
+    lensCtx.translate(BOARD.MAP_LEFT, 0);
+    Game.board.drawMap(lensCtx, visibleArea);
     lensCtx.restore();
+    Game.scene.draw(lensCtx, timestamp);
+    lensCtx.restore();
+
     // Monture de la loupe.
-    lensCtx.strokeStyle = '#ffffff';
-    lensCtx.lineWidth = 3 * pixelRatio;
-    lensCtx.beginPath();
-    lensCtx.arc(middle, middle, middle - 2.5 * pixelRatio, 0, Game.draw.FULL_TURN);
-    lensCtx.stroke();
-    lensCtx.strokeStyle = 'rgba(20, 25, 20, .45)';
-    lensCtx.lineWidth = pixelRatio;
-    lensCtx.beginPath();
-    lensCtx.arc(middle, middle, middle - 0.5 * pixelRatio, 0, Game.draw.FULL_TURN);
-    lensCtx.stroke();
+    lensCtx.setTransform(1, 0, 0, 1, 0, 0);
+    strokeRing(middle - 2.5 * pixelRatio, 3 * pixelRatio, '#ffffff');
+    strokeRing(middle - 0.5 * pixelRatio, pixelRatio, 'rgba(20, 25, 20, .45)');
   }
 
   Game.magnifier = { bind, draw };

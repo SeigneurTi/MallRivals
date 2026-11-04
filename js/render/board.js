@@ -32,12 +32,14 @@
     c.fill();
   }
 
-  function draw() {
-    const view = Game.view;
-    const c = view.backgroundCtx;
-    const pixelsPerUnit = view.pixelRatio * view.scale;
-    // Repère de la carte : décalé de la largeur du bac de gauche.
-    c.setTransform(pixelsPerUnit, 0, 0, pixelsPerUnit, pixelsPerUnit * BOARD.MAP_LEFT, 0);
+  function isLotVisible(lot, visibleArea) {
+    return !visibleArea || (lot.x < visibleArea.right && lot.x + lot.width > visibleArea.left
+      && lot.y < visibleArea.bottom && lot.y + lot.height > visibleArea.top);
+  }
+
+  // Dessine le fond de carte dans c, déjà placé dans le repère de la carte.
+  // visibleArea (facultatif, pour la loupe) : seules les cases qui la touchent sont dessinées.
+  function drawMap(c, visibleArea) {
     c.fillStyle = '#d9dbd5';
     c.fillRect(0, 0, BOARD.MAP_WIDTH, BOARD.HEIGHT);
 
@@ -52,6 +54,9 @@
     }
 
     for (const lot of Game.state.lots) {
+      if (!isLotVisible(lot, visibleArea)) {
+        continue;
+      }
       // Terrain gris avec un léger reflet.
       c.fillStyle = '#b8bbb3';
       roundedRectPath(c, lot.x, lot.y, lot.width, lot.height, 6);
@@ -68,5 +73,15 @@
     }
   }
 
-  Game.board = { draw };
+  // Redessine le canvas de fond, recopié ensuite à chaque image.
+  function draw() {
+    const view = Game.view;
+    const c = view.backgroundCtx;
+    const pixelsPerUnit = view.pixelRatio * view.scale;
+    // Repère de la carte : décalé de la largeur du bac de gauche.
+    c.setTransform(pixelsPerUnit, 0, 0, pixelsPerUnit, pixelsPerUnit * BOARD.MAP_LEFT, 0);
+    drawMap(c);
+  }
+
+  Game.board = { draw, drawMap };
 })();

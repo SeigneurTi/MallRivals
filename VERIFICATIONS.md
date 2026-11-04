@@ -37,7 +37,7 @@
 
 - [ ] **Bowling** : 3 pistes ; les quilles forment un triangle dont la pointe est tournée vers le lanceur. Le client vise, la boule remonte la piste et, en touchant la quille de tête, les quilles basculent l'une après l'autre ; « Strike ! » ou « n quilles, m debout » s'affiche, et il reste exactement m quilles debout une fois les quilles tombées balayées ; 3 lancers puis il repart.
 - [ ] **Cinéma** : pastille verte « Séance dans 40 s » qui décompte ; puis pastille rouge « Film · 25 s », écran coloré animé et faisceau du projecteur ; personne n'entre pendant le film ; à la fin, toute la salle sort.
-- [ ] **Piscine** : 3 nageurs font des longueurs (seule la tête dépasse), 2 clients sur les transats.
+- [ ] **Piscine** : 3 nageurs font des longueurs dans leur couloir (seule la tête dépasse), 3 clients au jacuzzi, 2 sur les transats (voir « Piscine et bijouterie »).
 - [ ] **Manège** : le plateau tourne et les clients tournent avec lui.
 - [ ] **Arcade** : 5 bornes en colonne contre le mur de gauche ; l'écran d'une borne s'allume en couleurs quand un client y joue ; à droite, machine à pince, flippers et comptoir à lots.
 - [ ] **Cinéma** : les spectateurs regardent l'écran (vus de dos si l'écran est en haut de la case, de face s'il est en bas).
@@ -77,9 +77,16 @@
 - [ ] Carte « Galerie d'art » (420 $) ; 6 places. 4 tableaux au fond derrière un cordon rouge (dont un écran d'art vidéo aux couleurs qui défilent), 2 tableaux sur chaque mur de côté, un mobile qui tourne sur un socle au centre, un accueil.
 - [ ] Les visiteurs vont d'un tableau à l'autre (jamais deux devant le même), regardent chacun quelques secondes, contournent le socle ; devant le mur du fond, on les voit de dos.
 
+## Piscine et bijouterie
+
+- [ ] Piscine : bassin de 3 couloirs, jacuzzi à bulles, vestiaire à 2 cabines, 2 transats ; 8 places.
+- [ ] Un client qui entre va au vestiaire et disparaît environ 3 s : le rideau de sa cabine est fermé et on voit ses pieds dessous. Il ressort en maillot de bain (une pièce pour les filles, short pour les garçons) et va nager, au jacuzzi (seule sa tête dépasse) ou sur un transat.
+- [ ] En partant, il repasse par une cabine et ressort habillé, avec son sac ; personne ne sort dans la rue en maillot.
+- [ ] Bijouterie : comptoir vitré (bagues, colliers, montres), vitrines murales, deux îlots, diamant sous cloche ; des éclats scintillent sur les pierres ; les clients repartent avec un petit écrin.
+
 ## Loupe
 
-- [ ] Bouton rond à loupe sur le bord droit de la tablette : un clic l'allume (orange). En survolant le plateau, un rond montre la zone sous le curseur grossie ×3 ; autour, la carte reste normale.
+- [ ] Bouton rond à loupe sur le bord droit de la tablette : un clic l'allume (orange). En survolant le plateau, un rond montre la zone sous le curseur grossie ×3, nette (textes et passants sans flou) ; autour, la carte reste normale.
 - [ ] Les clics passent à travers la loupe (on peut construire en loupe) ; un nouveau clic sur le bouton l'éteint ; la loupe disparaît quand le curseur quitte le plateau.
 
 ## Partie auto

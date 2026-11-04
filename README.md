@@ -77,10 +77,11 @@ bourg-les-bonhommes/
 | Vitesse des passants, durée de séjour par activité | `js/config.js` | `people` |
 | Bowling (lancers, durées, chance de strike, chute des quilles) | `js/config.js` | `bowling` |
 | Temps passé devant chaque tableau de la galerie d'art | `js/config.js` | `gallery` |
+| Temps pour se changer au vestiaire de la piscine | `js/config.js` | `pool` |
 | Grossissement et taille de la loupe | `js/config.js` | `magnifier` |
 | Durée de l'attente et du film au cinéma | `js/config.js` | `cinema` |
 | Durée de l'attente et de la partie au laser game, cadence de tir | `js/config.js` | `lasergame` |
-| Ce que les clients emportent (fleur, cornet) | `js/shops/interiors-*.js` | `souvenir` de la boutique |
+| Ce que les clients emportent (fleur, cornet, écrin) | `js/shops/interiors-*.js` | `souvenir` de la boutique |
 | Obstacles que les clients contournent dans une boutique | `js/shops/interiors-*.js` | `obstacles(lot)` de la boutique |
 | Réussite de la voiture-voleur, vitesse de la voiture | `js/config.js` | `thief` |
 | Fréquence des incendies, monstres, OVNI | `js/config.js` | `events` |

@@ -2,6 +2,14 @@
 
 Les versions les plus récentes sont en haut.
 
+## v2.13 — Loupe nette, bijouterie, piscine avec vestiaire et jacuzzi (5 novembre 2026)
+
+- **Loupe nette** : au lieu d'agrandir les pixels de l'écran, la scène est redessinée trois fois plus grande dans le rond (textes, passants et mobilier restent nets). Seules les cases sous la loupe sont redessinées.
+- **Bijouterie refaite** : comptoir vitré au fond (bagues, colliers, montres), vitrines murales (perles, bracelets), deux îlots vitrés, un gros diamant sous cloche sur un tapis rouge, caisse et miroir. Les pierres scintillent. Les clients repartent avec un petit écrin enrubanné. Toujours 4 places.
+- **Piscine refaite** : bassin de 3 couloirs, jacuzzi à bulles, vestiaire à 2 cabines, 2 transats sous un parasol. En entrant, le client va au vestiaire ; il disparaît 3 s dans une cabine (rideau fermé, on voit ses pieds), en ressort en maillot de bain (maillot une pièce ou short de bain), puis va nager, se baigner dans le jacuzzi ou s'allonger sur un transat. Avant de partir, il repasse par une cabine pour se rhabiller.
+- La piscine passe de 5 à 8 places (3 nageurs, 3 au jacuzzi, 2 transats) : un peu moins de gain par client, mais plus de clients.
+- Fichiers : `js/render/magnifier.js`, `js/render/board.js`, `js/main.js` (loupe) ; `js/shops/interiors-shops.js` (bijouterie) ; `js/shops/interiors-leisure.js`, `js/people/behaviour.js`, `js/people/activities.js`, `js/people/person.js`, `js/people/draw.js`, `js/config.js` (piscine, écrin).
+
 ## v2.12 — Galerie d'art, bowling corrigé, loupe (4 novembre 2026)
 
 - **Galerie d'art** (420 $, 6 places) : 4 tableaux au mur du fond derrière un cordon rouge (paysage, aplats de couleurs, portrait, écran d'art vidéo animé), 2 tableaux sur chaque mur de côté, un mobile qui tourne sur un socle au centre, un accueil. Les visiteurs passent d'un tableau libre à l'autre, regardent chacun 2,5 à 4,5 s et contournent le socle ; devant le mur du fond, on les voit de dos.

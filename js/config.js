@@ -72,6 +72,7 @@
         dance: [8, 12],                // piste de danse de la discothèque
         billiard: [16, 26],            // une partie de billard
         gallery: [14, 20],             // visite de la galerie d'art
+        soak: [8, 12],                 // jacuzzi de la piscine
       },
       DEFAULT_STAY_SECONDS: 6,
       SEATED_ACTIVITIES: ['sit', 'session'],   // activités où le client s'assoit (tables, fauteuils de cinéma…)
@@ -92,6 +93,10 @@
       PIN_FALL_DELAY_PER_ROW: 0.07,    // la chute se propage de rangée en rangée
       PIN_LIE_SECONDS: 0.45,           // les quilles tombées restent couchées…
       PIN_SWEEP_SECONDS: 0.3,          // …puis sont balayées : seules les quilles debout restent
+    },
+
+    pool: {
+      CHANGE_SECONDS: 3,               // temps pour se changer dans une cabine du vestiaire
     },
 
     gallery: {

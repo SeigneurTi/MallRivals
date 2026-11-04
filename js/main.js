@@ -29,6 +29,16 @@
     ctx.clearRect(0, 0, view.canvas.width, view.canvas.height);
     ctx.drawImage(view.backgroundCanvas, 0, 0);
     ctx.setTransform(pixelsPerUnit, 0, 0, pixelsPerUnit, 0, 0);
+    drawScene(ctx, timestamp);
+    Game.magnifier.draw(timestamp);
+  }
+
+  // Tout ce qui bouge (carte et bacs de cartes), dans ctx déjà placé dans le repère du plateau.
+  // Les fonctions de dessin utilisent Game.view.ctx : on le remplace le temps du dessin.
+  function drawScene(ctx, timestamp) {
+    const view = Game.view;
+    const mainCtx = view.ctx;
+    view.ctx = ctx;
 
     // Tout ce qui est sur la carte, découpé à ses bords.
     ctx.save();
@@ -60,7 +70,7 @@
 
     Game.trays.draw(0);
     Game.trays.draw(1);
-    Game.magnifier.draw();
+    view.ctx = mainCtx;
   }
 
   function step(timestamp) {
@@ -91,6 +101,7 @@
     requestAnimationFrame(frame);
   }
 
+  Game.scene = { draw: drawScene };
   Game.input.bind();
   Game.magnifier.bind();
   Game.view.watchResize();

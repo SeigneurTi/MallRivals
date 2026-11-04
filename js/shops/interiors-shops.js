@@ -1,5 +1,5 @@
 // Intérieurs des commerces où l'on flâne : fleuriste, kiosque, boulangerie, librairie,
-// pharmacie, jouets, vêtements, bijouterie.
+// pharmacie, jouets, vêtements, bijouterie (vitrines et bijoux qui scintillent).
 // Coordonnées normalisées : voir js/shops/geometry.js.
 (function () {
   'use strict';
@@ -21,6 +21,97 @@
       circle(c, bloomX, bloomY, size * 0.12, '#f2c14e');
     }
     circle(c, x, y, size * 0.3, FLOWER_COLORS[(colorIndex + 3) % FLOWER_COLORS.length]);
+  }
+
+  // Bijouterie : couleurs des pierres et des écrins, et points qui scintillent.
+  const JEWEL_COLORS = ['#e8f6ff', '#d62848', '#2a9d8f', '#3d5bd8', '#9a4fd6'];
+  const JEWEL_BOX_COLORS = ['#2aa7b8', '#d62848', '#1f2a44'];
+  const SPARKLES = [[0.5, 0.49], [0.1, 0.085], [0.32, 0.085], [0.21, 0.465], [0.71, 0.465], [0.94, 0.6], [0.06, 0.6], [0.6, 0.11]];
+
+  // Vitrine vue de dessus : cadre doré, velours bleu nuit, reflet du verre.
+  function glassCase(g, u, v, width, height) {
+    const { c, x, y, w, h } = g;
+    rect(c, x(u), y(v), w(width), h(height), '#c9a23a');
+    rect(c, x(u + 0.006), y(v + 0.01), w(width - 0.012), h(height - 0.02), '#1f2a44');
+    c.fillStyle = 'rgba(255,255,255,.14)';
+    c.beginPath();
+    c.moveTo(x(u + 0.006), y(v + height - 0.01));
+    c.lineTo(x(u + width * 0.35), y(v + 0.01));
+    c.lineTo(x(u + width * 0.5), y(v + 0.01));
+    c.lineTo(x(u + width * 0.15), y(v + height - 0.01));
+    c.closePath();
+    c.fill();
+  }
+
+  // Bague : anneau doré et sa pierre.
+  function ring(g, u, v, stoneColor) {
+    const { c, x, y, radius } = g;
+    c.strokeStyle = '#f2c14e';
+    c.lineWidth = radius(0.008);
+    c.beginPath();
+    c.arc(x(u), y(v), radius(0.017), 0, FULL_TURN);
+    c.stroke();
+    circle(c, x(u), y(v) - radius(0.017), radius(0.01), stoneColor);
+  }
+
+  // Collier posé en arc, avec un pendentif.
+  function necklace(g, u, v, halfWidth, chainColor, pendantColor) {
+    const { c, x, y, w, radius } = g;
+    c.strokeStyle = chainColor;
+    c.lineWidth = radius(0.008);
+    c.beginPath();
+    c.ellipse(x(u), y(v), w(halfWidth), radius(0.045), 0, 0.15 * Math.PI, 0.85 * Math.PI);
+    c.stroke();
+    circle(c, x(u), y(v) + radius(0.047), radius(0.013), pendantColor);
+  }
+
+  function bracelet(g, u, v, color) {
+    const { c, x, y, radius } = g;
+    c.strokeStyle = color;
+    c.lineWidth = radius(0.01);
+    c.beginPath();
+    c.ellipse(x(u), y(v), radius(0.03), radius(0.02), 0, 0, FULL_TURN);
+    c.stroke();
+  }
+
+  // Montre : bracelet, boîtier et cadran.
+  function watch(g, u, v) {
+    const { c, x, y, radius } = g;
+    rect(c, x(u) - radius(0.008), y(v) - radius(0.04), radius(0.016), radius(0.08), '#6b4a2a');
+    circle(c, x(u), y(v), radius(0.022), '#d9d9e0');
+    circle(c, x(u), y(v), radius(0.016), '#ffffff');
+  }
+
+  // Diamant taillé : couronne et pointe.
+  function diamondShape(c, centerX, centerY, size) {
+    c.fillStyle = '#e8f6ff';
+    c.beginPath();
+    c.moveTo(centerX - size, centerY - size * 0.3);
+    c.lineTo(centerX - size * 0.5, centerY - size * 0.8);
+    c.lineTo(centerX + size * 0.5, centerY - size * 0.8);
+    c.lineTo(centerX + size, centerY - size * 0.3);
+    c.lineTo(centerX, centerY + size);
+    c.closePath();
+    c.fill();
+    c.strokeStyle = '#7fc8f8';
+    c.lineWidth = size * 0.12;
+    c.stroke();
+  }
+
+  // Éclat de lumière en étoile à quatre branches.
+  function sparkle(c, centerX, centerY, size) {
+    c.fillStyle = '#ffffff';
+    c.beginPath();
+    c.moveTo(centerX, centerY - size);
+    c.lineTo(centerX + size * 0.25, centerY - size * 0.25);
+    c.lineTo(centerX + size, centerY);
+    c.lineTo(centerX + size * 0.25, centerY + size * 0.25);
+    c.lineTo(centerX, centerY + size);
+    c.lineTo(centerX - size * 0.25, centerY + size * 0.25);
+    c.lineTo(centerX - size, centerY);
+    c.lineTo(centerX - size * 0.25, centerY - size * 0.25);
+    c.closePath();
+    c.fill();
   }
 
   Object.assign(Game.interiors, {
@@ -187,22 +278,63 @@
       },
     },
 
+    // Bijouterie : comptoir vitré au fond, vitrines murales, deux îlots de présentation
+    // et un gros diamant sur son coussin ; les pierres scintillent (drawAnimated).
     bijouterie: {
       activity: 'browse',
-      slots: [slot(0.25, 0.38), slot(0.75, 0.38), slot(0.22, 0.7), slot(0.78, 0.7)],
+      slots: [slot(0.3, 0.33), slot(0.7, 0.33), slot(0.2, 0.62), slot(0.8, 0.62)],
+      // Chaque client repart avec un petit écrin emballé.
+      souvenir: () => ({ kind: 'giftbox', color: Game.utils.pickRandom(JEWEL_BOX_COLORS) }),
       drawFurniture(g) {
         const { c, x, y, w, h, radius } = g;
-        checkerFloor(g, '#f4efe4', '#ebe3d2', 6);
-        // Vitrine du fond et ses bijoux.
-        rect(c, x(0.04), y(0.05), w(0.92), h(0.16), '#cfeef3');
-        for (let k = 0; k < 8; k++) {
-          circle(c, x(0.09 + k * 0.117), y(0.13), radius(0.03), k % 2 ? '#f2c14e' : '#2aa7b8');
+        checkerFloor(g, '#f4efe4', '#e9dfc9', 6);
+        // Tapis rouge de l'entrée au diamant.
+        rect(c, x(0.4), y(0.55), w(0.2), h(0.45), '#8e2a3c');
+        // Comptoir vitré du fond : velours bleu nuit, bagues, colliers, montres.
+        glassCase(g, 0.04, 0.03, 0.92, 0.16);
+        for (let k = 0; k < 5; k++) {
+          ring(g, 0.1 + k * 0.055, 0.1, JEWEL_COLORS[k % JEWEL_COLORS.length]);
         }
-        // Vitrines latérales et présentoir central.
-        rect(c, x(0.02), y(0.3), w(0.06), h(0.5), '#cfeef3');
-        rect(c, x(0.92), y(0.3), w(0.06), h(0.5), '#cfeef3');
-        circle(c, x(0.5), y(0.52), radius(0.14), '#cfeef3');
-        circle(c, x(0.5), y(0.52), radius(0.05), '#f2c14e');
+        necklace(g, 0.47, 0.06, 0.05, '#f2c14e', JEWEL_COLORS[1]);
+        necklace(g, 0.6, 0.06, 0.05, '#f3f3f3', JEWEL_COLORS[0]);
+        for (let k = 0; k < 3; k++) {
+          watch(g, 0.74 + k * 0.08, 0.11);
+        }
+        // Vitrines murales à gauche et à droite : colliers de perles et bracelets.
+        glassCase(g, 0.02, 0.27, 0.08, 0.42);
+        glassCase(g, 0.9, 0.27, 0.08, 0.42);
+        for (const u of [0.06, 0.94]) {
+          necklace(g, u, 0.31, 0.025, '#f3f3f3', '#f3f3f3');
+          bracelet(g, u, 0.47, '#f2c14e');
+          necklace(g, u, 0.55, 0.025, '#f2c14e', JEWEL_COLORS[2]);
+        }
+        // Deux îlots vitrés : bagues, boucles d'oreilles et bracelets.
+        for (const left of [0.17, 0.67]) {
+          glassCase(g, left, 0.42, 0.16, 0.12);
+          ring(g, left + 0.04, 0.48, JEWEL_COLORS[3]);
+          ring(g, left + 0.08, 0.5, JEWEL_COLORS[0]);
+          bracelet(g, left + 0.12, 0.47, '#d9d9e0');
+          circle(c, x(left + 0.05), y(0.515), radius(0.008), JEWEL_COLORS[1]);
+          circle(c, x(left + 0.065), y(0.515), radius(0.008), JEWEL_COLORS[1]);
+        }
+        // Gros diamant sur un coussin, sous une cloche de verre.
+        circle(c, x(0.5), y(0.5), radius(0.085), 'rgba(207,238,243,.9)');
+        rect(c, x(0.47), y(0.48), w(0.06), h(0.045), '#8e2a3c');
+        diamondShape(c, x(0.5), y(0.497), radius(0.03));
+        // Caisse, miroir et plante.
+        rect(c, x(0.04), y(0.8), w(0.22), h(0.1), '#5a3d2b');
+        rect(c, x(0.06), y(0.82), w(0.06), h(0.05), '#2a2e36');
+        circle(c, x(0.2), y(0.85), radius(0.03), '#2aa7b8');
+        ellipse(c, x(0.33), y(0.86), radius(0.035), radius(0.05), '#bfe3f2');
+      },
+      drawAnimated(g, lot, time) {
+        // Éclats de lumière qui passent d'une pierre à l'autre.
+        SPARKLES.forEach(([u, v], index) => {
+          const glow = Math.sin(time * 3 + index * 1.7);
+          if (glow > 0.4) {
+            sparkle(g.c, g.x(u), g.y(v), g.radius(0.03) * (glow - 0.3));
+          }
+        });
       },
     },
   });

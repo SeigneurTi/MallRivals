@@ -79,6 +79,11 @@
       slotIndex: null,          // sa place dans la boutique
       insidePhase: null,        // 'toSlot' puis 'active'
       activity: null,           // browse, sit, bowl… (voir js/people/activities.js)
+      cabin: null,              // piscine : cabine du vestiaire
+      isChanging: false,        // dans la cabine : invisible
+      inSwimsuit: false,        // en maillot de bain (piscine)
+      mustDress: false,         // doit repasser au vestiaire avant de sortir
+      swimsuitColor: null,
       stayTimer: 0,
       sessionOver: false,       // cinéma : la séance est finie
       isRemoved: false,         // emporté par un OVNI
@@ -144,6 +149,9 @@
     let nearest = null;
     let nearestDistance = PEOPLE.HOVER_RADIUS;
     for (const person of Game.state.people) {
+      if (person.isChanging) {
+        continue;   // invisible dans sa cabine
+      }
       // On vise le buste, une dizaine d'unités au-dessus des pieds.
       const distance = Math.hypot(person.x - x, person.y - 10 - y);
       if (distance < nearestDistance) {

@@ -90,6 +90,7 @@
 
   function exitShopNow(person) {
     takeSouvenir(person);
+    forgetChangingRoom(person);
     releaseSlot(person);
     person.x = person.door[0];
     person.y = person.door[1];
@@ -106,6 +107,7 @@
     person.state = PERSON_STATE.LEAVING;
     person.target = person.door;
     person.activity = null;
+    person.mustDress = Boolean(person.inSwimsuit);
   }
 
   // Enlevé par un OVNI : il disparaît à la prochaine image.
@@ -116,6 +118,34 @@
 
   function isInOrEnteringShop(person) {
     return person.state === PERSON_STATE.INSIDE || person.state === PERSON_STATE.ENTERING || person.state === PERSON_STATE.LEAVING;
+  }
+
+  // Vestiaire (piscine) : aller à l'entrée de sa cabine, puis y rester caché le temps de se changer.
+  // Renvoie true une fois changé.
+  function changeClothes(person, dt) {
+    const interior = Game.interiors[person.lot.shop.id];
+    const cabin = interior.changingCabins[person.cabin];
+    if (!person.isChanging) {
+      const cabinDoor = Game.shopGeometry.lotPointToBoard(person.lot, cabin.u, cabin.v);
+      if (!Game.people.walkAvoiding(person, cabinDoor, dt, PEOPLE.INSIDE_WALK_FACTOR)) {
+        return false;
+      }
+      person.isChanging = true;
+      person.changeTimer = Game.config.pool.CHANGE_SECONDS;
+    }
+    person.changeTimer -= dt;
+    if (person.changeTimer > 0) {
+      return false;
+    }
+    person.isChanging = false;
+    return true;
+  }
+
+  // Remet ses vêtements d'un coup (boutique détruite pendant qu'on est en maillot).
+  function forgetChangingRoom(person) {
+    person.isChanging = false;
+    person.inSwimsuit = false;
+    person.mustDress = false;
   }
 
   // Arrivé à la porte : il prend une place libre (et paie), ou fait demi-tour si c'est complet.
@@ -134,6 +164,13 @@
     person.drawScale = PEOPLE.INSIDE_SCALE;
     person.sessionOver = false;
     person.target = Game.people.slotPosition(person);
+    // Piscine : d'abord le vestiaire, dans la cabine la moins occupée.
+    const changingCabins = Game.interiors[lot.shop.id].changingCabins;
+    if (changingCabins) {
+      const usersOfCabin = cabinIndex => Game.state.people.filter(other => other.lot === lot && other.cabin === cabinIndex && (other.isChanging || other.insidePhase === 'changing')).length;
+      person.cabin = usersOfCabin(0) <= usersOfCabin(1) ? 0 : 1;
+      person.insidePhase = 'changing';
+    }
 
     const income = Game.catalog.incomePerCustomer(lot);
     if (lot.owner != null) {
@@ -173,6 +210,15 @@
           exitShopNow(person);
           return true;
         }
+        if (person.insidePhase === 'changing') {
+          // En ressortant de la cabine : maillot de bain, puis direction sa place.
+          if (changeClothes(person, dt)) {
+            person.inSwimsuit = true;
+            person.swimsuitColor = Game.utils.pickRandom(Game.interiors[person.lot.shop.id].swimsuitColors);
+            person.insidePhase = 'toSlot';
+          }
+          return true;
+        }
         if (person.insidePhase === 'toSlot') {
           // La cible est recalculée à chaque image (le manège tourne, la nageuse avance…).
           if (Game.people.walkAvoiding(person, Game.people.slotPosition(person), dt, PEOPLE.INSIDE_WALK_FACTOR)) {
@@ -185,6 +231,16 @@
         return true;
 
       case PERSON_STATE.LEAVING:
+        // En maillot : on repasse par le vestiaire pour se rhabiller avant de sortir.
+        if (person.mustDress) {
+          if (!person.lot.shop || !Game.interiors[person.lot.shop.id].changingCabins) {
+            forgetChangingRoom(person);
+          } else if (changeClothes(person, dt)) {
+            person.mustDress = false;
+            person.inSwimsuit = false;
+          }
+          return true;
+        }
         if (Game.people.walkAvoiding(person, person.door, dt, PEOPLE.LEAVING_WALK_FACTOR)) {
           person.state = PERSON_STATE.RETURNING;
           person.target = person.returnPoint;

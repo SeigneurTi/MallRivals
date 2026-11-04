@@ -11,13 +11,17 @@
   const SEATED_SHIN = 3.5;
 
   function draw(person, isHovered) {
+    if (person.isChanging) {
+      return;   // dans une cabine du vestiaire
+    }
     const ctx = Game.view.ctx;
     ctx.save();
     ctx.translate(person.x, person.y);
     ctx.scale(person.drawScale, person.drawScale);
 
-    // Nageur : seule la tête dépasse, avec un remous autour.
-    if (person.activity === 'swim' && person.state === PERSON_STATE.INSIDE && person.insidePhase === 'active') {
+    // Nageur ou client du jacuzzi : seule la tête dépasse, avec un remous autour.
+    const isInWater = person.activity === 'swim' || person.activity === 'soak';
+    if (isInWater && person.state === PERSON_STATE.INSIDE && person.insidePhase === 'active') {
       ctx.strokeStyle = 'rgba(255,255,255,.8)';
       ctx.lineWidth = 1.2;
       ctx.beginPath();
@@ -52,7 +56,7 @@
     // Jambes : chacune va de la hanche au pied en passant par le genou.
     // Debout, la jambe est droite ; assis, la cuisse part vers l'avant et le tibia descend.
     const hipY = -6 - bob + drop;
-    ctx.strokeStyle = person.pants;
+    ctx.strokeStyle = person.inSwimsuit ? person.skin : person.pants;
     ctx.lineWidth = 2.2;
     ctx.lineCap = 'round';
     ctx.lineJoin = 'round';
@@ -80,12 +84,21 @@
     }
     ctx.stroke();
 
-    // Buste, et jupe pour les filles.
+    // Buste, et jupe pour les filles. En maillot de bain : maillot une pièce pour les filles,
+    // short de bain pour les garçons.
     const top = -bob + drop;
-    ctx.fillStyle = person.shirt;
+    ctx.fillStyle = person.inSwimsuit ? person.skin : person.shirt;
     roundedRectPath(ctx, -3.8, -12.5 + top, 7.6, 7.5, 2.5);
     ctx.fill();
-    if (person.skirt) {
+    if (person.inSwimsuit) {
+      ctx.fillStyle = person.swimsuitColor;
+      if (person.isGirl) {
+        roundedRectPath(ctx, -3.2, -11.5 + top, 6.4, 6.6, 1.8);
+      } else {
+        roundedRectPath(ctx, -3.8, -7.6 + top, 7.6, 3, 1);
+      }
+      ctx.fill();
+    } else if (person.skirt) {
       ctx.fillStyle = person.skirt;
       ctx.beginPath();
       ctx.moveTo(-3.6, -7.2 + top);
@@ -144,7 +157,7 @@
     const isOut = person.state === PERSON_STATE.RETURNING || person.state === PERSON_STATE.LEAVING;
     if (person.souvenir && (isOut || person.state === PERSON_STATE.WALKING)) {
       drawSouvenir(ctx, person, top);
-    } else if (isOut) {
+    } else if (isOut && !person.inSwimsuit) {   // en maillot, on va d'abord se rhabiller
       ctx.fillStyle = '#f2c14e';
       ctx.fillRect(3, -10 + top, 5, 5);
       ctx.strokeStyle = '#a0673c';
@@ -187,6 +200,13 @@
       souvenir.scoops.forEach((color, k) => {
         circle(ctx, handX, handY - 3.8 - k * 2, 1.7, color);
       });
+    } else if (souvenir.kind === 'giftbox') {
+      // Petit écrin de la bijouterie, avec son ruban.
+      ctx.fillStyle = souvenir.color;
+      ctx.fillRect(handX - 1.8, handY - 3, 3.6, 3.2);
+      ctx.fillStyle = '#f2c14e';
+      ctx.fillRect(handX - 0.4, handY - 3, 0.8, 3.2);
+      circle(ctx, handX, handY - 3.3, 0.8, '#f2c14e');
     }
   }
 
