@@ -5,7 +5,7 @@
 
   const config = Game.config;
 
-  // Les 23 boutiques, de la moins chère à la plus chère.
+  // Les 24 boutiques, de la moins chère à la plus chère.
   // color : couleur de l'enseigne et des murs ; icon : voir js/icons.js.
   const SHOPS = [
     { id: 'fleuriste', name: 'Fleuriste', price: 60, color: '#e8578f', icon: 'flower' },
@@ -24,6 +24,7 @@
     { id: 'arcade', name: 'Arcade', price: 300, color: '#8c3fd1', icon: 'joystick' },
     { id: 'restaurant', name: 'Restaurant', price: 330, color: '#7d2a3a', icon: 'cutlery' },
     { id: 'bowling', name: 'Bowling', price: 360, color: '#d6336c', icon: 'pin' },
+    { id: 'lasergame', name: 'Laser game', price: 380, color: '#2bd1a0', icon: 'laser' },
     { id: 'cinema', name: 'Cinéma', price: 400, color: '#d22f3b', icon: 'reel' },
     { id: 'bijouterie', name: 'Bijouterie', price: 450, color: '#2aa7b8', icon: 'diamond' },
     { id: 'piscine', name: 'Piscine', price: 480, color: '#4fa8de', icon: 'pool' },

@@ -2,6 +2,15 @@
 
 Les versions les plus récentes sont en haut.
 
+## v2.9 — Fleuriste, souvenirs, laser game, billard corrigé (4 novembre 2026)
+
+- **Fleuriste** réaménagé : étagère de 8 pots fleuris, seaux de bouquets, jardinières suspendues, table de présentation, comptoir avec bouquet emballé, pétales au sol. Toujours 4 places.
+- **Souvenirs** : les clients du fleuriste repartent avec une fleur, ceux du glacier avec un cornet de 1 à 3 boules de couleurs différentes ; ils les gardent jusqu'à la sortie de la ville. Ailleurs, toujours le sac jaune.
+- **Laser game** (380 $, 10 joueurs) : comme au cinéma, 30 s pour entrer et s'équiper (équipe rouge à gauche, bleue à droite), puis 25 s de partie dans le noir pendant lesquelles personne n'entre. Les joueurs courent entre les obstacles fluo et se tirent dessus au fusil laser ; le gilet du joueur touché clignote. À la fin : « Équipe rouge gagne ! », « Équipe bleue gagne ! » ou « Égalité ! ».
+- **Billard corrigé** : le joueur dont c'est le tour marche avec sa queue jusqu'au point de tir, derrière la blanche et dans l'axe du coup ; la queue va de ses mains à la bille et le coup ne part qu'une fois en place. L'autre joueur attend, queue debout à la main.
+- Code : les séances (cinéma, laser game) sont un mécanisme commun (`session` dans l'intérieur) ; un intérieur peut donner un souvenir (`souvenir`).
+- Fichiers : nouveau `js/shops/interiors-lasergame.js` ; modifiés `js/shops/shop.js`, `js/shops/interiors-shops.js`, `js/shops/interiors-food.js`, `js/shops/interiors-leisure.js`, `js/shops/interiors-night.js`, `js/shops/geometry.js`, `js/people/activities.js`, `js/people/behaviour.js`, `js/people/draw.js`, `js/people/person.js`, `js/catalog.js`, `js/names.js`, `js/icons.js`, `js/config.js`, `index.html`.
+
 ## v2.8 — Banque, billard, partie auto, événements plus rares (4 novembre 2026)
 
 - **Banque** : toujours au centre de la carte, elle n'appartient à personne et ne peut pas être détruite (les événements l'épargnent, la météorite rebondit dessus). Quand son coffre est plein, une voiture-voleur l'emporte : +600 $. Le coffre se vide, puis l'or revient peu à peu (lingots visibles, « Or 45 % ») : pillable à nouveau au bout de 2 minutes. Son menu indique le temps restant.

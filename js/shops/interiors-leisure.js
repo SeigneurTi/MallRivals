@@ -104,6 +104,12 @@
     // 18 fauteuils en 3 rangées. Séances : voir Game.shops.update.
     cinema: {
       activity: 'session',
+      session: {
+        WAITING_SECONDS: Game.config.cinema.WAITING_SECONDS,
+        RUNNING_SECONDS: Game.config.cinema.FILM_SECONDS,
+        waitingLabel: remaining => `Séance dans ${remaining} s`,
+        runningLabel: remaining => `Film · ${remaining} s`,
+      },
       // Les spectateurs regardent l'écran (facesScreen), pas sur le côté.
       slots: CINEMA_ROWS_V.flatMap(v => CINEMA_SEATS_U.map(u => Object.assign(slot(u, v), { facesScreen: true }))),
       drawFurniture(g) {
@@ -119,7 +125,7 @@
       },
       drawAnimated(g, lot, time) {
         const { c, x, y, w, h } = g;
-        if (lot.cinema.phase === 'film') {
+        if (lot.session.phase === 'running') {
           // Image du film : bandes de couleurs changeantes.
           for (let k = 0; k < 8; k++) {
             const hue = (time * 60 + k * 25 + Math.sin(time * 3 + k) * 40) % 360;

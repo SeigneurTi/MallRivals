@@ -65,6 +65,7 @@
       hairStyle: isGirl ? pickRandom(GIRL_HAIR_STYLES) : 'short',
       skirt: isGirl ? pickRandom(SHIRT_COLORS) : null,
       sitAmount: 0,             // 0 : debout, 1 : assis (varie progressivement)
+      souvenir: null,           // objet emporté d'une boutique : { kind: 'flower' | 'icecream', … }
       seatView: null,           // assis face à un écran : 'back' (vu de dos) ou 'front' (vu de face)
       x: 0,
       y: 0,

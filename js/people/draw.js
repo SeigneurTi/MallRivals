@@ -96,6 +96,32 @@
       ctx.fill();
     }
 
+    const isActiveInside = person.state === PERSON_STATE.INSIDE && person.insidePhase === 'active';
+
+    // Billard : on tient sa queue debout, sauf quand on vise (la table la dessine alors).
+    if (person.activity === 'billiard' && person.state === PERSON_STATE.INSIDE && !person.cueOnTable) {
+      ctx.strokeStyle = '#c8a165';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(person.facing * 4.5, 0);
+      ctx.lineTo(person.facing * 4.5, -19 + top);
+      ctx.stroke();
+      circle(ctx, person.facing * 4.5, -19 + top, 0.6, '#3d7dd8');
+    }
+
+    // Laser game : gilet lumineux de l'équipe (blanc quand on est touché) et fusil.
+    if (person.activity === 'laser' && isActiveInside) {
+      const teamColor = Game.interiors.lasergame.TEAM_COLORS[person.laserTeam];
+      circle(ctx, 0, -9.5 + top, 1.6, person.hitFlash > 0 ? '#ffffff' : teamColor);
+      ctx.fillStyle = '#2a2e36';
+      ctx.fillRect(person.facing > 0 ? 0.5 : -7.5, -10.5 + top, 7, 1.8);   // canon
+      ctx.fillRect(person.facing > 0 ? 1 : -3, -9.5 + top, 2, 2.5);         // poignée
+      circle(ctx, person.facing * 7.5, -9.6 + top, 0.7, teamColor);         // bout du canon
+      if (person.muzzleFlash > 0) {
+        circle(ctx, person.facing * 8, -9.6 + top, 1.8, '#ffffff');
+      }
+    }
+
     // Danseur : bras levés qui s'agitent en rythme.
     if (person.activity === 'dance' && person.state === PERSON_STATE.INSIDE && person.insidePhase === 'active') {
       const wave = Math.sin(person.walkPhase * 1.5) * 1.5;
@@ -112,8 +138,12 @@
     const seenFromBack = person.seatView === 'back' && sit > 0.5;
     drawHead(ctx, person, -16 + top, seenFromBack);
 
-    // En sortant d'une boutique, on porte un sac.
-    if (person.state === PERSON_STATE.RETURNING || person.state === PERSON_STATE.LEAVING) {
+    // Souvenir (fleur, cornet) : gardé jusqu'à la sortie de la ville.
+    // Sinon, en sortant d'une boutique, on porte un sac.
+    const isOut = person.state === PERSON_STATE.RETURNING || person.state === PERSON_STATE.LEAVING;
+    if (person.souvenir && (isOut || person.state === PERSON_STATE.WALKING)) {
+      drawSouvenir(ctx, person, top);
+    } else if (isOut) {
       ctx.fillStyle = '#f2c14e';
       ctx.fillRect(3, -10 + top, 5, 5);
       ctx.strokeStyle = '#a0673c';
@@ -121,6 +151,42 @@
       ctx.strokeRect(3, -10 + top, 5, 5);
     }
     ctx.restore();
+  }
+
+  // Fleur ou cornet tenu à la main, du côté où le passant regarde.
+  function drawSouvenir(ctx, person, top) {
+    const handX = person.facing * 4.2;
+    const handY = -8.5 + top;
+    const souvenir = person.souvenir;
+    if (souvenir.kind === 'flower') {
+      // Tige, feuille, puis la fleur.
+      ctx.strokeStyle = '#3f8a3a';
+      ctx.lineWidth = 0.9;
+      ctx.beginPath();
+      ctx.moveTo(handX, handY + 1);
+      ctx.lineTo(handX + person.facing * 0.8, handY - 7);
+      ctx.stroke();
+      circle(ctx, handX + person.facing * 0.9, handY - 3.5, 0.9, '#4d9b42');
+      const headX = handX + person.facing * 0.8;
+      const headY = handY - 7.5;
+      for (let k = 0; k < 5; k++) {
+        const angle = k * Math.PI * 2 / 5;
+        circle(ctx, headX + Math.cos(angle) * 1.3, headY + Math.sin(angle) * 1.3, 1.1, souvenir.color);
+      }
+      circle(ctx, headX, headY, 0.8, '#f2c14e');
+    } else if (souvenir.kind === 'icecream') {
+      // Cornet, puis les boules empilées.
+      ctx.fillStyle = '#d9a35b';
+      ctx.beginPath();
+      ctx.moveTo(handX - 1.5, handY - 3);
+      ctx.lineTo(handX + 1.5, handY - 3);
+      ctx.lineTo(handX, handY + 1.5);
+      ctx.closePath();
+      ctx.fill();
+      souvenir.scoops.forEach((color, k) => {
+        circle(ctx, handX, handY - 3.8 - k * 2, 1.7, color);
+      });
+    }
   }
 
   // Tête et coiffure (centre de la tête en (0, headY)).

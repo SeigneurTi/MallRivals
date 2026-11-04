@@ -6,7 +6,7 @@
 
 - [ ] La page s'ouvre sans message d'erreur rouge sous le titre.
 - [ ] Le plateau montre 4 routes qui sortent du cadre, 36 cases grises, quelques ronds roses 4 boutiques déjà ouvertes (2 par joueur, contour orange ou bleu) et la banque au centre.
-- [ ] Chaque bac affiche 25 cartes avec leur prix et leur nom en petit dessous, et « 1000 bucks » en bas.
+- [ ] Chaque bac affiche 26 cartes avec leur prix et leur nom en petit dessous, et « 1000 bucks » en bas.
 - [ ] Les accents s'affichent correctement (« Météorite », « Hôtel », « Manège »).
 - [ ] Des passants arrivent par les 4 routes et se promènent.
 
@@ -59,9 +59,16 @@
 - [ ] Météorite sur la banque : « La banque est trop solide ! », rien n'est payé.
 - [ ] Toucher la banque : le menu indique le temps restant avant que le coffre soit plein (2 minutes en tout).
 
+## Fleuriste, glacier, laser game
+
+- [ ] Fleuriste plein de fleurs (étagère, seaux, jardinières, table, comptoir) ; les clients repartent avec une fleur à la main et la gardent dans la rue.
+- [ ] Glacier : les clients repartent avec un cornet de 1 à 3 boules de couleurs différentes.
+- [ ] Laser game : « Partie dans 30 s » pendant que les joueurs se placent dans leur base (rouge à gauche, bleue à droite) ; puis « Partie · 25 s », salle sombre, personne n'entre, les joueurs courent et tirent des lasers ; le gilet du joueur touché clignote en blanc ; à la fin, l'équipe gagnante s'affiche et tout le monde sort.
+
 ## Billard
 
-- [ ] 2 tables ; un client à chaque bout. À deux, ils jouent chacun leur tour : la queue recule, la blanche part, les billes rebondissent et tombent dans les poches.
+- [ ] 2 tables ; un client à chaque bout. À deux, ils jouent chacun leur tour.
+- [ ] Le tireur marche avec sa queue jusque derrière la blanche, dans l'axe du coup ; la queue va de ses mains à la bille, recule, puis la blanche part. L'autre joueur attend, queue debout à la main.
 - [ ] Quand toutes les billes sont rentrées : « Partie gagnée ! » et les billes sont remises en triangle.
 
 ## Partie auto

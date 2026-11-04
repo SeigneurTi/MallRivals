@@ -329,6 +329,21 @@
       dot(c, cx, cy - r * 0.45, r * 0.1);
     },
 
+    laser(c, cx, cy, r, color) {
+      // Pistolet laser et son rayon.
+      c.fillStyle = '#2a2e36';
+      c.fillRect(cx - r * 0.7, cy - r * 0.2, r * 0.95, r * 0.32);    // canon
+      c.fillRect(cx - r * 0.55, cy + r * 0.05, r * 0.28, r * 0.5);   // crosse
+      c.strokeStyle = color;
+      c.lineWidth = r * 0.16;
+      c.beginPath();
+      c.moveTo(cx + r * 0.3, cy - r * 0.04);
+      c.lineTo(cx + r * 0.8, cy - r * 0.04);
+      c.stroke();
+      c.fillStyle = color;
+      dot(c, cx + r * 0.8, cy - r * 0.04, r * 0.14);
+    },
+
     H(c, cx, cy, r) {
       c.font = `800 ${r * 1.5}px "Baloo 2", system-ui, sans-serif`;
       c.textAlign = 'center';

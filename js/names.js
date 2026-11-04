@@ -28,6 +28,7 @@
     discotheque: 'la ',
     billard: 'la salle de ',
     banque: 'la ',
+    lasergame: 'le ',
   };
 
   // « le Cinéma », « la boutique de vêtements ».

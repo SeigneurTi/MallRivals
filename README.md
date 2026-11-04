@@ -22,7 +22,7 @@ bourg-les-bonhommes/
 │   ├── canvas.js            Canvas, mise à l'échelle de l'écran (Game.view)
 │   ├── draw.js              Primitives : rectangle, disque, ellipse, rectangle arrondi
 │   ├── map.js               Carrefours, rues, sorties, cases, recherche de trajet
-│   ├── catalog.js           ★ Les 23 boutiques, la banque et les 2 malus, formules de gains
+│   ├── catalog.js           ★ Les 24 boutiques, la banque et les 2 malus, formules de gains
 │   ├── names.js             « le Cinéma », « au Cinéma », « du Cinéma »…
 │   ├── icons.js             Icônes des enseignes et des cartes
 │   ├── sprites.js           Bouclier, voiture, icônes des malus
@@ -35,6 +35,7 @@ bourg-les-bonhommes/
 │   │   ├── interiors-leisure.js  Coiffeur, arcade, bowling, cinéma, piscine, manège, hôtel
 │   │   ├── interiors-night.js    Billard, casino, discothèque
 │   │   ├── interiors-bank.js     Banque (coffre, lingots)
+│   │   ├── interiors-lasergame.js Laser game (équipes, tirs)
 │   │   └── shop.js          Ouverture, places libres, séances, pistes, dessin du bâtiment
 │   ├── state.js             État de la partie (Game.state), nouvelle partie, destruction
 │   ├── feedback.js          Journal, bannière, textes flottants
@@ -73,6 +74,8 @@ bourg-les-bonhommes/
 | Vitesse des passants, durée de séjour par activité | `js/config.js` | `people` |
 | Bowling (lancers, durées, chance de strike) | `js/config.js` | `bowling` |
 | Durée de l'attente et du film au cinéma | `js/config.js` | `cinema` |
+| Durée de l'attente et de la partie au laser game, cadence de tir | `js/config.js` | `lasergame` |
+| Ce que les clients emportent (fleur, cornet) | `js/shops/interiors-*.js` | `souvenir` de la boutique |
 | Réussite de la voiture-voleur, vitesse de la voiture | `js/config.js` | `thief` |
 | Fréquence des incendies, monstres, OVNI | `js/config.js` | `events` |
 | Butin, emplacement et remplissage de la banque | `js/config.js` | `bank` |

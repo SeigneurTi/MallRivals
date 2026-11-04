@@ -45,6 +45,13 @@
     }
     person.stayTimer = durations[activity] || PEOPLE.DEFAULT_STAY_SECONDS;
 
+    if (activity === 'laser') {
+      person.laserTeam = slot.team;
+      person.shootTimer = randomBetween(Game.config.lasergame.SHOT_DELAY_MIN, Game.config.lasergame.SHOT_DELAY_MAX);
+      person.roamTarget = null;
+      person.hitFlash = 0;
+      person.muzzleFlash = 0;
+    }
     if (activity === 'bowl') {
       person.throwCount = 0;
       person.bowlingPhase = 'aim';   // 'aim' → 'roll' → 'wait', trois fois
@@ -81,6 +88,16 @@
       person.walkPhase = beat;
       person.facing = Math.sin(beat * 0.25 + person.slotIndex) > 0 ? 1 : -1;
     }
+    if (person.activity === 'laser') {
+      updateLaserPlayer(person, dt, lot, slot);
+      if (person.sessionOver) {
+        Game.people.leaveShop(person);
+      }
+      return;
+    }
+    if (person.activity === 'billiard') {
+      updateBilliardPlayer(person, dt, lot);
+    }
     if (person.activity === 'session') {
       // Au cinéma, on reste jusqu'à la fin du film.
       if (person.sessionOver) {
@@ -95,6 +112,74 @@
     person.stayTimer -= dt;
     if (person.stayTimer <= 0) {
       Game.people.leaveShop(person);
+    }
+  }
+
+  // Marche vers un point, sans « piétiner » une fois arrivé. Renvoie true à l'arrivée.
+  function walkTo(person, point, dt, speedFactor) {
+    if (Math.hypot(point[0] - person.x, point[1] - person.y) < 0.3) {
+      return true;
+    }
+    person.target = point;
+    return Game.people.moveToward(person, dt, speedFactor);
+  }
+
+  // Laser game. Pendant l'attente : rester dans sa base. Pendant la partie : courir d'un point
+  // à l'autre de l'arène et tirer régulièrement sur un joueur de l'autre équipe.
+  function updateLaserPlayer(person, dt, lot, slot) {
+    const LASERGAME = Game.config.lasergame;
+    person.muzzleFlash = Math.max(0, person.muzzleFlash - dt);
+    person.hitFlash = Math.max(0, person.hitFlash - dt);
+    if (lot.session.phase !== 'running') {
+      walkTo(person, slotPosition(person), dt, 0.5);
+      person.facing = slot.facing;
+      return;
+    }
+    if (!person.roamTarget) {
+      person.roamTarget = clampInside(lot, lotPointToBoard(lot, randomBetween(0.08, 0.92), randomBetween(0.22, 0.86)));
+    }
+    if (walkTo(person, person.roamTarget, dt, 0.75)) {
+      person.roamTarget = null;
+    }
+    person.shootTimer -= dt;
+    if (person.shootTimer <= 0) {
+      person.shootTimer = randomBetween(LASERGAME.SHOT_DELAY_MIN, LASERGAME.SHOT_DELAY_MAX);
+      const opponents = lot.occupants.filter(other => other && other.activity === 'laser'
+        && other.insidePhase === 'active' && other.laserTeam !== person.laserTeam);
+      if (opponents.length) {
+        shootLaser(person, Game.utils.pickRandom(opponents), lot);
+      }
+    }
+    // Juste après un tir, on reste tourné vers sa cible.
+    if (person.muzzleFlash > 0) {
+      person.facing = person.aimFacing;
+    }
+  }
+
+  function shootLaser(shooter, target, lot) {
+    const { boardPointToLot } = Game.shopGeometry;
+    shooter.aimFacing = target.x >= shooter.x ? 1 : -1;
+    shooter.facing = shooter.aimFacing;
+    shooter.muzzleFlash = 0.12;
+    // Du canon du fusil (à hauteur de poitrine) jusqu'au buste de la cible.
+    const scale = shooter.drawScale;
+    const from = boardPointToLot(lot, shooter.x + shooter.facing * 7.5 * scale, shooter.y - 9.5 * scale);
+    const to = boardPointToLot(lot, target.x, target.y - 9 * target.drawScale);
+    lot.laser.shots.push({ from, to, team: shooter.laserTeam, age: 0 });
+    target.hitFlash = 0.35;
+    lot.laser.hits[shooter.laserTeam]++;
+  }
+
+  // Billard : le joueur dont c'est le tour va se placer derrière la bille blanche, dans l'axe
+  // du coup (point calculé par la table, voir js/shops/interiors-night.js) ; l'autre attend à sa place.
+  function updateBilliardPlayer(person, dt, lot) {
+    const table = lot.billiardTables[Math.floor(person.slotIndex / 2)];
+    const isShooter = Boolean(table.aim && table.shooterSlot === person.slotIndex);
+    walkTo(person, isShooter ? table.standPoint : slotPosition(person), dt, 0.6);
+    // Une fois en place, la queue est dessinée par la table, dans l'axe du coup.
+    person.cueOnTable = isShooter && table.shooterReady;
+    if (isShooter) {
+      person.facing = table.cueBallPoint[0] >= person.x ? 1 : -1;
     }
   }
 

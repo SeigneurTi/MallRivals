@@ -58,5 +58,12 @@
     return [frame.left + u * frame.width, frame.top + (frame.flipped ? 1 - v : v) * frame.height];
   }
 
-  Game.shopGeometry = { wallThickness, frameOfLot, withPainter, lotPointToBoard };
+  // L'inverse : coordonnées (u, v) de l'intérieur d'un point du plateau.
+  function boardPointToLot(lot, x, y) {
+    const frame = frameOfLot(lot);
+    const v = (y - frame.top) / frame.height;
+    return [(x - frame.left) / frame.width, frame.flipped ? 1 - v : v];
+  }
+
+  Game.shopGeometry = { wallThickness, frameOfLot, withPainter, lotPointToBoard, boardPointToLot };
 })();

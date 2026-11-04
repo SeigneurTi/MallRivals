@@ -82,7 +82,14 @@
   }
 
   // Sortie immédiate (boutique détruite) : le passant réapparaît sur le pas de la porte.
+  // Ce que le client emporte de la boutique (une fleur, un cornet…) : voir interior.souvenir.
+  function takeSouvenir(person) {
+    const interior = person.lot && person.lot.shop && Game.interiors[person.lot.shop.id];
+    person.souvenir = interior && interior.souvenir ? interior.souvenir() : null;
+  }
+
   function exitShopNow(person) {
+    takeSouvenir(person);
     releaseSlot(person);
     person.x = person.door[0];
     person.y = person.door[1];
@@ -94,6 +101,7 @@
 
   // Fin de l'activité : le passant regagne la porte à pied.
   function leaveShop(person) {
+    takeSouvenir(person);
     releaseSlot(person);
     person.state = PERSON_STATE.LEAVING;
     person.target = person.door;
@@ -203,6 +211,7 @@
   }
 
   Object.assign(Game.people, {
+    moveToward,
     tryEnterShop,
     leaveShop,
     exitShopNow,

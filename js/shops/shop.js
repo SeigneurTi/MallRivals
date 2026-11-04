@@ -5,7 +5,6 @@
 
   const { FULL_TURN, rect, circle, roundedRectPath } = Game.draw;
   const { wallThickness, frameOfLot, withPainter, lotPointToBoard } = Game.shopGeometry;
-  const CINEMA = Game.config.cinema;
   const PLAYER_COLORS = Game.config.players.COLORS;
 
   // Chaque boutique reçoit 3 pistes de bowling, utilisées seulement par le bowling.
@@ -20,7 +19,8 @@
       ballProgress: -1,     // -1 : pas de boule sur la piste
       pinsDownTimer: 0,     // > 0 : les quilles sont à terre
     }));
-    lot.cinema = { phase: 'waiting', elapsed: 0 };   // 'waiting' puis 'film'
+    // Séances (cinéma, laser game) : 'waiting' (on entre) puis 'running' (film, partie).
+    lot.session = { phase: 'waiting', elapsed: 0 };
     lot.isBank = false;
     // État propre à certaines boutiques (tables de billard, or de la banque…).
     const interior = Game.interiors[shop.id];
@@ -40,13 +40,13 @@
     return lot.isBank && lot.bank.gold >= 1;
   }
 
-  // Un passant peut-il entrer ? Il faut une place libre, et au cinéma, pas de film en cours.
+  // Un passant peut-il entrer ? Il faut une place libre et, pour une séance, qu'elle n'ait pas commencé.
   function hasFreeSlot(lot) {
     if (!lot.shop || !lot.occupants.some(occupant => !occupant)) {
       return false;
     }
-    const isCinema = Game.interiors[lot.shop.id].activity === 'session';
-    return !(isCinema && lot.cinema.phase !== 'waiting');
+    const hasSessions = Boolean(Game.interiors[lot.shop.id].session);
+    return !(hasSessions && lot.session.phase !== 'waiting');
   }
 
   function update(lot, dt) {
@@ -58,30 +58,38 @@
         lane.pinsDownTimer = Math.max(0, lane.pinsDownTimer - dt);
       }
     }
-    if (Game.interiors[lot.shop.id].activity === 'session') {
-      updateCinema(lot, dt);
-    }
     const interior = Game.interiors[lot.shop.id];
+    if (interior.session) {
+      updateSession(lot, interior, dt);
+    }
     if (interior.update) {
       interior.update(lot, dt);
     }
   }
 
-  // Attente (les spectateurs s'installent), puis film (personne n'entre),
-  // puis toute la salle sort et une nouvelle attente commence.
-  function updateCinema(lot, dt) {
-    const cinema = lot.cinema;
-    cinema.elapsed += dt;
-    if (cinema.phase === 'waiting' && cinema.elapsed >= CINEMA.WAITING_SECONDS) {
-      cinema.phase = 'film';
-      cinema.elapsed = 0;
-    } else if (cinema.phase === 'film' && cinema.elapsed >= CINEMA.FILM_SECONDS) {
-      cinema.phase = 'waiting';
-      cinema.elapsed = 0;
+  // Attente (les clients s'installent), puis séance (personne n'entre),
+  // puis tout le monde sort et une nouvelle attente commence.
+  // Durées et textes : interior.session (WAITING_SECONDS, RUNNING_SECONDS, waitingLabel, runningLabel).
+  function updateSession(lot, interior, dt) {
+    const session = lot.session;
+    const timing = interior.session;
+    session.elapsed += dt;
+    if (session.phase === 'waiting' && session.elapsed >= timing.WAITING_SECONDS) {
+      session.phase = 'running';
+      session.elapsed = 0;
+      if (interior.onSessionStart) {
+        interior.onSessionStart(lot);
+      }
+    } else if (session.phase === 'running' && session.elapsed >= timing.RUNNING_SECONDS) {
+      session.phase = 'waiting';
+      session.elapsed = 0;
       for (const person of lot.occupants) {
         if (person) {
           person.sessionOver = true;
         }
+      }
+      if (interior.onSessionEnd) {
+        interior.onSessionEnd(lot);
       }
     }
   }
@@ -192,10 +200,11 @@
       // Banque : état du coffre.
       label = isBankFull(lot) ? 'Coffre plein' : `Or ${Math.floor(lot.bank.gold * 100)} %`;
       color = isBankFull(lot) ? '#b8860b' : '#5b6b7a';
-    } else if (interior.activity === 'session') {
-      const isWaiting = lot.cinema.phase === 'waiting';
-      const remaining = Math.ceil((isWaiting ? CINEMA.WAITING_SECONDS : CINEMA.FILM_SECONDS) - lot.cinema.elapsed);
-      label = isWaiting ? `Séance dans ${remaining} s` : `Film · ${remaining} s`;
+    } else if (interior.session) {
+      const timing = interior.session;
+      const isWaiting = lot.session.phase === 'waiting';
+      const remaining = Math.ceil((isWaiting ? timing.WAITING_SECONDS : timing.RUNNING_SECONDS) - lot.session.elapsed);
+      label = isWaiting ? timing.waitingLabel(remaining) : timing.runningLabel(remaining);
       color = isWaiting ? '#2f7d6d' : '#d22f3b';
     } else if (!freeSlots) {
       label = 'Complet';

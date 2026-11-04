@@ -58,6 +58,12 @@
     glacier: {
       activity: 'sit',
       slots: seatPairs([0.27, 0.73], 0.62, 0.1),
+      // On repart avec un cornet de 1 à 3 boules de parfums différents.
+      souvenir: () => {
+        const flavours = ['#f7b2c4', '#fff1c1', '#a0673c', '#b8e0d2', '#f2c14e', '#c9b6f2', '#ef7fb0'];
+        const scoopCount = 1 + Math.floor(Math.random() * 3);
+        return { kind: 'icecream', scoops: Game.utils.shuffled(flavours).slice(0, scoopCount) };
+      },
       drawFurniture(g) {
         const { c, x, y, w, h } = g;
         checkerFloor(g, '#ffffff', '#ffe0ea', 7);

@@ -7,29 +7,68 @@
   const { FULL_TURN, rect, circle, ellipse } = Game.draw;
   const { MAGAZINE_COLORS, slot, checkerFloor, plankFloor, horizontalShelf, verticalShelf } = Game.furniture;
 
+  const FLOWER_COLORS = ['#e8578f', '#f2c14e', '#ffffff', '#9a6fd6', '#ff7a45', '#e74c3c', '#7fc8f8'];
+
+  // Bouquet vu de dessus : feuillage, 5 fleurs autour et une au centre.
+  // colorIndex décale les couleurs pour que deux bouquets voisins ne se ressemblent pas.
+  function flowerCluster(c, x, y, size, colorIndex) {
+    circle(c, x, y, size, '#4d9b42');
+    for (let k = 0; k < 5; k++) {
+      const angle = k * Math.PI * 2 / 5 + colorIndex;
+      const bloomX = x + Math.cos(angle) * size * 0.55;
+      const bloomY = y + Math.sin(angle) * size * 0.55;
+      circle(c, bloomX, bloomY, size * 0.34, FLOWER_COLORS[(colorIndex + k) % FLOWER_COLORS.length]);
+      circle(c, bloomX, bloomY, size * 0.12, '#f2c14e');
+    }
+    circle(c, x, y, size * 0.3, FLOWER_COLORS[(colorIndex + 3) % FLOWER_COLORS.length]);
+  }
+
   Object.assign(Game.interiors, {
     fleuriste: {
       activity: 'browse',
       slots: [slot(0.22, 0.45), slot(0.45, 0.45), slot(0.7, 0.45), slot(0.2, 0.75)],
+      // Chaque client repart avec une fleur.
+      souvenir: () => ({ kind: 'flower', color: Game.utils.pickRandom(FLOWER_COLORS) }),
       drawFurniture(g) {
         const { c, x, y, w, h, radius } = g;
         checkerFloor(g, '#eef5e6', '#e1ecd6', 7);
-        // Six pots de fleurs le long du mur du fond.
-        for (let k = 0; k < 6; k++) {
-          const u = 0.09 + k * 0.164;
-          circle(c, x(u), y(0.17), radius(0.11), '#a0673c');
-          circle(c, x(u), y(0.17), radius(0.085), '#4d9b42');
-          for (let q = 0; q < 3; q++) {
-            const petalColor = ['#e8578f', '#f2c14e', '#ffffff', '#9a6fd6'][(q + k) % 4];
-            circle(c, x(u) + Math.cos(q * 2.1 + k) * radius(0.04), y(0.17) + Math.sin(q * 2.1 + k) * radius(0.04), radius(0.03), petalColor);
-          }
+        // Pétales tombés par terre (positions fixes).
+        for (let k = 0; k < 16; k++) {
+          circle(c, x(0.1 + (k * 41 % 80) / 100), y(0.3 + (k * 23 % 60) / 100), radius(0.015), FLOWER_COLORS[k % FLOWER_COLORS.length]);
         }
-        // Deux seaux de fleurs contre le mur gauche.
-        for (const v of [0.45, 0.7]) {
-          circle(c, x(0.05), y(v), radius(0.06), '#7aa0c8');
-          circle(c, x(0.05), y(v), radius(0.04), '#ef7fb0');
+        // Étagère du fond garnie de 8 pots fleuris.
+        rect(c, x(0.03), y(0.03), w(0.94), h(0.16), '#a0673c');
+        for (let k = 0; k < 8; k++) {
+          const u = 0.08 + k * 0.12;
+          circle(c, x(u), y(0.11), radius(0.065), '#c8553d');
+          flowerCluster(c, x(u), y(0.1), radius(0.065), k);
         }
-        rect(c, x(0.72), y(0.62), w(0.24), h(0.13), '#c9a27a');   // comptoir
+        // Seaux de bouquets contre le mur gauche.
+        for (const [v, k] of [[0.34, 1], [0.52, 4], [0.7, 6]]) {
+          circle(c, x(0.06), y(v), radius(0.08), '#7aa0c8');
+          flowerCluster(c, x(0.06), y(v), radius(0.075), k);
+        }
+        // Jardinières suspendues.
+        for (const [u, k] of [[0.34, 2], [0.6, 5]]) {
+          circle(c, x(u), y(0.29), radius(0.06), '#6b4a2a');
+          flowerCluster(c, x(u), y(0.29), radius(0.055), k);
+        }
+        // Table de présentation ronde au centre, chargée de fleurs.
+        circle(c, x(0.47), y(0.66), radius(0.13), '#c9a27a');
+        flowerCluster(c, x(0.43), y(0.64), radius(0.06), 0);
+        flowerCluster(c, x(0.52), y(0.69), radius(0.055), 3);
+        // Comptoir : bouquet emballé, pot de fleurs et caisse.
+        rect(c, x(0.72), y(0.62), w(0.24), h(0.13), '#c9a27a');
+        c.fillStyle = '#f4efe6';
+        c.beginPath();
+        c.moveTo(x(0.76), y(0.64));
+        c.lineTo(x(0.84), y(0.64));
+        c.lineTo(x(0.8), y(0.74));
+        c.closePath();
+        c.fill();
+        flowerCluster(c, x(0.8), y(0.645), radius(0.045), 2);
+        flowerCluster(c, x(0.9), y(0.68), radius(0.045), 5);
+        rect(c, x(0.86), y(0.7), w(0.04), h(0.04), '#555');
       },
     },
 

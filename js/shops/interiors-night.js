@@ -132,6 +132,31 @@
     }
   }
 
+  // Hauteur des mains au-dessus des pieds d'un client (dans une boutique, à l'échelle 0,8).
+  const HANDS_HEIGHT = 7.2;
+
+  // Point de la table (repère de la table) vers un point du plateau.
+  function tableToBoard(lot, tableIndex, bx, by) {
+    const u = BILLIARD_TABLES_U[tableIndex] + bx / TABLE_LENGTH * FELT.width;
+    const v = FELT.v + by * FELT.height;
+    return Game.shopGeometry.lotPointToBoard(lot, Math.min(0.97, Math.max(0.03, u)), Math.min(0.95, Math.max(0.1, v)));
+  }
+
+  // Où doit se tenir le tireur : derrière la blanche, dans l'axe du coup, juste après le bord
+  // de la table ; ses pieds sont placés pour que ses mains tombent sur cet axe.
+  function placeShooter(lot, table, tableIndex) {
+    const cueBall = table.balls[0];
+    const backX = -table.aim.dx;
+    const backY = -table.aim.dy;
+    // Distance jusqu'au bord de la table en reculant depuis la blanche.
+    const toEdgeX = backX > 0 ? (TABLE_LENGTH - cueBall.x) / backX : backX < 0 ? -cueBall.x / backX : Infinity;
+    const toEdgeY = backY > 0 ? (1 - cueBall.y) / backY : backY < 0 ? -cueBall.y / backY : Infinity;
+    const distance = Math.min(toEdgeX, toEdgeY) + 0.22;
+    const [handX, handY] = tableToBoard(lot, tableIndex, cueBall.x + backX * distance, cueBall.y + backY * distance);
+    table.standPoint = [handX, handY + HANDS_HEIGHT];
+    table.cueBallPoint = tableToBoard(lot, tableIndex, cueBall.x, cueBall.y);
+  }
+
   function isPlayingBilliard(person) {
     return person && person.insidePhase === 'active' && person.activity === 'billiard';
   }
@@ -148,13 +173,17 @@
       return;
     }
     const players = [2 * tableIndex, 2 * tableIndex + 1].filter(slotIndex => isPlayingBilliard(lot.occupants[slotIndex]));
-    if (!players.length) {
+    // Si le tireur est parti entre-temps, on recommence la visée.
+    if (table.aim && !players.includes(table.shooterSlot)) {
       table.aim = null;
+    }
+    if (!players.length) {
       return;
     }
     if (!table.aim) {
       // À deux, on joue chacun son tour ; seul, on s'entraîne.
       table.turn = players.length === 2 ? 1 - table.turn : players[0] % 2;
+      table.shooterSlot = 2 * tableIndex + table.turn;
       // On vise une bille au hasard, avec une petite imprécision.
       const cueBall = table.balls[0];
       const target = Game.utils.pickRandom(remaining);
@@ -162,6 +191,13 @@
       table.aim = { dx: Math.cos(angle), dy: Math.sin(angle) };
       table.aimDuration = Game.utils.randomBetween(BILLIARD.AIM_SECONDS_MIN, BILLIARD.AIM_SECONDS_MAX);
       table.aimTimer = table.aimDuration;
+      placeShooter(lot, table, tableIndex);
+    }
+    // Le compte à rebours ne démarre qu'une fois le tireur en place, queue en main.
+    const shooter = lot.occupants[table.shooterSlot];
+    table.shooterReady = Math.hypot(shooter.x - table.standPoint[0], shooter.y - table.standPoint[1]) < 1.5;
+    if (!table.shooterReady) {
+      return;
     }
     table.aimTimer -= dt;
     if (table.aimTimer <= 0) {
@@ -220,14 +256,17 @@
               circle(c, bx, by, ballRadius, ball.color);
             }
           }
-          // Queue pendant la visée : elle recule, puis le coup part.
-          if (table.aim) {
+          // Queue pendant la visée, des mains du tireur jusqu'à la blanche : elle recule, puis le coup part.
+          const shooter = table.aim && table.shooterReady && lot.occupants[table.shooterSlot];
+          if (shooter) {
             const cueBall = table.balls[0];
             const progress = 1 - table.aimTimer / table.aimDuration;
             const pullBack = 0.04 + 0.12 * Math.min(1, progress * 1.5);
             const tipDistance = BALL_RADIUS + pullBack;
             const [tipX, tipY] = toBoard(cueBall.x - table.aim.dx * tipDistance, cueBall.y - table.aim.dy * tipDistance);
-            const [endX, endY] = toBoard(cueBall.x - table.aim.dx * (tipDistance + 1), cueBall.y - table.aim.dy * (tipDistance + 1));
+            const [handU, handV] = Game.shopGeometry.boardPointToLot(lot, shooter.x, shooter.y - HANDS_HEIGHT);
+            const endX = x(handU);
+            const endY = y(handV);
             c.strokeStyle = '#c8a165';
             c.lineWidth = radius(0.02);
             c.lineCap = 'round';

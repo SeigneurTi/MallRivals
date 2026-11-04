@@ -94,6 +94,13 @@
       FILM_SECONDS: 25,                // personne n'entre, puis toute la salle sort
     },
 
+    lasergame: {
+      WAITING_SECONDS: 30,             // les joueurs s'équipent dans leur base
+      PLAYING_SECONDS: 25,             // la partie : personne n'entre, puis tout le monde sort
+      SHOT_DELAY_MIN: 0.5,             // temps entre deux tirs d'un joueur
+      SHOT_DELAY_MAX: 1.4,
+    },
+
     carousel: {
       TURN_SPEED: 0.9,                 // radians par seconde
     },
