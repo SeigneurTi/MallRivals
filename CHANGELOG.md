@@ -2,6 +2,14 @@
 
 Les versions les plus récentes sont en haut.
 
+## v2.15 — Carte en moulinet, événements plus tardifs (6 novembre 2026)
+
+- **Carte en moulinet**, d'après le plan du City Bucks d'origine : un carré de rues dont chaque côté se prolonge hors de la carte par un coin (le haut vers la droite, la droite vers le bas, le bas vers la gauche, la gauche vers le haut). Les passants arrivent par ces 4 routes, aux coins.
+- Les boutiques bordent tout le tour de la carte, côté extérieur du carré (20 cases, y compris le long des prolongements). À l'intérieur : une rangée le long du haut et du bas du carré, et une rue centrale bordée de 4 boutiques dont la banque. 32 cases en tout.
+- Deux parcs arborés de part et d'autre de la rue centrale ; le compte à rebours des soldes est au milieu du parc de gauche.
+- **Événements aléatoires plus tardifs** : aucun incendie, monstre ni OVNI pendant les 6 premières minutes de jeu, le temps de construire ses premières boutiques. « Recommencer » remet aussi ce délai à zéro.
+- Fichiers : `js/map.js` (plan), `js/render/board.js` (parcs), `js/render/overlay.js` (place du compte à rebours), `js/people/person.js` (clients des soldes sur les prolongements), `js/events/attacks.js` (trajet de la voiture-voleur), `js/events/random-events.js` et `js/config.js` (délai des événements, place de la banque), `js/state.js` (temps de jeu remis à zéro).
+
 ## v2.14 — Nouvelle carte, soldes, boucliers faillibles, départ modeste (6 novembre 2026)
 
 - **Nouvelle carte** : une rue fait le tour de la ville et une croix la traverse en son centre. Les passants arrivent par 4 routes (nord, sud, est, ouest). Les boutiques bordent tout le tour de la carte, sauf là où passent ces 4 routes, et occupent les 4 quartiers du centre : 28 cases (au lieu de 36), la banque juste au-dessus du carrefour central. Pelouses et arbres dans les coins et entre les rangées.

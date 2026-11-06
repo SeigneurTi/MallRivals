@@ -150,6 +150,7 @@
     // Fréquence moyenne des événements aléatoires (par seconde de jeu).
     // Au total, environ un événement toutes les 4 minutes (v2.7 : toutes les 40 s).
     events: {
+      START_DELAY_SECONDS: 360,        // aucun événement pendant les 6 premières minutes de jeu
       FIRE_PER_SECOND: 0.0007,         // un incendie toutes les 24 min environ
       MONSTER_PER_SECOND: 0.002,       // un monstre toutes les 8 min environ
       UFO_PER_SECOND: 0.0015,          // un OVNI toutes les 11 min environ
@@ -157,7 +158,7 @@
 
     // Banque : sans propriétaire, toujours au même endroit, pillable à la voiture-voleur.
     bank: {
-      LOT_INDEX: 10,                   // case au centre de la carte, juste au-dessus du carrefour central
+      LOT_INDEX: 28,                   // au centre de la carte, le long de la rue centrale
       LOOT: 600,                       // butin quand le coffre est plein
       REFILL_SECONDS: 120,             // l'or revient en 2 minutes
     },

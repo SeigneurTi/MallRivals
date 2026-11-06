@@ -69,6 +69,7 @@
     state.animations = [];
     state.spawnTimer = 0;
     state.banner = null;
+    state.gameTime = 0;
     Game.events.resetSales();
     state.people = [];
     const startingPopulation = Game.people.targetPopulation();

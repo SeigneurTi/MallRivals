@@ -54,7 +54,7 @@
   }
 
   // La voiture part de la sortie du joueur (ouest pour le joueur 1, est pour le joueur 2),
-  // rejoint un carrefour au bout de la rue de la boutique, puis la porte.
+  // rejoint le carrefour au bout de la rue de la boutique, puis la porte.
   // Réussite : la boutique change de propriétaire et perd ses boucliers.
   // Échec : la boutique perd quand même un bouclier si elle en a.
   function launchThief(player, lot) {
@@ -63,7 +63,7 @@
     const street = Game.map.lotStreet[lot.index];
     const startExit = player ? 'east' : 'west';
     const points = [
-      ...Game.map.findPath(startExit, street.end).map(id => Game.map.nodes[id]),
+      ...Game.map.findPath(startExit, street.start).map(id => Game.map.nodes[id]),
       street.access.streetPoint,
       street.access.door,
     ];

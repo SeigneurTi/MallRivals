@@ -1,9 +1,11 @@
 // Plan de la ville : carrefours, rues, sorties et cases de boutiques.
 // Coordonnées en unités logiques de la carte (0 = bord gauche de la carte, après le bac de cartes).
 //
-// Une rue fait le tour de la ville, une croix la traverse en son centre, et les passants
-// arrivent par 4 routes (nord, sud, est, ouest). Les boutiques bordent tout le tour de la carte,
-// sauf là où passent ces 4 routes ; d'autres boutiques occupent les 4 quartiers du centre.
+// Plan « en moulinet », comme le City Bucks d'origine : un carré de rues dont chaque côté se
+// prolonge hors de la carte par un coin (le haut vers la droite, la droite vers le bas, le bas
+// vers la gauche, la gauche vers le haut). Les passants arrivent par ces 4 routes.
+// Les boutiques bordent tout le tour de la carte, côté extérieur du carré ; à l'intérieur,
+// une rangée de boutiques le long du carré et une rue centrale bordée de boutiques et de parcs.
 (function () {
   'use strict';
 
@@ -11,19 +13,20 @@
   const MAP_WIDTH = Game.config.board.MAP_WIDTH;
   const MAP_HEIGHT = Game.config.board.HEIGHT;
 
-  // 3 rues verticales × 3 rues horizontales : le tour de la ville et la croix du centre.
+  // Le carré de rues (gauche, milieu, droite × haut, bas) : le milieu est la rue centrale.
   const STREET_X = [118, 470, 822];
-  const STREET_Y = [118, 380, 642];
+  const STREET_Y = [118, 642];
 
-  // Une case mesure 124 le long de sa rue et 90 de profondeur (sur les côtés gauche et droit
-  // de la carte, elle est donc tournée : 90 de large, 124 de haut).
+  // Une case mesure 124 le long de sa rue et 90 de profondeur (le long d'une rue verticale,
+  // elle est donc tournée : 90 de large, 124 de haut).
   const LOT_LENGTH = 124;
   const LOT_DEPTH = 90;
   const LOT_GAP = 8;
+  const EDGE_MARGIN = 8;          // marge entre les cases et le bord de la carte
 
   // ---------- Carrefours et sorties ----------
 
-  // Identifiant d'un carrefour : 'colonne,ligne' (par exemple '1,2').
+  // Identifiant d'un carrefour : 'colonne,ligne' (par exemple '1,0').
   const nodeId = (column, row) => column + ',' + row;
 
   const nodes = {};
@@ -33,12 +36,12 @@
     });
   });
 
-  // Les 4 sorties, hors du cadre, au bout des 4 routes. L'ordre compte : il sert au tirage des trajets.
+  // Les 4 sorties, hors du cadre, au bout des 4 prolongements. L'ordre compte : il sert au tirage des trajets.
   const EXIT_NAMES = { north: 'Nord', west: 'Ouest', south: 'Sud', east: 'Est' };
-  nodes.north = [STREET_X[1], -50];
-  nodes.west = [-50, STREET_Y[1]];
-  nodes.south = [STREET_X[1], MAP_HEIGHT + 50];
-  nodes.east = [MAP_WIDTH + 50, STREET_Y[1]];
+  nodes.north = [STREET_X[0], -50];                  // la rue de gauche monte
+  nodes.east = [MAP_WIDTH + 50, STREET_Y[0]];        // la rue du haut part à droite
+  nodes.south = [STREET_X[2], MAP_HEIGHT + 50];      // la rue de droite descend
+  nodes.west = [-50, STREET_Y[1]];                   // la rue du bas part à gauche
 
   const isExit = id => id in EXIT_NAMES;
   const exits = Object.keys(EXIT_NAMES);
@@ -46,18 +49,15 @@
 
   // ---------- Rues (tronçons entre deux carrefours) ----------
 
-  const STREETS = [];
-  for (let row = 0; row < STREET_Y.length; row++) {
-    for (let column = 0; column < STREET_X.length - 1; column++) {
-      STREETS.push([nodeId(column, row), nodeId(column + 1, row)]);
-    }
-  }
-  for (let column = 0; column < STREET_X.length; column++) {
-    for (let row = 0; row < STREET_Y.length - 1; row++) {
-      STREETS.push([nodeId(column, row), nodeId(column, row + 1)]);
-    }
-  }
-  STREETS.push(['north', '1,0'], ['west', '0,1'], ['south', '1,2'], ['east', '2,1']);
+  const STREETS = [
+    // Haut et bas du carré, coupés par la rue centrale.
+    ['0,0', '1,0'], ['1,0', '2,0'],
+    ['0,1', '1,1'], ['1,1', '2,1'],
+    // Côtés gauche et droit, et rue centrale.
+    ['0,0', '0,1'], ['2,0', '2,1'], ['1,0', '1,1'],
+    // Les 4 prolongements vers les sorties (le carrefour d'abord, la sortie ensuite).
+    ['0,0', 'north'], ['2,0', 'east'], ['2,1', 'south'], ['0,1', 'west'],
+  ];
 
   const neighbours = {};
   for (const id in nodes) {
@@ -95,80 +95,96 @@
 
   // ---------- Cases de boutiques ----------
 
-  // Groupes de cases le long d'un tronçon. side : où sont les cases par rapport à la rue
-  // ('above', 'below' pour une rue horizontale ; 'left', 'right' pour une rue verticale).
+  // Rangées de cases le long d'une rue droite. side : où sont les cases par rapport à la rue
+  // ('above', 'below' pour une rue horizontale à l'ordonnée `line` ; 'left', 'right' pour une
+  // rue verticale à l'abscisse `line`). Les cases sont centrées entre `from` et `to` (le long de la rue).
   // La porte donne toujours sur la rue.
-  const LOT_GROUPS = [];
-  for (let row = 0; row < STREET_Y.length; row++) {
-    for (const side of ['above', 'below']) {
-      for (let column = 0; column < STREET_X.length - 1; column++) {
-        LOT_GROUPS.push({ start: nodeId(column, row), end: nodeId(column + 1, row), side, count: 2 });
-      }
-    }
-  }
-  // Côtés gauche et droit de la carte : une case par tronçon (les deux routes ouest et est passent entre elles).
-  for (let row = 0; row < STREET_Y.length - 1; row++) {
-    LOT_GROUPS.push({ start: nodeId(0, row), end: nodeId(0, row + 1), side: 'left', count: 1 });
-  }
-  for (let row = 0; row < STREET_Y.length - 1; row++) {
-    LOT_GROUPS.push({ start: nodeId(2, row), end: nodeId(2, row + 1), side: 'right', count: 1 });
-  }
+  const TOP = STREET_Y[0];
+  const BOTTOM = STREET_Y[1];
+  const LEFT = STREET_X[0];
+  const MIDDLE = STREET_X[1];
+  const RIGHT = STREET_X[2];
+  const SIDEWALK = ROAD_HALF_WIDTH + 2;
+  const INNER_TOP = TOP + ROAD_HALF_WIDTH + LOT_DEPTH + LOT_GAP;        // bas de la rangée intérieure du haut
+  const INNER_BOTTOM = BOTTOM - ROAD_HALF_WIDTH - LOT_DEPTH - LOT_GAP;  // haut de la rangée intérieure du bas
+  const LOT_ROWS = [
+    // Tour de la carte (côté extérieur du carré), en tournant comme le moulinet.
+    { side: 'above', line: TOP, from: LEFT + SIDEWALK, to: MAP_WIDTH - EDGE_MARGIN, count: 6 },
+    { side: 'right', line: RIGHT, from: TOP + SIDEWALK, to: MAP_HEIGHT - EDGE_MARGIN, count: 4 },
+    { side: 'below', line: BOTTOM, from: EDGE_MARGIN, to: RIGHT - SIDEWALK, count: 6 },
+    { side: 'left', line: LEFT, from: EDGE_MARGIN, to: BOTTOM - SIDEWALK, count: 4 },
+    // Intérieur du carré : le long du haut et du bas, de part et d'autre de la rue centrale.
+    { side: 'below', line: TOP, from: LEFT + SIDEWALK, to: MIDDLE - SIDEWALK, count: 2 },
+    { side: 'below', line: TOP, from: MIDDLE + SIDEWALK, to: RIGHT - SIDEWALK, count: 2 },
+    { side: 'above', line: BOTTOM, from: LEFT + SIDEWALK, to: MIDDLE - SIDEWALK, count: 2 },
+    { side: 'above', line: BOTTOM, from: MIDDLE + SIDEWALK, to: RIGHT - SIDEWALK, count: 2 },
+    // Rue centrale, des deux côtés.
+    { side: 'left', line: MIDDLE, from: INNER_TOP, to: INNER_BOTTOM, count: 2 },
+    { side: 'right', line: MIDDLE, from: INNER_TOP, to: INNER_BOTTOM, count: 2 },
+  ];
 
   const DOOR_OF_SIDE = { above: 'bottom', below: 'top', left: 'right', right: 'left' };
 
   const lotRects = [];          // [x, y, largeur, hauteur] de chaque case
   const lotDoorSide = [];       // 'top', 'bottom', 'left' ou 'right' : côté de la porte
-  const lotStreet = [];         // rue qui dessert chaque case : { start, end, access }
+  const lotStreet = [];         // rue qui dessert chaque case : { start (un carrefour), end, access }
   const lotsByStreet = {};      // 'a|b' → cases le long du tronçon a–b (dans les deux sens)
 
   for (const [a, b] of STREETS) {
     lotsByStreet[a + '|' + b] = lotsByStreet[b + '|' + a] = [];
   }
 
-  for (const group of LOT_GROUPS) {
-    const [startX, startY] = nodes[group.start];
-    const [endX, endY] = nodes[group.end];
-    const isHorizontal = startY === endY;
-    // Les cases sont centrées entre les deux carrefours, hors des trottoirs des rues qui croisent.
-    const streetStart = (isHorizontal ? startX : startY) + ROAD_HALF_WIDTH + 2;
-    const streetEnd = (isHorizontal ? endX : endY) - ROAD_HALF_WIDTH - 2;
-    const groupLength = group.count * LOT_LENGTH + (group.count - 1) * LOT_GAP;
-    const first = streetStart + (streetEnd - streetStart - groupLength) / 2;
+  // Tronçons qui passent devant une porte (deux si la porte est face à un carrefour).
+  function streetsAlong(isHorizontal, line, position) {
+    return STREETS.filter(([a, b]) => {
+      const [ax, ay] = nodes[a];
+      const [bx, by] = nodes[b];
+      if (isHorizontal ? ay !== line || by !== line : ax !== line || bx !== line) {
+        return false;
+      }
+      const start = isHorizontal ? Math.min(ax, bx) : Math.min(ay, by);
+      const end = isHorizontal ? Math.max(ax, bx) : Math.max(ay, by);
+      return position >= start - 1 && position <= end + 1;
+    });
+  }
 
-    for (let k = 0; k < group.count; k++) {
+  for (const row of LOT_ROWS) {
+    const isHorizontal = row.side === 'above' || row.side === 'below';
+    const rowLength = row.count * LOT_LENGTH + (row.count - 1) * LOT_GAP;
+    const first = row.from + (row.to - row.from - rowLength) / 2;
+
+    for (let k = 0; k < row.count; k++) {
       const along = first + k * (LOT_LENGTH + LOT_GAP);
       const middle = along + LOT_LENGTH / 2;
       let rect;
       let door;
-      let streetPoint;
-      if (group.side === 'above') {
-        rect = [along, startY - ROAD_HALF_WIDTH - LOT_DEPTH, LOT_LENGTH, LOT_DEPTH];
-        door = [middle, startY - ROAD_HALF_WIDTH];
-        streetPoint = [middle, startY];
-      } else if (group.side === 'below') {
-        rect = [along, startY + ROAD_HALF_WIDTH, LOT_LENGTH, LOT_DEPTH];
-        door = [middle, startY + ROAD_HALF_WIDTH];
-        streetPoint = [middle, startY];
-      } else if (group.side === 'left') {
-        rect = [startX - ROAD_HALF_WIDTH - LOT_DEPTH, along, LOT_DEPTH, LOT_LENGTH];
-        door = [startX - ROAD_HALF_WIDTH, middle];
-        streetPoint = [startX, middle];
+      if (row.side === 'above') {
+        rect = [along, row.line - ROAD_HALF_WIDTH - LOT_DEPTH, LOT_LENGTH, LOT_DEPTH];
+        door = [middle, row.line - ROAD_HALF_WIDTH];
+      } else if (row.side === 'below') {
+        rect = [along, row.line + ROAD_HALF_WIDTH, LOT_LENGTH, LOT_DEPTH];
+        door = [middle, row.line + ROAD_HALF_WIDTH];
+      } else if (row.side === 'left') {
+        rect = [row.line - ROAD_HALF_WIDTH - LOT_DEPTH, along, LOT_DEPTH, LOT_LENGTH];
+        door = [row.line - ROAD_HALF_WIDTH, middle];
       } else {
-        rect = [startX + ROAD_HALF_WIDTH, along, LOT_DEPTH, LOT_LENGTH];
-        door = [startX + ROAD_HALF_WIDTH, middle];
-        streetPoint = [startX, middle];
+        rect = [row.line + ROAD_HALF_WIDTH, along, LOT_DEPTH, LOT_LENGTH];
+        door = [row.line + ROAD_HALF_WIDTH, middle];
       }
       const lotIndex = lotRects.length;
       const access = {
         lotIndex,
         positionAlong: middle,      // position de la porte le long de la rue (abscisse ou ordonnée)
         door,
-        streetPoint,                // point de la rue face à la porte
+        streetPoint: isHorizontal ? [middle, row.line] : [row.line, middle],   // point de la rue face à la porte
       };
+      const streets = streetsAlong(isHorizontal, row.line, middle);
+      for (const [a, b] of streets) {
+        lotsByStreet[a + '|' + b].push(access);
+      }
       lotRects.push(rect);
-      lotDoorSide.push(DOOR_OF_SIDE[group.side]);
-      lotsByStreet[group.start + '|' + group.end].push(access);
-      lotStreet.push({ start: group.start, end: group.end, access });
+      lotDoorSide.push(DOOR_OF_SIDE[row.side]);
+      lotStreet.push({ start: streets[0][0], end: streets[0][1], access });
     }
   }
 
@@ -177,25 +193,19 @@
     return lotsByStreet[a + '|' + b];
   }
 
-  // ---------- Décor : pelouses et arbres ----------
+  // ---------- Décor : parcs et compte à rebours des soldes ----------
 
-  // Les 4 coins de la carte et les bandes entre les rangées de boutiques du centre.
-  const CORNER_SIZE = STREET_X[0] - ROAD_HALF_WIDTH - 2 * LOT_GAP;
+  // Deux parcs à l'intérieur du carré, de part et d'autre des boutiques de la rue centrale.
+  const PARK_TOP = INNER_TOP;
+  const PARK_HEIGHT = INNER_BOTTOM - INNER_TOP;
+  const PARK_LEFT_END = MIDDLE - ROAD_HALF_WIDTH - LOT_DEPTH - LOT_GAP;
+  const PARK_RIGHT_START = MIDDLE + ROAD_HALF_WIDTH + LOT_DEPTH + LOT_GAP;
   const PARKS = [
-    [LOT_GAP, LOT_GAP, CORNER_SIZE, CORNER_SIZE],
-    [MAP_WIDTH - LOT_GAP - CORNER_SIZE, LOT_GAP, CORNER_SIZE, CORNER_SIZE],
-    [LOT_GAP, MAP_HEIGHT - LOT_GAP - CORNER_SIZE, CORNER_SIZE, CORNER_SIZE],
-    [MAP_WIDTH - LOT_GAP - CORNER_SIZE, MAP_HEIGHT - LOT_GAP - CORNER_SIZE, CORNER_SIZE, CORNER_SIZE],
+    [LEFT + SIDEWALK + LOT_GAP, PARK_TOP, PARK_LEFT_END - LEFT - SIDEWALK - LOT_GAP, PARK_HEIGHT],
+    [PARK_RIGHT_START, PARK_TOP, RIGHT - SIDEWALK - LOT_GAP - PARK_RIGHT_START, PARK_HEIGHT],
   ];
-  for (const row of [0, 1]) {
-    const top = STREET_Y[row] + ROAD_HALF_WIDTH + LOT_DEPTH + 6;
-    const bottom = STREET_Y[row + 1] - ROAD_HALF_WIDTH - LOT_DEPTH - 6;
-    for (const column of [0, 1]) {
-      const left = STREET_X[column] + ROAD_HALF_WIDTH + 2 + LOT_GAP;
-      const right = STREET_X[column + 1] - ROAD_HALF_WIDTH - 2 - LOT_GAP;
-      PARKS.push([left, top, right - left, bottom - top]);
-    }
-  }
+  // Le compte à rebours des soldes est au milieu du parc de gauche.
+  const SALES_CLOCK = [PARKS[0][0] + PARKS[0][2] / 2, PARKS[0][1] + PARKS[0][3] / 2];
 
   Game.map = {
     nodes,
@@ -210,5 +220,6 @@
     lotStreet,
     lotsAlongStreet,
     PARKS,
+    SALES_CLOCK,
   };
 })();

@@ -5,7 +5,7 @@
 ## Démarrage
 
 - [ ] La page s'ouvre sans message d'erreur rouge sous le titre.
-- [ ] Le plateau montre une rue qui fait le tour de la ville, une croix au centre et 4 routes qui sortent du cadre (nord, sud, est, ouest) ; 28 cases grises tout autour et dans les 4 quartiers, quelques ronds roses, aucune boutique ouverte sauf la banque au centre ; des pelouses avec des arbres dans les coins et entre les rangées.
+- [ ] Le plateau montre un carré de rues en moulinet : la rue de gauche sort en haut, celle du haut sort à droite, celle de droite sort en bas, celle du bas sort à gauche ; une rue centrale relie le haut et le bas. 32 cases grises : tout le tour de la carte (côté extérieur), le long du haut et du bas à l'intérieur, et le long de la rue centrale ; quelques ronds roses, aucune boutique ouverte sauf la banque au centre ; deux parcs arborés, avec le compte à rebours des soldes dans celui de gauche.
 - [ ] Les cases des côtés gauche et droit sont tournées, porte vers la rue ; une boutique construite là a son mobilier tourné et ses clients y entrent.
 - [ ] Chaque bac affiche 27 cartes avec leur prix et leur nom en petit dessous, et « 140 bucks » en bas.
 - [ ] Jauge d'argent : derrière les cartes, un fond à la couleur du joueur descend jusqu'à la dernière boutique abordable (140 $ : jusqu'à la Librairie ; 200 $ : jusqu'à Jouets) ; elle monte et descend en douceur quand l'argent change.
@@ -99,12 +99,12 @@
 
 ## Soldes et boucliers
 
-- [ ] Coin en haut à gauche : « Soldes dans 1:59 », qui décompte ; l'anneau rose se vide ; dans les 10 dernières secondes, le temps clignote en rouge.
+- [ ] Dans le parc de gauche : « Soldes dans 1:59 », qui décompte ; l'anneau rose se vide ; dans les 10 dernières secondes, le temps clignote en rouge.
 - [ ] À zéro : le rond devient rose « SOLDES −50 % », le journal annonce les soldes, des clients arrivent en courant par les 4 routes et entrent dans 4 boutiques marquées « Soldes −50 % ». Ils rapportent la moitié du gain habituel. Puis le compte à rebours repart de 2:00.
 - [ ] Sans boutique, le journal indique que la ville n'a encore aucune boutique.
 - [ ] Météorite, monstre ou OVNI sur une boutique avec bouclier : en général « Bouclier ! » et un écusson en moins ; environ une fois sur cinq « Bouclier percé ! » et la boutique est détruite.
 
-## Événements aléatoires (laisser tourner à ×3, ils sont rares : environ un toutes les 4 minutes)
+## Événements aléatoires (aucun pendant les 6 premières minutes, puis environ un toutes les 4 minutes : laisser tourner à ×3)
 
 - [ ] **Monstre** : il traverse la carte et fait perdre un bouclier, sinon un niveau (« Niveau −1 »), sinon détruit la boutique ; puis il repart.
 - [ ] **OVNI** : il arrive, éclaire la boutique de son rayon vert, puis l'emporte, est repoussé par un bouclier, ou fait des courses (« +gain » vert).

@@ -38,12 +38,18 @@
     let routeNodes;
     if (salesLot) {
       // Trajet qui longe la rue de la boutique (il passe forcément devant sa porte).
+      // Si cette rue mène à une sortie, il repart par cette sortie.
       const street = map.lotStreet[salesLot.index];
-      routeNodes = [
-        ...map.findPath(from, street.start),
-        street.end,
-        ...map.findPath(street.end, to).slice(1),
-      ];
+      if (map.isExit(street.end)) {
+        to = street.end;
+        routeNodes = [...map.findPath(from, street.start), street.end];
+      } else {
+        routeNodes = [
+          ...map.findPath(from, street.start),
+          street.end,
+          ...map.findPath(street.end, to).slice(1),
+        ];
+      }
     } else {
       const firstStop = pickRandom(map.intersections);
       const secondStop = pickRandom(map.intersections);

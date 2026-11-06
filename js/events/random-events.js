@@ -8,8 +8,12 @@
   const { log, floatText } = Game.feedback;
   const { shopName, shopNameAfterA, shopNameAfterDe } = Game.names;
 
-  // Appelé à chaque image : chaque événement a une petite chance de se produire.
+  // Appelé à chaque image : chaque événement a une petite chance de se produire,
+  // mais pas en début de partie (le temps de construire ses premières boutiques).
   function maybeTriggerRandomEvents(dt) {
+    if (Game.state.gameTime < EVENTS.START_DELAY_SECONDS) {
+      return;
+    }
     if (Math.random() < EVENTS.FIRE_PER_SECOND * dt) {
       triggerRandomEvent('fire');
     }

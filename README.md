@@ -21,7 +21,7 @@ bourg-les-bonhommes/
 │   ├── utils.js             Hasard, mélange de couleurs
 │   ├── canvas.js            Canvas, mise à l'échelle de l'écran (Game.view)
 │   ├── draw.js              Primitives : rectangle, disque, ellipse, rectangle arrondi
-│   ├── map.js               Carte en anneau : carrefours, rues, 4 sorties, cases, pelouses, trajets
+│   ├── map.js               Carte en moulinet : carrefours, rues, 4 sorties, cases, parcs, trajets
 │   ├── catalog.js           ★ Les 24 boutiques, la banque et les 2 malus, formules de gains
 │   ├── names.js             « le Cinéma », « au Cinéma », « du Cinéma »…
 │   ├── icons.js             Icônes des enseignes et des cartes
@@ -77,7 +77,7 @@ bourg-les-bonhommes/
 | Chance qu'une boutique soit détruite malgré un bouclier (20 %) | `js/config.js` | `economy.SHIELD_BREAK_CHANCE` |
 | Soldes : compte à rebours, nombre de boutiques et de clients, gain réduit | `js/config.js` | `sales` |
 | Vitesse de la jauge d'argent derrière les cartes | `js/config.js` | `moneyGauge` |
-| Plan de la ville (rues, cases, pelouses) | `js/map.js` | `STREET_X`, `STREET_Y`, `LOT_GROUPS`, `PARKS` |
+| Plan de la ville (rues, cases, parcs) | `js/map.js` | `STREET_X`, `STREET_Y`, `STREETS`, `LOT_ROWS`, `PARKS` |
 | Envie des passants d'entrer | `js/config.js` | `attraction` |
 | Vitesse des passants, durée de séjour par activité | `js/config.js` | `people` |
 | Bowling (lancers, durées, chance de strike, chute des quilles) | `js/config.js` | `bowling` |
@@ -89,7 +89,7 @@ bourg-les-bonhommes/
 | Ce que les clients emportent (fleur, cornet, écrin) | `js/shops/interiors-*.js` | `souvenir` de la boutique |
 | Obstacles que les clients contournent dans une boutique | `js/shops/interiors-*.js` | `obstacles(lot)` de la boutique |
 | Réussite de la voiture-voleur, vitesse de la voiture | `js/config.js` | `thief` |
-| Fréquence des incendies, monstres, OVNI | `js/config.js` | `events` |
+| Fréquence des incendies, monstres, OVNI, délai avant le premier (6 min) | `js/config.js` | `events` (`START_DELAY_SECONDS`) |
 | Butin, emplacement et remplissage de la banque | `js/config.js` | `bank` |
 | Comportement de la partie auto | `js/config.js` (et `js/autoplay.js`) | `autoplay` |
 | Billard (visée, vitesse, frottement) | `js/config.js` | `billiard` |

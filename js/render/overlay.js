@@ -7,6 +7,7 @@
   const BOARD = Game.config.board;
   const FEEDBACK = Game.config.feedback;
   const { roundedRectPath } = Game.draw;
+  const SALES_CLOCK_RADIUS = 40;
 
   // Contour pointillé animé autour des cases où la carte choisie peut être jouée.
   function drawSelectionTargets(ctx, time) {
@@ -87,17 +88,15 @@
     ctx.globalAlpha = 1;
   }
 
-  // Compte à rebours des soldes, sur la pelouse du coin en haut à gauche.
+  // Compte à rebours des soldes, au milieu du parc de gauche.
   // Il clignote en rose quand les soldes commencent, en rouge dans les 10 dernières secondes.
   function drawSalesClock(ctx) {
     const sales = Game.state.sales;
     if (!sales) {
       return;
     }
-    const [parkX, parkY, parkWidth, parkHeight] = Game.map.PARKS[0];
-    const centerX = parkX + parkWidth / 2;
-    const centerY = parkY + parkHeight / 2;
-    const radius = Math.min(parkWidth, parkHeight) / 2 - 2;
+    const [centerX, centerY] = Game.map.SALES_CLOCK;
+    const radius = SALES_CLOCK_RADIUS;
     const isOn = Game.events.salesJustStarted();
     const pulse = 0.5 + 0.5 * Math.sin(Game.state.gameTime * 8);
     const secondsLeft = Math.ceil(sales.countdown);
