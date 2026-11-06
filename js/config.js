@@ -57,7 +57,7 @@
     attraction: {
       BASE: 0.45,
       PRICE_WEIGHT: 0.4,
-      REFERENCE_PRICE: 600,
+      REFERENCE_PRICE: 1300,           // les prix vont jusqu'à 1800 $ : l'attrait suit la même courbe qu'avant
       LEVEL_BONUS: 0.08,
       MAX: 0.97,
     },
@@ -72,6 +72,7 @@
       WALK_SPEED_MAX: 46,
       ROAD_OFFSET: 13,                 // écart latéral maximal par rapport au milieu de la rue
       AVOID_SAME_EXIT_CHANCE: 0.8,     // chance de ne pas ressortir par la route d'arrivée
+      ROUTE_LOT_COUNT: 1,              // en plus de sa boutique, chaque passant longe la rue d'une case tirée au hasard
       SPAWN_DELAY_MIN: 0.25,
       SPAWN_DELAY_MAX: 0.7,
       INSIDE_SCALE: 0.8,               // les passants sont dessinés plus petits dans les boutiques

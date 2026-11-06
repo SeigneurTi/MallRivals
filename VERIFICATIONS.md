@@ -8,8 +8,10 @@
 - [ ] Le plateau montre un carré de rues en moulinet : la rue de gauche sort en haut, celle du haut sort à droite, celle de droite sort en bas, celle du bas sort à gauche ; une rue centrale relie le haut et le bas. 32 cases grises : tout le tour de la carte (côté extérieur), le long du haut et du bas à l'intérieur, et le long de la rue centrale ; quelques ronds roses, aucune boutique ouverte sauf la banque au centre ; deux parcs arborés, avec le compte à rebours des soldes dans celui de gauche.
 - [ ] Les cases des côtés gauche et droit sont tournées, porte vers la rue ; une boutique construite là a son mobilier tourné et ses clients y entrent.
 - [ ] Chaque bac affiche 27 cartes avec leur prix et leur nom en petit dessous, et « 140 bucks » en bas.
-- [ ] Jauge d'argent : derrière les cartes, un fond à la couleur du joueur descend jusqu'à la dernière boutique abordable (140 $ : jusqu'à la Librairie ; 200 $ : jusqu'à Jouets) ; elle monte et descend en douceur quand l'argent change.
+- [ ] Jauge d'argent : derrière les cartes, un fond à la couleur du joueur descend jusqu'à la dernière boutique abordable (140 $ : jusqu'au Café ; 200 $ : jusqu'à la Librairie) ; elle monte et descend en douceur quand l'argent change.
 - [ ] Au début, peu de passants (8) ; chaque boutique ouverte en fait venir 4 de plus.
+- [ ] Prix des cartes : de 60 $ (Fleuriste) à 1800 $ (Discothèque), de plus en plus espacés.
+- [ ] Deux boutiques identiques placées n'importe où reçoivent à peu près autant de clients (une boutique isolée sur un côté de la carte n'est pas délaissée).
 - [ ] Les accents s'affichent correctement (« Météorite », « Hôtel », « Manège »).
 - [ ] Des passants arrivent par les 4 routes et se promènent.
 

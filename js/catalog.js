@@ -5,34 +5,34 @@
 
   const config = Game.config;
 
-  // Les 24 boutiques, de la moins chère à la plus chère.
+  // Les 25 boutiques, de la moins chère à la plus chère (écart croissant entre deux prix).
   // color : couleur de l'enseigne et des murs ; icon : voir js/icons.js.
   const SHOPS = [
     { id: 'fleuriste', name: 'Fleuriste', price: 60, color: '#e8578f', icon: 'flower' },
     { id: 'kiosque', name: 'Kiosque', price: 70, color: '#3d6fb6', icon: 'news' },
     { id: 'boulangerie', name: 'Boulangerie', price: 100, color: '#d48a2c', icon: 'croissant' },
-    { id: 'cafe', name: 'Café', price: 110, color: '#8a5a36', icon: 'cup' },
-    { id: 'glacier', name: 'Glacier', price: 120, color: '#f07fa8', icon: 'icecream' },
-    { id: 'librairie', name: 'Librairie', price: 140, color: '#2f7d6d', icon: 'book' },
-    { id: 'pharmacie', name: 'Pharmacie', price: 160, color: '#27a35a', icon: 'cross' },
-    { id: 'pizzeria', name: 'Pizzeria', price: 180, color: '#c8402f', icon: 'pizza' },
-    { id: 'jouets', name: 'Jouets', price: 200, color: '#f2a31f', icon: 'bear' },
-    { id: 'coiffeur', name: 'Coiffeur', price: 210, color: '#6b4fb3', icon: 'scissors' },
-    { id: 'burger', name: 'Burger', price: 240, color: '#e2552a', icon: 'burger' },
-    { id: 'vetements', name: 'Vêtements', price: 270, color: '#2b8fbd', icon: 'shirt' },
-    { id: 'billard', name: 'Billard', price: 280, color: '#2e7d4f', icon: 'eightball' },
-    { id: 'arcade', name: 'Arcade', price: 300, color: '#8c3fd1', icon: 'joystick' },
-    { id: 'restaurant', name: 'Restaurant', price: 330, color: '#7d2a3a', icon: 'cutlery' },
-    { id: 'bowling', name: 'Bowling', price: 360, color: '#d6336c', icon: 'pin' },
-    { id: 'lasergame', name: 'Laser game', price: 380, color: '#2bd1a0', icon: 'laser' },
-    { id: 'cinema', name: 'Cinéma', price: 400, color: '#d22f3b', icon: 'reel' },
-    { id: 'galerie', name: "Galerie d'art", price: 420, color: '#3b4a6b', icon: 'painting' },
-    { id: 'bijouterie', name: 'Bijouterie', price: 450, color: '#2aa7b8', icon: 'diamond' },
-    { id: 'piscine', name: 'Piscine', price: 480, color: '#4fa8de', icon: 'pool' },
-    { id: 'manege', name: 'Manège', price: 520, color: '#e9b92e', icon: 'carousel' },
-    { id: 'hotel', name: 'Hôtel', price: 600, color: '#b08a2e', icon: 'H' },
-    { id: 'casino', name: 'Casino', price: 700, color: '#1f8a4c', icon: 'dice' },
-    { id: 'discotheque', name: 'Discothèque', price: 800, color: '#b83dd1', icon: 'discoball' },
+    { id: 'cafe', name: 'Café', price: 120, color: '#8a5a36', icon: 'cup' },
+    { id: 'glacier', name: 'Glacier', price: 160, color: '#f07fa8', icon: 'icecream' },
+    { id: 'librairie', name: 'Librairie', price: 200, color: '#2f7d6d', icon: 'book' },
+    { id: 'pharmacie', name: 'Pharmacie', price: 240, color: '#27a35a', icon: 'cross' },
+    { id: 'pizzeria', name: 'Pizzeria', price: 290, color: '#c8402f', icon: 'pizza' },
+    { id: 'jouets', name: 'Jouets', price: 340, color: '#f2a31f', icon: 'bear' },
+    { id: 'coiffeur', name: 'Coiffeur', price: 400, color: '#6b4fb3', icon: 'scissors' },
+    { id: 'burger', name: 'Burger', price: 460, color: '#e2552a', icon: 'burger' },
+    { id: 'vetements', name: 'Vêtements', price: 520, color: '#2b8fbd', icon: 'shirt' },
+    { id: 'billard', name: 'Billard', price: 590, color: '#2e7d4f', icon: 'eightball' },
+    { id: 'arcade', name: 'Arcade', price: 660, color: '#8c3fd1', icon: 'joystick' },
+    { id: 'restaurant', name: 'Restaurant', price: 740, color: '#7d2a3a', icon: 'cutlery' },
+    { id: 'bowling', name: 'Bowling', price: 820, color: '#d6336c', icon: 'pin' },
+    { id: 'lasergame', name: 'Laser game', price: 900, color: '#2bd1a0', icon: 'laser' },
+    { id: 'cinema', name: 'Cinéma', price: 990, color: '#d22f3b', icon: 'reel' },
+    { id: 'galerie', name: "Galerie d'art", price: 1080, color: '#3b4a6b', icon: 'painting' },
+    { id: 'bijouterie', name: 'Bijouterie', price: 1180, color: '#2aa7b8', icon: 'diamond' },
+    { id: 'piscine', name: 'Piscine', price: 1290, color: '#4fa8de', icon: 'pool' },
+    { id: 'manege', name: 'Manège', price: 1400, color: '#e9b92e', icon: 'carousel' },
+    { id: 'hotel', name: 'Hôtel', price: 1520, color: '#b08a2e', icon: 'H' },
+    { id: 'casino', name: 'Casino', price: 1650, color: '#1f8a4c', icon: 'dice' },
+    { id: 'discotheque', name: 'Discothèque', price: 1800, color: '#b83dd1', icon: 'discoball' },
   ];
 
   // Les 2 malus, qui se jouent sur une boutique adverse.

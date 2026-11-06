@@ -25,6 +25,21 @@
     RETURNING: 'returning',   // de la porte jusqu'à la rue
   };
 
+  // Boutique pour laquelle un nouveau passant vient en ville : tirée au hasard parmi les boutiques
+  // ouvertes, les plus attirantes un peu plus souvent. Ainsi chaque boutique reçoit sa part de clients,
+  // où qu'elle soit sur la carte. null s'il n'y a encore aucune boutique.
+  function pickDestination() {
+    const shops = Game.state.lots.filter(lot => lot.shop && !lot.isBank);
+    let remaining = Math.random() * shops.reduce((total, lot) => total + Game.catalog.entryChance(lot), 0);
+    for (const lot of shops) {
+      remaining -= Game.catalog.entryChance(lot);
+      if (remaining <= 0) {
+        return lot;
+      }
+    }
+    return shops.length ? shops[shops.length - 1] : null;
+  }
+
   // Crée un passant. Avec `alreadyInTown`, il est placé au hasard au milieu de son trajet
   // (début de partie) ; sinon il apparaît à sa sortie de départ.
   // Avec `salesLot` (soldes), il court tout droit vers cette boutique, puis repart.
@@ -35,30 +50,32 @@
     if (to === from && Math.random() < PEOPLE.AVOID_SAME_EXIT_CHANCE) {
       to = pickRandom(map.exits.filter(id => id !== from));
     }
-    let routeNodes;
-    if (salesLot) {
-      // Trajet qui longe la rue de la boutique (il passe forcément devant sa porte).
-      // Si cette rue mène à une sortie, il repart par cette sortie.
-      const street = map.lotStreet[salesLot.index];
-      if (map.isExit(street.end)) {
-        to = street.end;
-        routeNodes = [...map.findPath(from, street.start), street.end];
-      } else {
-        routeNodes = [
-          ...map.findPath(from, street.start),
-          street.end,
-          ...map.findPath(street.end, to).slice(1),
-        ];
+    // Rues à longer : celle de la boutique visée (soldes, ou boutique pour laquelle il vient en ville),
+    // puis celles de quelques cases tirées au hasard. Il passe forcément devant leurs portes.
+    const destinationLot = salesLot ? null : pickDestination();
+    const targetLot = salesLot || destinationLot;
+    const streets = targetLot ? [map.lotStreet[targetLot.index]] : [];
+    if (!salesLot) {
+      for (let k = 0; k < PEOPLE.ROUTE_LOT_COUNT; k++) {
+        streets.push(pickRandom(map.lotStreet));
       }
-    } else {
-      const firstStop = pickRandom(map.intersections);
-      const secondStop = pickRandom(map.intersections);
-      routeNodes = [
-        ...map.findPath(from, firstStop),
-        ...map.findPath(firstStop, secondStop).slice(1),
-        ...map.findPath(secondStop, to).slice(1),
-      ];
     }
+    const routeNodes = [from];
+    for (const street of streets) {
+      if (map.isExit(street.end)) {
+        // Rue qui mène à une sortie : il y passe en arrivant, ou bien il repartira par là.
+        if (street.end !== from) {
+          to = street.end;
+        }
+        continue;
+      }
+      const goesForward = Math.random() < 0.5;
+      const streetStart = goesForward ? street.start : street.end;
+      const streetEnd = goesForward ? street.end : street.start;
+      const current = routeNodes[routeNodes.length - 1];
+      routeNodes.push(...map.findPath(current, streetStart).slice(1), streetEnd);
+    }
+    routeNodes.push(...map.findPath(routeNodes[routeNodes.length - 1], to).slice(1));
     const walkSpeed = randomBetween(PEOPLE.WALK_SPEED_MIN, PEOPLE.WALK_SPEED_MAX);
 
     const isGirl = Math.random() < 0.5;
@@ -77,6 +94,7 @@
       walkSpeed,                // vitesse normale (il court pendant les soldes)
       salesLot: salesLot || null,       // soldes : boutique visée (il paie moitié prix)
       isRushing: Boolean(salesLot),     // soldes : il fonce vers salesLot sans regarder les autres boutiques
+      destinationLot,           // boutique pour laquelle il est venu : il y entre s'il reste de la place
       walkPhase: randomBetween(0, 6.28),                                  // balancement des jambes
       shirt: pickRandom(SHIRT_COLORS),
       pants: pickRandom(PANTS_COLORS),

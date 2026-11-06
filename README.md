@@ -79,7 +79,7 @@ bourg-les-bonhommes/
 | Vitesse de la jauge d'argent derrière les cartes | `js/config.js` | `moneyGauge` |
 | Plan de la ville (rues, cases, parcs) | `js/map.js` | `STREET_X`, `STREET_Y`, `STREETS`, `LOT_ROWS`, `PARKS` |
 | Envie des passants d'entrer | `js/config.js` | `attraction` |
-| Vitesse des passants, durée de séjour par activité | `js/config.js` | `people` |
+| Vitesse des passants, durée de séjour par activité, rues longées en plus de leur boutique | `js/config.js` | `people` (`ROUTE_LOT_COUNT`) |
 | Bowling (lancers, durées, chance de strike, chute des quilles) | `js/config.js` | `bowling` |
 | Temps passé devant chaque tableau de la galerie d'art | `js/config.js` | `gallery` |
 | Temps pour se changer au vestiaire de la piscine | `js/config.js` | `pool` |

@@ -49,6 +49,7 @@
       const lot = Game.state.lots[access.lotIndex];
       // Soldes : il fonce vers sa boutique sans regarder les autres.
       const isSalesTarget = person.isRushing && person.salesLot === lot;
+      const isDestination = person.destinationLot === lot;
       if (person.isRushing && !isSalesTarget) {
         continue;
       }
@@ -67,12 +68,15 @@
       if (isSalesTarget) {
         stopRushing(person);
       }
+      if (isDestination) {
+        person.destinationLot = null;
+      }
       if (!Game.shops.hasFreeSlot(lot)) {
         person.salesLot = null;   // complet : il repart (et paiera plein tarif ailleurs)
         continue;
       }
       person.visitedLots.add(lot);
-      if (isSalesTarget || Math.random() < Game.catalog.entryChance(lot)) {
+      if (isSalesTarget || isDestination || Math.random() < Game.catalog.entryChance(lot)) {
         // On le replace exactement face à la porte.
         person.distanceOnSegment = Math.abs(access.positionAlong - origin);
         Game.people.placeOnRoute(person);

@@ -2,6 +2,12 @@
 
 Les versions les plus récentes sont en haut.
 
+## v2.16 — Prix plus espacés, clients mieux répartis (6 novembre 2026)
+
+- **Prix plus espacés** : de 60 $ (fleuriste) à 1800 $ (discothèque), au lieu de 60 à 800 $. L'écart grandit d'une boutique à la suivante (fleuriste 60, kiosque 70, boulangerie 100, café 120, glacier 160, librairie 200… casino 1650, discothèque 1800). Les gains, les améliorations et les boucliers suivent les prix. Avec les 140 $ du départ, on peut toujours ouvrir une boulangerie ou un café, ou deux fleuristes ou deux kiosques.
+- **Clients mieux répartis** : avant, certaines rues étaient bien plus passantes que d'autres, et une boutique pouvait recevoir 4 fois moins de clients qu'une autre selon sa case. Désormais, chaque nouveau passant vient en ville pour une boutique tirée au hasard parmi celles qui sont ouvertes (les plus attirantes un peu plus souvent) : il y entre s'il reste de la place, et peut s'arrêter dans d'autres en chemin. En début de partie, avec une boutique chacun, l'écart de gains entre les deux joueurs passe d'environ ×2 à ×1,4.
+- Fichiers : `js/catalog.js` (prix), `js/config.js` (`attraction.REFERENCE_PRICE`, `people.ROUTE_LOT_COUNT`), `js/people/person.js` (boutique visée, trajet), `js/people/behaviour.js` (entrée dans la boutique visée).
+
 ## v2.15 — Carte en moulinet, événements plus tardifs (6 novembre 2026)
 
 - **Carte en moulinet**, d'après le plan du City Bucks d'origine : un carré de rues dont chaque côté se prolonge hors de la carte par un coin (le haut vers la droite, la droite vers le bas, le bas vers la gauche, la gauche vers le haut). Les passants arrivent par ces 4 routes, aux coins.
