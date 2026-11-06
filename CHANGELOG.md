@@ -2,6 +2,13 @@
 
 Les versions les plus récentes sont en haut.
 
+## v2.18 — Victoire à 20 000 $, coup de pouce au joueur qui perd (6 novembre 2026)
+
+- **Victoire** : le premier joueur qui atteint 20 000 $ gagne. La ville s'arrête et un panneau annonce le gagnant, la durée de la partie et l'argent des deux joueurs ; « Recommencer » relance une partie. En partie auto, une nouvelle partie commence toute seule 10 s plus tard. L'objectif est rappelé sous l'argent de chaque joueur.
+- **Coup de pouce** : si la fortune d'un joueur (son argent plus le prix de ses boutiques) tombe sous la moitié de celle de l'autre, chacun de ses clients rapporte 50 % de plus. Un badge vert « Coup de pouce +50 % » s'affiche en haut de son bac ; il disparaît dès qu'il remonte.
+- **Gains par client divisés par 5** (`INCOME_RATE` 0,5 → 0,1) : avant, l'argent s'emballait (des centaines de milliers de dollars en 10 minutes). En partie auto, une partie dure maintenant 14 à 17 minutes. Le butin de la banque, les malus et les courses des extraterrestres pèsent donc plus lourd qu'avant.
+- Fichiers : `js/config.js` (`catchUp`, `victory`, `economy.INCOME_RATE`), `js/catalog.js` (`wealthOf`, `hasCatchUpBonus`), `js/state.js` (`checkVictory`), `js/main.js` (fin de partie, relance auto), `js/render/overlay.js` (panneau de victoire), `js/render/trays.js` (badge, objectif), `js/input.js` (clics ignorés après la victoire), `index.html` (règles).
+
 ## v2.17 — Pas plus de 2 fois la même boutique par joueur (6 novembre 2026)
 
 - Un joueur ne peut pas construire plus de 2 fois la même boutique. Une pastille « 1/2 » ou « 2/2 » sur la carte indique combien il en possède ; à 2/2, la carte est grisée, les cases libres ne sont plus proposées et un clic affiche « Déjà 2 fois ! ». Une boutique volée à la voiture-voleur peut faire dépasser cette limite (la règle porte sur la construction).

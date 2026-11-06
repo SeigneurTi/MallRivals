@@ -52,12 +52,25 @@
     return Game.interiors[shop.id].slots.length;
   }
 
+  // Fortune d'un joueur : son argent plus le prix de ses boutiques.
+  function wealthOf(player) {
+    const state = Game.state;
+    const shopsValue = state.lots.filter(lot => lot.owner === player && lot.shop).reduce((total, lot) => total + lot.shop.price, 0);
+    return state.bucks[player] + shopsValue;
+  }
+
+  // Coup de pouce : le joueur dont la fortune est sous la moitié de celle de l'autre.
+  function hasCatchUpBonus(player) {
+    return player != null && wealthOf(player) < config.catchUp.WEALTH_RATIO * wealthOf(1 - player);
+  }
+
   // Gain par client. Moins il y a de places, plus chaque client rapporte.
   function incomePerCustomer(lot) {
     const economy = config.economy;
     const levelBonus = 1 + economy.LEVEL_INCOME_BONUS * (lot.level - 1);
     const hotBonus = lot.isHot ? economy.HOT_LOT_MULTIPLIER : 1;
-    return Math.round(lot.shop.price * economy.INCOME_RATE / Math.sqrt(capacityOf(lot.shop)) * levelBonus * hotBonus);
+    const catchUpBonus = hasCatchUpBonus(lot.owner) ? config.catchUp.INCOME_BONUS : 1;
+    return Math.round(lot.shop.price * economy.INCOME_RATE / Math.sqrt(capacityOf(lot.shop)) * levelBonus * hotBonus * catchUpBonus);
   }
 
   // Probabilité qu'un passant entre : augmente avec le prix et le niveau.
@@ -77,5 +90,5 @@
     return Math.round(config.economy.SHIELD_BASE_COST + lot.shop.price * config.economy.SHIELD_PRICE_RATE);
   }
 
-  Game.catalog = { SHOPS, ACTIONS, CARDS, BANK, capacityOf, incomePerCustomer, entryChance, upgradeCost, shieldCost };
+  Game.catalog = { SHOPS, ACTIONS, CARDS, BANK, capacityOf, wealthOf, hasCatchUpBonus, incomePerCustomer, entryChance, upgradeCost, shieldCost };
 })();

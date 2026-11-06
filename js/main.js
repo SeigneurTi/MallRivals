@@ -18,6 +18,7 @@
     Game.events.maybeTriggerRandomEvents(dt);
     Game.events.updateSales(dt);
     Game.autoplay.update(dt);
+    Game.world.checkVictory();
   }
 
   function render(timestamp) {
@@ -68,6 +69,7 @@
     Game.overlay.drawSalesClock(ctx);
     Game.overlay.drawBanner(ctx);
     Game.overlay.drawPauseBadge(ctx);
+    Game.overlay.drawVictory(ctx);
     ctx.restore();
 
     Game.trays.draw(0);
@@ -79,8 +81,15 @@
     // Temps réel écoulé, plafonné ; le temps de jeu suit le curseur « Vitesse ».
     const realDt = Math.min(Game.config.loop.MAX_FRAME_SECONDS, (timestamp - lastTimestamp) / 1000 || 0);
     lastTimestamp = timestamp;
-    if (Game.state.isRunning) {
-      simulate(realDt * Game.state.speedMultiplier);
+    const state = Game.state;
+    if (state.winner != null) {
+      // Partie finie : la ville s'arrête ; en partie auto, une nouvelle partie commence peu après.
+      state.victoryAge += realDt;
+      if (state.isAutoplay && state.victoryAge >= Game.config.victory.AUTOPLAY_RESTART_SECONDS) {
+        Game.world.reset();
+      }
+    } else if (state.isRunning) {
+      simulate(realDt * state.speedMultiplier);
     }
     Game.feedback.update(realDt);
     Game.trays.update(realDt);

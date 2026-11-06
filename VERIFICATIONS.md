@@ -7,7 +7,7 @@
 - [ ] La page s'ouvre sans message d'erreur rouge sous le titre.
 - [ ] Le plateau montre un carré de rues en moulinet : la rue de gauche sort en haut, celle du haut sort à droite, celle de droite sort en bas, celle du bas sort à gauche ; une rue centrale relie le haut et le bas. 32 cases grises : tout le tour de la carte (côté extérieur), le long du haut et du bas à l'intérieur, et le long de la rue centrale ; quelques ronds roses, aucune boutique ouverte sauf la banque au centre ; deux parcs arborés, avec le compte à rebours des soldes dans celui de gauche.
 - [ ] Les cases des côtés gauche et droit sont tournées, porte vers la rue ; une boutique construite là a son mobilier tourné et ses clients y entrent.
-- [ ] Chaque bac affiche 27 cartes avec leur prix et leur nom en petit dessous, et « 140 bucks » en bas.
+- [ ] Chaque bac affiche 27 cartes avec leur prix et leur nom en petit dessous, et « 140 » en bas, avec « objectif 20000 $ » dessous.
 - [ ] Jauge d'argent : derrière les cartes, un fond à la couleur du joueur descend jusqu'à la dernière boutique abordable (140 $ : jusqu'au Café ; 200 $ : jusqu'à la Librairie) ; elle monte et descend en douceur quand l'argent change.
 - [ ] Au début, peu de passants (8) ; chaque boutique ouverte en fait venir 4 de plus.
 - [ ] Prix des cartes : de 60 $ (Fleuriste) à 1800 $ (Discothèque), de plus en plus espacés.
@@ -99,6 +99,12 @@
 
 - [ ] Bouton « Partie auto » : il s'enfonce (« Partie auto ✓ ») et les deux joueurs construisent, améliorent et protègent tout seuls ; au bout de quelques minutes, la ville est pleine et toutes les boutiques sont présentes.
 - [ ] Le rejouer l'arrête ; Pause met aussi la partie auto en pause.
+
+## Victoire et coup de pouce
+
+- [ ] Un joueur atteint 20 000 $ : la ville s'arrête, la carte s'assombrit, un panneau « Joueur N gagne ! » indique la durée et l'argent des deux joueurs ; le journal l'annonce ; les clics sur le plateau ne font plus rien ; « Recommencer » relance une partie.
+- [ ] En partie auto, une nouvelle partie démarre toute seule 10 s après la victoire (« Nouvelle partie dans … s »).
+- [ ] Quand la fortune d'un joueur (argent + prix de ses boutiques) passe sous la moitié de celle de l'autre : badge vert « Coup de pouce +50 % » en haut de son bac, et le gain par client de ses boutiques (menu d'une boutique, « +… » flottants) augmente de 50 %. Le badge disparaît quand il remonte.
 
 ## Soldes et boucliers
 

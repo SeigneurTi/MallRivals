@@ -23,6 +23,8 @@
     isRunning: !Game.view.prefersReducedMotion,           // bouton Pause / Lecture
     hoveredPerson: null,      // passant survolé (info-bulle)
     isAutoplay: false,        // bouton « Partie auto » : les joueurs jouent tout seuls
+    winner: null,             // joueur qui a atteint l'objectif (la partie est alors finie)
+    victoryAge: 0,            // temps réel écoulé depuis la victoire (s)
   };
 
   function createLots() {
@@ -70,6 +72,8 @@
     state.spawnTimer = 0;
     state.banner = null;
     state.gameTime = 0;
+    state.winner = null;
+    state.victoryAge = 0;
     Game.events.resetSales();
     state.people = [];
     const startingPopulation = Game.people.targetPopulation();
@@ -104,5 +108,19 @@
     Game.board.draw();
   }
 
-  Game.world = { reset, lotCenter, destroyShop };
+  // Le premier joueur qui atteint l'objectif gagne (le plus riche si les deux l'atteignent ensemble).
+  function checkVictory() {
+    const state = Game.state;
+    const target = Game.config.victory.TARGET_BUCKS;
+    if (state.winner != null || Math.max(...state.bucks) < target) {
+      return;
+    }
+    state.winner = state.bucks[0] >= state.bucks[1] ? 0 : 1;
+    state.victoryAge = 0;
+    state.selection = null;
+    state.menuLot = null;
+    Game.feedback.log(`${Game.config.players.NAMES[state.winner]} atteint ${target} $ et gagne la partie !`);
+  }
+
+  Game.world = { reset, lotCenter, destroyShop, checkVictory };
 })();

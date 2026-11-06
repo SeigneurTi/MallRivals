@@ -138,6 +138,46 @@
     ctx.fillText(minutes + ':' + seconds, centerX, centerY + 7);
   }
 
+  // Fin de partie : la carte s'assombrit et un panneau annonce le gagnant.
+  function drawVictory(ctx) {
+    const state = Game.state;
+    if (state.winner == null) {
+      return;
+    }
+    const players = Game.config.players;
+    const victory = Game.config.victory;
+    const fadeIn = Math.min(1, state.victoryAge * 2);
+    ctx.globalAlpha = fadeIn;
+    ctx.fillStyle = 'rgba(20,25,30,.55)';
+    ctx.fillRect(0, 0, BOARD.MAP_WIDTH, BOARD.HEIGHT);
+    const width = 420;
+    const height = 170;
+    const left = BOARD.MAP_WIDTH / 2 - width / 2;
+    const top = BOARD.HEIGHT / 2 - height / 2;
+    ctx.fillStyle = '#ffffff';
+    roundedRectPath(ctx, left, top, width, height, 18);
+    ctx.fill();
+    ctx.fillStyle = players.COLORS[state.winner];
+    roundedRectPath(ctx, left, top, width, 10, 5);
+    ctx.fill();
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillStyle = players.COLORS[state.winner];
+    ctx.font = '800 34px "Baloo 2", system-ui, sans-serif';
+    ctx.fillText(`${players.NAMES[state.winner]} gagne !`, BOARD.MAP_WIDTH / 2, top + 55);
+    const minutes = Math.floor(state.gameTime / 60);
+    const seconds = Math.floor(state.gameTime % 60);
+    ctx.fillStyle = '#23272b';
+    ctx.font = '700 15px Nunito, system-ui, sans-serif';
+    ctx.fillText(`${victory.TARGET_BUCKS} $ atteints en ${minutes} min ${seconds} s · ${state.bucks[0]} $ contre ${state.bucks[1]} $`, BOARD.MAP_WIDTH / 2, top + 98, width - 30);
+    ctx.fillStyle = '#5d6560';
+    ctx.font = '600 13px Nunito, system-ui, sans-serif';
+    const restartIn = Math.ceil(victory.AUTOPLAY_RESTART_SECONDS - state.victoryAge);
+    const hint = state.isAutoplay ? `Nouvelle partie dans ${restartIn} s` : 'Touche « Recommencer » pour rejouer';
+    ctx.fillText(hint, BOARD.MAP_WIDTH / 2, top + 132);
+    ctx.globalAlpha = 1;
+  }
+
   function drawPauseBadge(ctx) {
     if (Game.state.isRunning) {
       return;
@@ -151,5 +191,5 @@
     ctx.fillText('Pause', BOARD.MAP_WIDTH / 2, 29.5);
   }
 
-  Game.overlay = { drawSelectionTargets, drawFloatingTexts, drawTooltip, drawSalesClock, drawBanner, drawPauseBadge };
+  Game.overlay = { drawSelectionTargets, drawFloatingTexts, drawTooltip, drawSalesClock, drawBanner, drawPauseBadge, drawVictory };
 })();

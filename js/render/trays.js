@@ -180,6 +180,15 @@
     if (selection && selection.player === player) {
       c.fillStyle = PLAYERS.COLORS[player];
       c.fillText(Game.catalog.CARDS[selection.cardIndex].name, middle, 39);
+    } else if (Game.catalog.hasCatchUpBonus(player)) {
+      // Coup de pouce : ce joueur est loin derrière, ses clients rapportent plus.
+      const bonus = Math.round((Game.config.catchUp.INCOME_BONUS - 1) * 100);
+      c.fillStyle = '#27a35a';
+      roundedRectPath(c, left + 8, 31, BOARD.TRAY_WIDTH - 16, 16, 8);
+      c.fill();
+      c.fillStyle = '#ffffff';
+      c.font = '800 10px Nunito, system-ui, sans-serif';
+      c.fillText(`Coup de pouce +${bonus} %`, middle, 39.5);
     } else {
       c.fillStyle = '#9aa2ad';
       c.fillText('Choisis une carte', middle, 39);
@@ -192,7 +201,7 @@
     c.fillText(Game.state.bucks[player], middle, BOARD.HEIGHT - 40);
     c.fillStyle = '#9aa2ad';
     c.font = '700 12px Nunito, system-ui, sans-serif';
-    c.fillText('bucks', middle, BOARD.HEIGHT - 18);
+    c.fillText(`objectif ${Game.config.victory.TARGET_BUCKS} $`, middle, BOARD.HEIGHT - 18);
   }
 
   Game.trays = { cardRect, update, draw };

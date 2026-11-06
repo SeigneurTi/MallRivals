@@ -76,6 +76,8 @@ bourg-les-bonhommes/
 | Gain par client, coût d'amélioration et de bouclier, maximums | `js/config.js` | `economy` (formules dans `js/catalog.js`) |
 | Chance qu'une boutique soit détruite malgré un bouclier (20 %) | `js/config.js` | `economy.SHIELD_BREAK_CHANCE` |
 | Nombre maximal de fois la même boutique par joueur (2) | `js/config.js` | `economy.MAX_SAME_SHOP_PER_PLAYER` |
+| Objectif de victoire (20 000 $), relance en partie auto | `js/config.js` | `victory` |
+| Coup de pouce au joueur qui perd (seuil, bonus) | `js/config.js` | `catchUp` |
 | Soldes : compte à rebours, nombre de boutiques et de clients, gain réduit | `js/config.js` | `sales` |
 | Vitesse de la jauge d'argent derrière les cartes | `js/config.js` | `moneyGauge` |
 | Plan de la ville (rues, cases, parcs) | `js/map.js` | `STREET_X`, `STREET_Y`, `STREETS`, `LOT_ROWS`, `PARKS` |

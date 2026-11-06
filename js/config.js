@@ -31,7 +31,7 @@
     },
 
     economy: {
-      INCOME_RATE: 0.5,                // part du prix gagnée par client (avant correction)
+      INCOME_RATE: 0.1,                // part du prix gagnée par client (avant correction) ; réglée pour une partie de 15 min environ
       LEVEL_INCOME_BONUS: 0.5,         // +50 % de gain par niveau au-dessus de 1
       HOT_LOT_MULTIPLIER: 2,
       UPGRADE_COST_RATE: 0.5,          // coût = prix × 0,5 × niveau actuel
@@ -41,6 +41,19 @@
       MAX_SHIELDS: 3,
       SHIELD_BREAK_CHANCE: 0.2,
       MAX_SAME_SHOP_PER_PLAYER: 2,     // un joueur ne construit pas plus de 2 fois la même boutique        // même avec un bouclier, 20 % de chances que la boutique soit détruite
+    },
+
+    // Coup de pouce au joueur qui perd : si sa fortune (argent + prix de ses boutiques) tombe sous
+    // la moitié de celle de l'autre, chacun de ses clients rapporte 50 % de plus.
+    catchUp: {
+      WEALTH_RATIO: 0.5,
+      INCOME_BONUS: 1.5,
+    },
+
+    // Victoire : le premier joueur qui atteint ce montant gagne la partie.
+    victory: {
+      TARGET_BUCKS: 20000,
+      AUTOPLAY_RESTART_SECONDS: 10,    // en partie auto, une nouvelle partie commence 10 s après
     },
 
     // Soldes : toutes les 2 minutes, des clients se ruent dans plusieurs boutiques.

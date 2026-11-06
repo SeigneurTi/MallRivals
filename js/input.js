@@ -63,6 +63,9 @@
     const state = Game.state;
     const [x, y] = toBoardPoint(event);
     const mapX = x - BOARD.MAP_LEFT;
+    if (state.winner != null) {
+      return;   // partie finie : on attend « Recommencer »
+    }
 
     // Un menu est ouvert : tout clic le ferme, et active la ligne touchée.
     if (state.menuLot) {
