@@ -24,9 +24,9 @@
     },
 
     start: {
-      BUCKS: 1000,
+      BUCKS: 140,                      // de quoi ouvrir une boulangerie, un café, ou deux fleuristes ou kiosques
       HOT_LOT_COUNT: 5,                // cases avec un rond rose (gains doublés)
-      PREBUILT_SHOP_COUNT: 4,          // boutiques déjà ouvertes en début de partie
+      PREBUILT_SHOP_COUNT: 0,          // boutiques déjà ouvertes en début de partie (aucune : on part de rien)
       PREBUILT_SHOP_CHOICES: 10,       // tirées parmi les 10 boutiques les moins chères
     },
 
@@ -39,6 +39,18 @@
       SHIELD_PRICE_RATE: 0.25,
       MAX_LEVEL: 3,
       MAX_SHIELDS: 3,
+      SHIELD_BREAK_CHANCE: 0.2,        // même avec un bouclier, 20 % de chances que la boutique soit détruite
+    },
+
+    // Soldes : toutes les 2 minutes, des clients se ruent dans plusieurs boutiques.
+    sales: {
+      COUNTDOWN_SECONDS: 120,          // compte à rebours avant les soldes
+      SHOP_COUNT: 4,                   // nombre de boutiques prises d'assaut
+      MAX_SHOPPERS_PER_SHOP: 6,        // clients envoyés vers chaque boutique (au plus ses places)
+      INCOME_RATE: 0.5,                // un client des soldes rapporte deux fois moins
+      RUN_SPEED_FACTOR: 2.2,           // ils courent jusqu'à la boutique
+      SPREAD_DISTANCE: 140,            // ils n'arrivent pas tous en même temps
+      LABEL_SECONDS: 15,               // durée de la pastille « Soldes » sur les boutiques visées
     },
 
     // Probabilité qu'un passant entre quand il passe devant une boutique.
@@ -51,7 +63,11 @@
     },
 
     people: {
-      DEFAULT_COUNT: 40,               // doit correspondre à la valeur du curseur dans index.html
+      // Plus il y a de boutiques, plus il y a de passants : BASE_COUNT + PER_SHOP × boutiques,
+      // sans dépasser le curseur « Passants max ».
+      BASE_COUNT: 8,
+      PER_SHOP: 4,
+      DEFAULT_MAX: 120,                // doit correspondre à la valeur du curseur dans index.html
       WALK_SPEED_MIN: 28,
       WALK_SPEED_MAX: 46,
       ROAD_OFFSET: 13,                 // écart latéral maximal par rapport au milieu de la rue
@@ -141,7 +157,7 @@
 
     // Banque : sans propriétaire, toujours au même endroit, pillable à la voiture-voleur.
     bank: {
-      LOT_INDEX: 15,                   // case au centre de la carte
+      LOT_INDEX: 10,                   // case au centre de la carte, juste au-dessus du carrefour central
       LOOT: 600,                       // butin quand le coffre est plein
       REFILL_SECONDS: 120,             // l'or revient en 2 minutes
     },
@@ -168,8 +184,7 @@
 
     fire: {
       DURATION_SECONDS: 6,
-      BURN_CHANCE: 0.45,
-      BURN_CHANCE_WITH_SHIELD: 0.15,
+      BURN_CHANCE: 0.45,               // avec un bouclier : economy.SHIELD_BREAK_CHANCE
     },
 
     monster: {
@@ -183,6 +198,11 @@
       DEPARTURE_SECONDS: 1.4,
       ABDUCTION_CHANCE: 0.35,          // sinon les extraterrestres font des achats
       SHOPPING_RATE: 0.6,              // achat = prix de la boutique × 0,6
+    },
+
+    // Jauge d'argent derrière les cartes : elle descend jusqu'à la dernière boutique qu'on peut s'offrir.
+    moneyGauge: {
+      FILL_SPEED: 3,                   // vitesse à laquelle la jauge rattrape l'argent du joueur
     },
 
     feedback: {

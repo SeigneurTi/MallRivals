@@ -5,8 +5,11 @@
 ## Démarrage
 
 - [ ] La page s'ouvre sans message d'erreur rouge sous le titre.
-- [ ] Le plateau montre 4 routes qui sortent du cadre, 36 cases grises, quelques ronds roses 4 boutiques déjà ouvertes (2 par joueur, contour orange ou bleu) et la banque au centre.
-- [ ] Chaque bac affiche 26 cartes avec leur prix et leur nom en petit dessous, et « 1000 bucks » en bas.
+- [ ] Le plateau montre une rue qui fait le tour de la ville, une croix au centre et 4 routes qui sortent du cadre (nord, sud, est, ouest) ; 28 cases grises tout autour et dans les 4 quartiers, quelques ronds roses, aucune boutique ouverte sauf la banque au centre ; des pelouses avec des arbres dans les coins et entre les rangées.
+- [ ] Les cases des côtés gauche et droit sont tournées, porte vers la rue ; une boutique construite là a son mobilier tourné et ses clients y entrent.
+- [ ] Chaque bac affiche 27 cartes avec leur prix et leur nom en petit dessous, et « 140 bucks » en bas.
+- [ ] Jauge d'argent : derrière les cartes, un fond à la couleur du joueur descend jusqu'à la dernière boutique abordable (140 $ : jusqu'à la Librairie ; 200 $ : jusqu'à Jouets) ; elle monte et descend en douceur quand l'argent change.
+- [ ] Au début, peu de passants (8) ; chaque boutique ouverte en fait venir 4 de plus.
 - [ ] Les accents s'affichent correctement (« Météorite », « Hôtel », « Manège »).
 - [ ] Des passants arrivent par les 4 routes et se promènent.
 
@@ -94,6 +97,13 @@
 - [ ] Bouton « Partie auto » : il s'enfonce (« Partie auto ✓ ») et les deux joueurs construisent, améliorent et protègent tout seuls ; au bout de quelques minutes, la ville est pleine et toutes les boutiques sont présentes.
 - [ ] Le rejouer l'arrête ; Pause met aussi la partie auto en pause.
 
+## Soldes et boucliers
+
+- [ ] Coin en haut à gauche : « Soldes dans 1:59 », qui décompte ; l'anneau rose se vide ; dans les 10 dernières secondes, le temps clignote en rouge.
+- [ ] À zéro : le rond devient rose « SOLDES −50 % », le journal annonce les soldes, des clients arrivent en courant par les 4 routes et entrent dans 4 boutiques marquées « Soldes −50 % ». Ils rapportent la moitié du gain habituel. Puis le compte à rebours repart de 2:00.
+- [ ] Sans boutique, le journal indique que la ville n'a encore aucune boutique.
+- [ ] Météorite, monstre ou OVNI sur une boutique avec bouclier : en général « Bouclier ! » et un écusson en moins ; environ une fois sur cinq « Bouclier percé ! » et la boutique est détruite.
+
 ## Événements aléatoires (laisser tourner à ×3, ils sont rares : environ un toutes les 4 minutes)
 
 - [ ] **Monstre** : il traverse la carte et fait perdre un bouclier, sinon un niveau (« Niveau −1 »), sinon détruit la boutique ; puis il repart.
@@ -104,8 +114,8 @@
 ## Commandes
 
 - [ ] Survoler un passant (ou le toucher) : anneau orange et info-bulle « Prénom · de Nord vers Est », ou « Prénom · Boutique » s'il est dans une boutique.
-- [ ] Curseur **Passants** : la foule grossit ou diminue progressivement.
+- [ ] Curseur **Passants max** : baisser le curseur plafonne la foule ; elle diminue progressivement.
 - [ ] Curseur **Vitesse** : tout va plus ou moins vite.
 - [ ] **Pause** : tout s'arrête, badge « Pause » sur le plateau, le bouton devient « Lecture ».
-- [ ] **Recommencer** : nouvelle partie, 1000 bucks chacun, journal remis à « La ville se réveille. ».
+- [ ] **Recommencer** : nouvelle partie, 140 bucks chacun, compte à rebours des soldes à 2:00, journal remis à « La ville se réveille. ».
 - [ ] Redimensionner la fenêtre (ou tourner la tablette) : le plateau s'adapte sans se déformer.

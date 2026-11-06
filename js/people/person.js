@@ -27,20 +27,33 @@
 
   // Crée un passant. Avec `alreadyInTown`, il est placé au hasard au milieu de son trajet
   // (début de partie) ; sinon il apparaît à sa sortie de départ.
-  function create(alreadyInTown) {
+  // Avec `salesLot` (soldes), il court tout droit vers cette boutique, puis repart.
+  function create(alreadyInTown, salesLot) {
     const map = Game.map;
     const from = pickRandom(map.exits);
     let to = pickRandom(map.exits);
     if (to === from && Math.random() < PEOPLE.AVOID_SAME_EXIT_CHANCE) {
       to = pickRandom(map.exits.filter(id => id !== from));
     }
-    const firstStop = pickRandom(map.intersections);
-    const secondStop = pickRandom(map.intersections);
-    const routeNodes = [
-      ...map.findPath(from, firstStop),
-      ...map.findPath(firstStop, secondStop).slice(1),
-      ...map.findPath(secondStop, to).slice(1),
-    ];
+    let routeNodes;
+    if (salesLot) {
+      // Trajet qui longe la rue de la boutique (il passe forcément devant sa porte).
+      const street = map.lotStreet[salesLot.index];
+      routeNodes = [
+        ...map.findPath(from, street.start),
+        street.end,
+        ...map.findPath(street.end, to).slice(1),
+      ];
+    } else {
+      const firstStop = pickRandom(map.intersections);
+      const secondStop = pickRandom(map.intersections);
+      routeNodes = [
+        ...map.findPath(from, firstStop),
+        ...map.findPath(firstStop, secondStop).slice(1),
+        ...map.findPath(secondStop, to).slice(1),
+      ];
+    }
+    const walkSpeed = randomBetween(PEOPLE.WALK_SPEED_MIN, PEOPLE.WALK_SPEED_MAX);
 
     const isGirl = Math.random() < 0.5;
     const person = {
@@ -54,7 +67,10 @@
       visitedLots: new Set(),   // boutiques déjà devant lesquelles il est passé
       offsetX: randomBetween(-PEOPLE.ROAD_OFFSET, PEOPLE.ROAD_OFFSET),   // écart au milieu de la rue
       offsetY: randomBetween(-PEOPLE.ROAD_OFFSET, PEOPLE.ROAD_OFFSET),
-      speed: randomBetween(PEOPLE.WALK_SPEED_MIN, PEOPLE.WALK_SPEED_MAX),
+      speed: salesLot ? walkSpeed * Game.config.sales.RUN_SPEED_FACTOR : walkSpeed,
+      walkSpeed,                // vitesse normale (il court pendant les soldes)
+      salesLot: salesLot || null,       // soldes : boutique visée (il paie moitié prix)
+      isRushing: Boolean(salesLot),     // soldes : il fonce vers salesLot sans regarder les autres boutiques
       walkPhase: randomBetween(0, 6.28),                                  // balancement des jambes
       shirt: pickRandom(SHIRT_COLORS),
       pants: pickRandom(PANTS_COLORS),
@@ -91,6 +107,9 @@
     if (alreadyInTown) {
       person.segmentIndex = Math.floor(randomBetween(1, person.routePoints.length - 2));
       person.distanceOnSegment = randomBetween(0, 1) * segmentLength(person);
+    } else if (salesLot) {
+      // Les clients des soldes arrivent les uns derrière les autres.
+      person.distanceOnSegment = -randomBetween(0, Game.config.sales.SPREAD_DISTANCE);
     }
     placeOnRoute(person);
     return person;
@@ -134,11 +153,19 @@
     return true;
   }
 
-  // Fait arriver un nouveau passant de temps en temps, jusqu'au nombre demandé.
+  // Nombre de passants voulu : peu au début, davantage à chaque boutique ouverte,
+  // sans dépasser le curseur « Passants max ».
+  function targetPopulation() {
+    const state = Game.state;
+    const shopCount = state.lots.filter(lot => lot.shop && !lot.isBank).length;
+    return Math.min(state.maxPopulation, PEOPLE.BASE_COUNT + PEOPLE.PER_SHOP * shopCount);
+  }
+
+  // Fait arriver un nouveau passant de temps en temps, jusqu'au nombre voulu.
   function spawnIfNeeded(dt) {
     const state = Game.state;
     state.spawnTimer -= dt;
-    if (state.people.length < state.targetPopulation && state.spawnTimer <= 0) {
+    if (state.people.length < targetPopulation() && state.spawnTimer <= 0) {
       state.people.push(create(false));
       state.spawnTimer = randomBetween(PEOPLE.SPAWN_DELAY_MIN, PEOPLE.SPAWN_DELAY_MAX);
     }
@@ -168,6 +195,7 @@
     placeOnRoute,
     walkAlongRoute,
     spawnIfNeeded,
+    targetPopulation,
     findNear,
   };
 })();

@@ -2,6 +2,17 @@
 
 Les versions les plus récentes sont en haut.
 
+## v2.14 — Nouvelle carte, soldes, boucliers faillibles, départ modeste (6 novembre 2026)
+
+- **Nouvelle carte** : une rue fait le tour de la ville et une croix la traverse en son centre. Les passants arrivent par 4 routes (nord, sud, est, ouest). Les boutiques bordent tout le tour de la carte, sauf là où passent ces 4 routes, et occupent les 4 quartiers du centre : 28 cases (au lieu de 36), la banque juste au-dessus du carrefour central. Pelouses et arbres dans les coins et entre les rangées.
+- Sur les côtés gauche et droit de la carte, les boutiques sont tournées d'un quart de tour, porte vers la rue : le mobilier, les places et les clients suivent.
+- **Soldes** : un compte à rebours de 2 minutes est affiché dans le coin en haut à gauche. À zéro, des clients arrivent en courant par les 4 routes et se ruent dans 4 boutiques tirées au hasard (pastille rose « Soldes −50 % »). Chacun rapporte deux fois moins qu'un client normal. Puis le compte à rebours repart.
+- **Boucliers** : même avec un bouclier, il reste 20 % de chances que la boutique soit détruite (météorite, monstre, OVNI : « Bouclier percé ! » ; incendie : 20 % de chances de brûler au lieu de 15 %).
+- **Départ modeste** : 140 $ chacun (au lieu de 1000), de quoi ouvrir une boulangerie ou un café, ou deux fleuristes ou kiosques, et aucune boutique déjà ouverte.
+- **Affluence** : peu de passants au début (8), puis 4 de plus par boutique ouverte. Le curseur devient « Passants max » (120 par défaut).
+- **Jauge d'argent** : derrière les cartes, une jauge à la couleur du joueur descend depuis le haut jusqu'à la dernière boutique qu'il peut s'offrir (avec 200 $ : jusqu'à la carte Jouets). Elle monte et descend en douceur quand l'argent change.
+- Fichiers : `js/map.js` (carte), `js/shops/geometry.js` (boutiques tournées), `js/shops/shop.js` (porte, enseigne, badges, pastille « Soldes »), `js/events/sales.js` (nouveau : soldes), `js/events/attacks.js` et `js/events/random-events.js` (boucliers), `js/people/person.js` et `js/people/behaviour.js` (affluence, clients des soldes), `js/render/trays.js` (jauge), `js/render/overlay.js` (compte à rebours), `js/render/board.js` (pelouses), `js/state.js`, `js/main.js`, `js/input.js`, `js/people/activities.js`, `js/config.js`, `index.html` (curseur et règles).
+
 ## v2.13 — Loupe nette, bijouterie, piscine avec vestiaire et jacuzzi (5 novembre 2026)
 
 - **Loupe nette** : au lieu d'agrandir les pixels de l'écran, la scène est redessinée trois fois plus grande dans le rond (textes, passants et mobilier restent nets). Seules les cases sous la loupe sont redessinées.

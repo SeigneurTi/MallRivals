@@ -105,9 +105,10 @@
     const y = lot.y;
     const width = lot.width;
     const height = lot.height;
-    const wall = wallThickness(height);
+    const wall = wallThickness(Math.min(width, height));
     const wallColor = Game.utils.mixColor(shop.color, -0.3);
-    const doorOnTop = Game.map.lotDoorSide[lot.index] === 'top';
+    const door = Game.map.lotDoorSide[lot.index];
+    const isSideways = door === 'left' || door === 'right';
 
     c.save();
     // Ombre portée.
@@ -130,19 +131,30 @@
     c.stroke();
 
     // Porte : ouverture au milieu du mur côté rue.
-    const doorWidth = width * 0.24;
-    const doorLeft = (width - doorWidth) / 2;
+    const doorLength = (isSideways ? height : width) * 0.24;
     c.fillStyle = '#e9e3d6';
-    if (doorOnTop) {
-      c.fillRect(x + doorLeft, y - 1, doorWidth, wall + 2);
+    if (door === 'top') {
+      c.fillRect(x + (width - doorLength) / 2, y - 1, doorLength, wall + 2);
+    } else if (door === 'bottom') {
+      c.fillRect(x + (width - doorLength) / 2, y + height - wall - 1, doorLength, wall + 2);
+    } else if (door === 'left') {
+      c.fillRect(x - 1, y + (height - doorLength) / 2, wall + 2, doorLength);
     } else {
-      c.fillRect(x + doorLeft, y + height - wall - 1, doorWidth, wall + 2);
+      c.fillRect(x + width - wall - 1, y + (height - doorLength) / 2, wall + 2, doorLength);
     }
 
-    // Enseigne ronde, près de la porte, à droite.
-    const signX = x + width - height * 0.17;
-    const signY = doorOnTop ? y + height * 0.2 : y + height * 0.8;
-    const signRadius = Math.max(7, height * 0.1);
+    // Enseigne ronde, près de la porte, dans un coin.
+    const depth = Math.min(width, height);
+    const signRadius = Math.max(7, depth * 0.1);
+    let signX;
+    let signY;
+    if (isSideways) {
+      signX = door === 'left' ? x + depth * 0.2 : x + width - depth * 0.2;
+      signY = y + height - depth * 0.17;
+    } else {
+      signX = x + width - depth * 0.17;
+      signY = door === 'top' ? y + depth * 0.2 : y + height - depth * 0.2;
+    }
     circle(c, signX, signY, signRadius, '#ffffff');
     c.strokeStyle = wallColor;
     c.lineWidth = 1.5;
@@ -159,22 +171,23 @@
       c.stroke();
     }
 
-    // Badges (niveau, boucliers) du côté opposé à la porte.
-    const badgeY = doorOnTop ? y + height - 19 : y + 4;
+    // Badges (niveau, boucliers) loin de la porte : en haut pour les cases des côtés.
+    const badgeY = door === 'top' ? y + height - 19 : y + 4;
+    const badgeLeft = door === 'left' ? x + width - 4 - 30 - 13 * 3 : x + 4;
     if (lot.level > 1) {
       const badgeWidth = 30;
       const badgeHeight = 15;
       c.fillStyle = '#f2c14e';
-      roundedRectPath(c, x + 4, badgeY, badgeWidth, badgeHeight, badgeHeight / 2);
+      roundedRectPath(c, badgeLeft, badgeY, badgeWidth, badgeHeight, badgeHeight / 2);
       c.fill();
       c.fillStyle = '#5a3d00';
       c.font = '800 11px Nunito, system-ui, sans-serif';
       c.textAlign = 'center';
       c.textBaseline = 'middle';
-      c.fillText('★' + lot.level, x + 4 + badgeWidth / 2, badgeY + badgeHeight / 2 + 0.5);
+      c.fillText('★' + lot.level, badgeLeft + badgeWidth / 2, badgeY + badgeHeight / 2 + 0.5);
     }
     for (let k = 0; k < lot.shields; k++) {
-      Game.sprites.drawShield(c, x + 40 + k * 13, badgeY, 10);
+      Game.sprites.drawShield(c, badgeLeft + 36 + k * 13, badgeY, 10);
     }
     c.restore();
   }
@@ -198,7 +211,10 @@
     const freeSlots = lot.occupants.filter(occupant => !occupant).length;
     let label = null;
     let color = '#c0392b';
-    if (lot.isBank) {
+    if (Game.events.isOnSale(lot)) {
+      label = 'Soldes −50 %';
+      color = '#e8578f';
+    } else if (lot.isBank) {
       // Banque : état du coffre.
       label = isBankFull(lot) ? 'Coffre plein' : `Or ${Math.floor(lot.bank.gold * 100)} %`;
       color = isBankFull(lot) ? '#b8860b' : '#5b6b7a';
@@ -215,10 +231,12 @@
       return;
     }
 
-    // Pastille près de la porte.
+    // Pastille près de la porte (un peu plus loin sur les cases étroites des côtés).
     ctx.font = '800 10px Nunito, system-ui, sans-serif';
     const labelWidth = ctx.measureText(label).width + 12;
-    const [labelX, labelY] = lotPointToBoard(lot, 0.5, 0.93);
+    const door = Game.map.lotDoorSide[lot.index];
+    const isSideways = door === 'left' || door === 'right';
+    const [labelX, labelY] = lotPointToBoard(lot, 0.5, isSideways ? 0.55 : 0.93);
     ctx.fillStyle = color;
     roundedRectPath(ctx, labelX - labelWidth / 2, labelY - 7, labelWidth, 14, 7);
     ctx.fill();

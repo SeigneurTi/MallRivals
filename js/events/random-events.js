@@ -38,7 +38,8 @@
     }
   }
 
-  // Incendie : la boutique brûle ou les pompiers la sauvent (un bouclier aide beaucoup).
+  // Incendie : la boutique brûle ou les pompiers la sauvent (un bouclier aide beaucoup :
+  // il ne reste que 20 % de chances qu'elle brûle).
   function startFire(lot, [centerX, centerY]) {
     const FIRE = Game.config.fire;
     log(`Incendie ${shopNameAfterA(lot)} !`);
@@ -52,7 +53,7 @@
         if (!lot.shop) {
           return;
         }
-        const burnChance = lot.shields > 0 ? FIRE.BURN_CHANCE_WITH_SHIELD : FIRE.BURN_CHANCE;
+        const burnChance = lot.shields > 0 ? Game.config.economy.SHIELD_BREAK_CHANCE : FIRE.BURN_CHANCE;
         if (Math.random() < burnChance) {
           log(`${lot.shop.name} a brûlé…`);
           Game.events.addSmoke(centerX, centerY);
@@ -65,8 +66,9 @@
     });
   }
 
-  // Monstre : il traverse la carte jusqu'à la boutique et fait perdre un bouclier,
-  // sinon un niveau, sinon détruit la boutique. Puis il repart de l'autre côté.
+  // Monstre : il traverse la carte jusqu'à la boutique et fait perdre un bouclier (qui peut céder :
+  // la boutique est alors détruite), sinon un niveau, sinon détruit la boutique.
+  // Puis il repart de l'autre côté.
   function startMonster(lot, [centerX, centerY]) {
     const MONSTER = Game.config.monster;
     log(`Un monstre attaque ${shopName(lot)} !`);
@@ -84,11 +86,12 @@
         if (!lot.shop) {
           return;
         }
-        if (lot.shields > 0) {
-          lot.shields--;
-          Game.board.draw();
-          floatText(lot, 'Bouclier !', '#3a86ff');
+        const shield = Game.events.shieldOutcome(lot);
+        if (shield === 'holds') {
           log(`Le bouclier ${shopNameAfterDe(lot)} a repoussé le monstre.`);
+        } else if (shield === 'breaks') {
+          log(`Le monstre a percé le bouclier et détruit ${shopName(lot)} !`);
+          Game.world.destroyShop(lot);
         } else if (lot.level > 1) {
           lot.level--;
           Game.board.draw();
@@ -110,7 +113,7 @@
   }
 
   // OVNI : il arrive, éclaire la boutique de son rayon, puis repart.
-  // Il emporte la boutique (et ses clients), sauf si un bouclier le repousse ;
+  // Il emporte la boutique (et ses clients), sauf si un bouclier le repousse (il peut céder) ;
   // ou bien les extraterrestres font un gros achat.
   function startUfo(lot, [centerX, centerY]) {
     const UFO = Game.config.ufo;
@@ -151,18 +154,17 @@
   function resolveUfoVisit(lot) {
     const UFO = Game.config.ufo;
     const roll = Math.random();
-    if (roll < UFO.ABDUCTION_CHANCE && lot.shields === 0) {
+    const shield = roll < UFO.ABDUCTION_CHANCE ? Game.events.shieldOutcome(lot) : null;
+    if (shield === 'holds') {
+      log(`Le bouclier ${shopNameAfterDe(lot)} a repoussé l'OVNI.`);
+    } else if (shield) {
       for (const person of Game.state.people) {
         if (person.lot === lot && person.state === Game.people.PERSON_STATE.INSIDE) {
           Game.people.takeAway(person);
         }
       }
-      log(`L'OVNI a emporté ${shopName(lot)} !`);
+      log(shield === 'breaks' ? `Le bouclier a cédé : l'OVNI a emporté ${shopName(lot)} !` : `L'OVNI a emporté ${shopName(lot)} !`);
       Game.world.destroyShop(lot);
-    } else if (roll < UFO.ABDUCTION_CHANCE) {
-      lot.shields--;
-      Game.board.draw();
-      log(`Le bouclier ${shopNameAfterDe(lot)} a repoussé l'OVNI.`);
     } else {
       const purchase = Math.round(lot.shop.price * UFO.SHOPPING_RATE);
       if (lot.owner != null) {

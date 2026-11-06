@@ -21,7 +21,7 @@ bourg-les-bonhommes/
 │   ├── utils.js             Hasard, mélange de couleurs
 │   ├── canvas.js            Canvas, mise à l'échelle de l'écran (Game.view)
 │   ├── draw.js              Primitives : rectangle, disque, ellipse, rectangle arrondi
-│   ├── map.js               Carrefours, rues, sorties, cases, recherche de trajet
+│   ├── map.js               Carte en anneau : carrefours, rues, 4 sorties, cases, pelouses, trajets
 │   ├── catalog.js           ★ Les 24 boutiques, la banque et les 2 malus, formules de gains
 │   ├── names.js             « le Cinéma », « au Cinéma », « du Cinéma »…
 │   ├── icons.js             Icônes des enseignes et des cartes
@@ -55,7 +55,8 @@ bourg-les-bonhommes/
 │   ├── events/
 │   │   ├── animations.js    Mise à jour et dessin des animations
 │   │   ├── attacks.js       Météorite, voiture-voleur
-│   │   └── random-events.js Incendie, monstre, OVNI
+│   │   ├── random-events.js Incendie, monstre, OVNI
+│   │   └── sales.js         Soldes : compte à rebours, clients qui se ruent dans les boutiques
 │   ├── actions.js           Actions d'un joueur : construire, améliorer, protéger, malus
 │   ├── autoplay.js          Partie auto : les deux joueurs jouent tout seuls
 │   ├── input.js             Clics, survol, curseurs et boutons
@@ -71,8 +72,12 @@ bourg-les-bonhommes/
 | Pour changer… | Fichier | Ce qu'il faut modifier |
 |---|---|---|
 | Nom, prix, couleur, icône d'une boutique ou d'un malus | `js/catalog.js` | tableaux `SHOPS` et `ACTIONS` |
-| Bucks de départ, cases roses, boutiques déjà ouvertes | `js/config.js` | `start` |
+| Bucks de départ (140), cases roses, boutiques déjà ouvertes | `js/config.js` | `start` |
 | Gain par client, coût d'amélioration et de bouclier, maximums | `js/config.js` | `economy` (formules dans `js/catalog.js`) |
+| Chance qu'une boutique soit détruite malgré un bouclier (20 %) | `js/config.js` | `economy.SHIELD_BREAK_CHANCE` |
+| Soldes : compte à rebours, nombre de boutiques et de clients, gain réduit | `js/config.js` | `sales` |
+| Vitesse de la jauge d'argent derrière les cartes | `js/config.js` | `moneyGauge` |
+| Plan de la ville (rues, cases, pelouses) | `js/map.js` | `STREET_X`, `STREET_Y`, `LOT_GROUPS`, `PARKS` |
 | Envie des passants d'entrer | `js/config.js` | `attraction` |
 | Vitesse des passants, durée de séjour par activité | `js/config.js` | `people` |
 | Bowling (lancers, durées, chance de strike, chute des quilles) | `js/config.js` | `bowling` |
@@ -94,7 +99,7 @@ bourg-les-bonhommes/
 | Activités où l'on s'assoit, durée pour s'asseoir | `js/config.js` | `people.SEATED_ACTIVITIES`, `people.SIT_DOWN_SECONDS` |
 | Prénoms, coiffures, couleurs des passants | `js/people/person.js` | `GIRL_NAMES`, `BOY_NAMES`, `GIRL_HAIR_STYLES`… |
 | Mobilier d'une boutique | `js/shops/interiors-*.js` | `drawFurniture`, `drawAnimated` (ce qui bouge), `drawOverPeople` (par-dessus les clients, ex. lumière de la discothèque) |
-| Nombre de passants au démarrage | `js/config.js` et `index.html` | `people.DEFAULT_COUNT` et la valeur du curseur `#pop` |
+| Nombre de passants (8 au départ, +4 par boutique, maximum du curseur) | `js/config.js` et `index.html` | `people.BASE_COUNT`, `people.PER_SHOP`, `people.DEFAULT_MAX` et la valeur du curseur `#pop` |
 
 ### Ajouter une boutique
 

@@ -16,6 +16,7 @@
     Game.people.spawnIfNeeded(dt);
     Game.events.updateAnimations(dt);
     Game.events.maybeTriggerRandomEvents(dt);
+    Game.events.updateSales(dt);
     Game.autoplay.update(dt);
   }
 
@@ -64,6 +65,7 @@
       Game.menu.draw(ctx, Game.state.menuLot);
     }
     Game.overlay.drawTooltip(ctx);
+    Game.overlay.drawSalesClock(ctx);
     Game.overlay.drawBanner(ctx);
     Game.overlay.drawPauseBadge(ctx);
     ctx.restore();
@@ -81,6 +83,7 @@
       simulate(realDt * Game.state.speedMultiplier);
     }
     Game.feedback.update(realDt);
+    Game.trays.update(realDt);
     render(timestamp);
   }
 

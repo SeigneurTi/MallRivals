@@ -32,6 +32,37 @@
     c.fill();
   }
 
+  // Pelouses des coins et des bandes entre les rangées du centre, avec quelques arbres.
+  // La pelouse du coin en haut à gauche reste dégagée : le compte à rebours des soldes y est affiché.
+  function drawParks(c) {
+    Game.map.PARKS.forEach(([x, y, width, height], parkIndex) => {
+      c.fillStyle = '#a5d38a';
+      roundedRectPath(c, x, y, width, height, 8);
+      c.fill();
+      if (parkIndex === 0) {
+        return;
+      }
+      const treeCount = Math.max(1, Math.floor(width / 42));
+      const treeRadius = Math.min(13, Math.min(width, height) * 0.4);
+      for (let k = 0; k < treeCount; k++) {
+        const treeX = x + (k + 0.5) * width / treeCount;
+        const treeY = y + height / 2;
+        c.fillStyle = 'rgba(20,25,20,.18)';
+        c.beginPath();
+        c.arc(treeX + 2, treeY + 3, treeRadius, 0, FULL_TURN);
+        c.fill();
+        c.fillStyle = '#4f9a4a';
+        c.beginPath();
+        c.arc(treeX, treeY, treeRadius, 0, FULL_TURN);
+        c.fill();
+        c.fillStyle = '#6cb85f';
+        c.beginPath();
+        c.arc(treeX - treeRadius * 0.3, treeY - treeRadius * 0.3, treeRadius * 0.55, 0, FULL_TURN);
+        c.fill();
+      }
+    });
+  }
+
   function isLotVisible(lot, visibleArea) {
     return !visibleArea || (lot.x < visibleArea.right && lot.x + lot.width > visibleArea.left
       && lot.y < visibleArea.bottom && lot.y + lot.height > visibleArea.top);
@@ -42,6 +73,7 @@
   function drawMap(c, visibleArea) {
     c.fillStyle = '#d9dbd5';
     c.fillRect(0, 0, BOARD.MAP_WIDTH, BOARD.HEIGHT);
+    drawParks(c);
 
     // Trottoirs, puis chaussée par-dessus.
     c.fillStyle = '#c6c9c1';

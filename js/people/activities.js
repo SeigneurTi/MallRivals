@@ -73,7 +73,7 @@
       const angle = gameTime * Game.config.carousel.TURN_SPEED + person.slotIndex * Math.PI / 4;
       const frame = frameOfLot(lot);
       const ringRadius = 0.3;
-      const u = 0.5 + Math.cos(angle) * ringRadius * frame.height / frame.width;
+      const u = 0.5 + Math.cos(angle) * ringRadius * frame.localHeight / frame.localWidth;
       const v = 0.47 + Math.sin(angle) * ringRadius + 0.04;
       [person.x, person.y] = clampInside(lot, lotPointToBoard(lot, u, v));
     }
@@ -260,7 +260,7 @@
     }
     person.facing = viewpoint.facing;
     // Devant le mur du fond, on voit le visiteur de dos (de face si la salle est retournée).
-    person.looksAtWall = viewpoint.wall === 'back' && !frameOfLot(lot).flipped;
+    person.looksAtWall = viewpoint.wall === 'back' && frameOfLot(lot).door === 'bottom';
     person.lookTimer -= dt;
     if (person.lookTimer > 0) {
       return;

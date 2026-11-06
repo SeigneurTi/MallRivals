@@ -1,5 +1,5 @@
 // Ce qui se dessine par-dessus la carte : cases jouables, textes flottants,
-// info-bulle d'un passant, bannière du journal, badge « Pause ».
+// info-bulle d'un passant, compte à rebours des soldes, bannière du journal, badge « Pause ».
 // Coordonnées dans le repère de la carte.
 (function () {
   'use strict';
@@ -87,6 +87,58 @@
     ctx.globalAlpha = 1;
   }
 
+  // Compte à rebours des soldes, sur la pelouse du coin en haut à gauche.
+  // Il clignote en rose quand les soldes commencent, en rouge dans les 10 dernières secondes.
+  function drawSalesClock(ctx) {
+    const sales = Game.state.sales;
+    if (!sales) {
+      return;
+    }
+    const [parkX, parkY, parkWidth, parkHeight] = Game.map.PARKS[0];
+    const centerX = parkX + parkWidth / 2;
+    const centerY = parkY + parkHeight / 2;
+    const radius = Math.min(parkWidth, parkHeight) / 2 - 2;
+    const isOn = Game.events.salesJustStarted();
+    const pulse = 0.5 + 0.5 * Math.sin(Game.state.gameTime * 8);
+    const secondsLeft = Math.ceil(sales.countdown);
+    const isSoon = secondsLeft <= 10;
+
+    ctx.fillStyle = isOn ? (pulse > 0.5 ? '#e8578f' : '#f07fa8') : '#ffffff';
+    ctx.beginPath();
+    ctx.arc(centerX, centerY, radius, 0, Game.draw.FULL_TURN);
+    ctx.fill();
+    ctx.strokeStyle = '#e8578f';
+    ctx.lineWidth = 3;
+    ctx.stroke();
+    // Anneau qui se vide au fil du compte à rebours.
+    if (!isOn) {
+      ctx.strokeStyle = 'rgba(232,87,143,.35)';
+      ctx.lineWidth = 5;
+      ctx.beginPath();
+      ctx.arc(centerX, centerY, radius - 6, -Math.PI / 2, -Math.PI / 2 + Game.draw.FULL_TURN * sales.countdown / Game.config.sales.COUNTDOWN_SECONDS);
+      ctx.stroke();
+    }
+
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    if (isOn) {
+      ctx.fillStyle = '#ffffff';
+      ctx.font = '800 15px "Baloo 2", system-ui, sans-serif';
+      ctx.fillText('SOLDES', centerX, centerY - 6);
+      ctx.font = '800 11px Nunito, system-ui, sans-serif';
+      ctx.fillText('−50 %', centerX, centerY + 10);
+      return;
+    }
+    const minutes = Math.floor(secondsLeft / 60);
+    const seconds = String(secondsLeft % 60).padStart(2, '0');
+    ctx.fillStyle = '#c2185b';
+    ctx.font = '800 9.5px Nunito, system-ui, sans-serif';
+    ctx.fillText('Soldes dans', centerX, centerY - 11);
+    ctx.fillStyle = isSoon && pulse > 0.5 ? '#c0392b' : '#23272b';
+    ctx.font = '800 19px "Baloo 2", system-ui, sans-serif';
+    ctx.fillText(minutes + ':' + seconds, centerX, centerY + 7);
+  }
+
   function drawPauseBadge(ctx) {
     if (Game.state.isRunning) {
       return;
@@ -100,5 +152,5 @@
     ctx.fillText('Pause', BOARD.MAP_WIDTH / 2, 29.5);
   }
 
-  Game.overlay = { drawSelectionTargets, drawFloatingTexts, drawTooltip, drawBanner, drawPauseBadge };
+  Game.overlay = { drawSelectionTargets, drawFloatingTexts, drawTooltip, drawSalesClock, drawBanner, drawPauseBadge };
 })();

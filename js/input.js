@@ -118,8 +118,8 @@
     const populationSlider = document.getElementById('pop');
     const speedSlider = document.getElementById('spd');
     populationSlider.addEventListener('input', () => {
-      Game.state.targetPopulation = +populationSlider.value;
-      document.getElementById('popv').textContent = Game.state.targetPopulation;
+      Game.state.maxPopulation = +populationSlider.value;
+      document.getElementById('popv').textContent = Game.state.maxPopulation;
     });
     speedSlider.addEventListener('input', () => {
       Game.state.speedMultiplier = +speedSlider.value;

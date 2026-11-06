@@ -47,7 +47,15 @@
 
     for (const access of lotsHere) {
       const lot = Game.state.lots[access.lotIndex];
-      if (!lot.shop || person.visitedLots.has(lot) || !Game.shops.hasFreeSlot(lot)) {
+      // Soldes : il fonce vers sa boutique sans regarder les autres.
+      const isSalesTarget = person.isRushing && person.salesLot === lot;
+      if (person.isRushing && !isSalesTarget) {
+        continue;
+      }
+      if (!lot.shop || person.visitedLots.has(lot)) {
+        if (isSalesTarget) {
+          stopRushing(person);   // la boutique a disparu entre-temps
+        }
         continue;
       }
       // La porte vient-elle d'être dépassée pendant cette image ?
@@ -56,8 +64,15 @@
       if (!justPassedDoor) {
         continue;
       }
+      if (isSalesTarget) {
+        stopRushing(person);
+      }
+      if (!Game.shops.hasFreeSlot(lot)) {
+        person.salesLot = null;   // complet : il repart (et paiera plein tarif ailleurs)
+        continue;
+      }
       person.visitedLots.add(lot);
-      if (Math.random() < Game.catalog.entryChance(lot)) {
+      if (isSalesTarget || Math.random() < Game.catalog.entryChance(lot)) {
         // On le replace exactement face à la porte.
         person.distanceOnSegment = Math.abs(access.positionAlong - origin);
         Game.people.placeOnRoute(person);
@@ -70,6 +85,12 @@
       }
     }
     return false;
+  }
+
+  // Fin de la course des soldes : il reprend sa vitesse normale.
+  function stopRushing(person) {
+    person.isRushing = false;
+    person.speed = person.walkSpeed;
   }
 
   // Libère la place occupée dans la boutique.
@@ -152,6 +173,9 @@
   function arriveAtDoor(person) {
     const lot = person.lot;
     const freeSlots = lot.shop ? lot.occupants.map((occupant, index) => (occupant ? -1 : index)).filter(index => index >= 0) : [];
+    // Client des soldes : il paie moitié prix (une seule fois).
+    const isSalesShopper = person.salesLot === lot;
+    person.salesLot = null;
     if (!lot.shop || !Game.shops.hasFreeSlot(lot) || !freeSlots.length) {
       person.state = PERSON_STATE.RETURNING;
       person.target = person.returnPoint;
@@ -172,7 +196,8 @@
       person.insidePhase = 'changing';
     }
 
-    const income = Game.catalog.incomePerCustomer(lot);
+    const fullIncome = Game.catalog.incomePerCustomer(lot);
+    const income = isSalesShopper ? Math.round(fullIncome * Game.config.sales.INCOME_RATE) : fullIncome;
     if (lot.owner != null) {
       Game.state.bucks[lot.owner] += income;
     }

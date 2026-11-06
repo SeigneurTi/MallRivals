@@ -7,7 +7,7 @@
 
   // Tout ce qui change pendant une partie.
   Game.state = {
-    lots: [],                 // les 36 cases (voir createLots)
+    lots: [],                 // les 28 cases (voir createLots)
     bucks: [0, 0],            // argent de chaque joueur
     selection: null,          // carte choisie : { player, cardIndex }
     menuLot: null,            // case dont le menu est ouvert
@@ -15,9 +15,10 @@
     floatingTexts: [],        // « +42 », « Volé ! »… (voir js/feedback.js)
     animations: [],           // météorites, voitures, monstres… (voir js/events/animations.js)
     spawnTimer: 0,            // délai avant l'arrivée du prochain passant
+    sales: null,              // compte à rebours des soldes (voir js/events/sales.js)
     banner: null,             // dernier message du journal, affiché sur le plateau
     gameTime: 0,              // temps de jeu écoulé (s), sert à faire tourner le manège
-    targetPopulation: Game.config.people.DEFAULT_COUNT,   // curseur « Passants »
+    maxPopulation: Game.config.people.DEFAULT_MAX,   // curseur « Passants max »
     speedMultiplier: 1,       // curseur « Vitesse »
     isRunning: !Game.view.prefersReducedMotion,           // bouton Pause / Lecture
     hoveredPerson: null,      // passant survolé (info-bulle)
@@ -36,6 +37,7 @@
       level: 1,
       shields: 0,
       isHot: false,           // rond rose : gains doublés
+      salesUntil: 0,          // soldes : pastille « Soldes » jusqu'à ce temps de jeu
       isBusy: false,          // une attaque ou un événement est en cours sur cette case
     }));
   }
@@ -67,8 +69,10 @@
     state.animations = [];
     state.spawnTimer = 0;
     state.banner = null;
+    Game.events.resetSales();
     state.people = [];
-    for (let k = 0; k < state.targetPopulation; k++) {
+    const startingPopulation = Game.people.targetPopulation();
+    for (let k = 0; k < startingPopulation; k++) {
       state.people.push(Game.people.create(true));
     }
     Game.feedback.clearLog();
@@ -92,6 +96,7 @@
     lot.shields = 0;
     lot.occupants = [];
     lot.isBank = false;
+    lot.salesUntil = 0;
     if (Game.state.menuLot === lot) {
       Game.state.menuLot = null;
     }
