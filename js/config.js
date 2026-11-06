@@ -39,7 +39,8 @@
       SHIELD_PRICE_RATE: 0.25,
       MAX_LEVEL: 3,
       MAX_SHIELDS: 3,
-      SHIELD_BREAK_CHANCE: 0.2,        // même avec un bouclier, 20 % de chances que la boutique soit détruite
+      SHIELD_BREAK_CHANCE: 0.2,
+      MAX_SAME_SHOP_PER_PLAYER: 2,     // un joueur ne construit pas plus de 2 fois la même boutique        // même avec un bouclier, 20 % de chances que la boutique soit détruite
     },
 
     // Soldes : toutes les 2 minutes, des clients se ruent dans plusieurs boutiques.

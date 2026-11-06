@@ -38,6 +38,10 @@
       floatText(lot, 'Pas assez de bucks', '#c0392b');
       return true;
     }
+    if (!card.isAction && !lot.shop && !Game.actions.canBuild(player, card)) {
+      floatText(lot, `Déjà ${Game.config.economy.MAX_SAME_SHOP_PER_PLAYER} fois !`, '#c0392b');
+      return true;
+    }
     if (!card.isAction && !lot.shop) {
       state.selection = null;
       Game.actions.build(player, lot, card);

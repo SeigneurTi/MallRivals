@@ -114,8 +114,10 @@
     const [x, y, width, height] = cardRect(player, cardIndex);
     const selected = isSelected(player, cardIndex);
     const affordable = Game.state.bucks[player] >= card.price;
+    const owned = card.isAction ? 0 : Game.actions.ownedCount(player, card);
+    const isMaxed = owned >= Game.config.economy.MAX_SAME_SHOP_PER_PLAYER;
 
-    c.globalAlpha = affordable ? 1 : 0.4;
+    c.globalAlpha = affordable && !isMaxed ? 1 : 0.4;
     c.fillStyle = card.isAction ? '#fde9e4' : Game.utils.mixColor(card.color, 0.78);
     roundedRectPath(c, x, y, width, height, 7);
     c.fill();
@@ -143,6 +145,16 @@
     c.font = '700 8.5px Nunito, system-ui, sans-serif';
     c.fillText(card.name, x + width / 2, y + height + 6.5, width + 2);
     c.globalAlpha = 1;
+    // Pastille « 1/2 », « 2/2 » : combien de boutiques de ce type le joueur possède déjà.
+    if (owned) {
+      const label = owned + '/' + Game.config.economy.MAX_SAME_SHOP_PER_PLAYER;
+      c.fillStyle = isMaxed ? '#c0392b' : PLAYERS.COLORS[player];
+      roundedRectPath(c, x + width - 20, y - 3, 22, 12, 6);
+      c.fill();
+      c.fillStyle = '#ffffff';
+      c.font = '800 8.5px Nunito, system-ui, sans-serif';
+      c.fillText(label, x + width - 9, y + 3.2);
+    }
   }
 
   function draw(player) {

@@ -13,6 +13,16 @@
     return Game.state.bucks[player] >= cost;
   }
 
+  // Nombre de boutiques de ce type que possède le joueur.
+  function ownedCount(player, shop) {
+    return Game.state.lots.filter(lot => lot.owner === player && lot.shop && lot.shop.id === shop.id).length;
+  }
+
+  // Le joueur peut-il encore construire cette boutique ? Pas plus de 2 fois la même.
+  function canBuild(player, shop) {
+    return ownedCount(player, shop) < ECONOMY.MAX_SAME_SHOP_PER_PLAYER;
+  }
+
   // Ouvre une boutique sur une case libre (le prix est payé).
   function build(player, lot, shop) {
     Game.state.bucks[player] -= shop.price;
@@ -45,10 +55,10 @@
   }
 
   // La case est-elle une cible possible pour cette carte ?
-  // Boutique : une case vide. Malus : une boutique adverse, ou la banque pleine (voleur seulement).
+  // Boutique : une case vide, si le joueur n'en a pas déjà 2. Malus : une boutique adverse, ou la banque pleine (voleur seulement).
   function isValidTarget(card, player, lot) {
     if (!card.isAction) {
-      return !lot.shop;
+      return !lot.shop && canBuild(player, card);
     }
     if (!lot.shop || lot.isBusy) {
       return false;
@@ -80,5 +90,5 @@
     return null;
   }
 
-  Game.actions = { canAfford, build, canUpgrade, upgrade, canAddShield, addShield, isValidTarget, playMalus };
+  Game.actions = { canAfford, ownedCount, canBuild, build, canUpgrade, upgrade, canAddShield, addShield, isValidTarget, playMalus };
 })();

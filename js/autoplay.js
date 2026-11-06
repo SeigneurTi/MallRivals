@@ -36,7 +36,7 @@
       return false;
     }
     const missing = missingShops();
-    const affordable = shops => shops.filter(shop => actions.canAfford(player, shop.price));
+    const affordable = shops => shops.filter(shop => actions.canAfford(player, shop.price) && actions.canBuild(player, shop));
     // Tant qu'il manque des boutiques, on économise plutôt que d'acheter un doublon.
     const pool = missing.length ? affordable(missing) : affordable(Game.catalog.SHOPS);
     if (!pool.length) {

@@ -11,6 +11,7 @@
 - [ ] Jauge d'argent : derrière les cartes, un fond à la couleur du joueur descend jusqu'à la dernière boutique abordable (140 $ : jusqu'au Café ; 200 $ : jusqu'à la Librairie) ; elle monte et descend en douceur quand l'argent change.
 - [ ] Au début, peu de passants (8) ; chaque boutique ouverte en fait venir 4 de plus.
 - [ ] Prix des cartes : de 60 $ (Fleuriste) à 1800 $ (Discothèque), de plus en plus espacés.
+- [ ] Construire 2 fois la même boutique : la carte affiche « 1/2 » puis « 2/2 » (rouge) et se grise ; les cases libres ne sont plus entourées ; un troisième essai affiche « Déjà 2 fois ! » et rien n'est payé.
 - [ ] Deux boutiques identiques placées n'importe où reçoivent à peu près autant de clients (une boutique isolée sur un côté de la carte n'est pas délaissée).
 - [ ] Les accents s'affichent correctement (« Météorite », « Hôtel », « Manège »).
 - [ ] Des passants arrivent par les 4 routes et se promènent.

@@ -2,6 +2,12 @@
 
 Les versions les plus récentes sont en haut.
 
+## v2.17 — Pas plus de 2 fois la même boutique par joueur (6 novembre 2026)
+
+- Un joueur ne peut pas construire plus de 2 fois la même boutique. Une pastille « 1/2 » ou « 2/2 » sur la carte indique combien il en possède ; à 2/2, la carte est grisée, les cases libres ne sont plus proposées et un clic affiche « Déjà 2 fois ! ». Une boutique volée à la voiture-voleur peut faire dépasser cette limite (la règle porte sur la construction).
+- La partie auto respecte la même règle.
+- Fichiers : `js/config.js` (`economy.MAX_SAME_SHOP_PER_PLAYER`), `js/actions.js` (`ownedCount`, `canBuild`), `js/input.js`, `js/render/trays.js` (pastille), `js/autoplay.js`, `index.html` (règle).
+
 ## v2.16 — Prix plus espacés, clients mieux répartis (6 novembre 2026)
 
 - **Prix plus espacés** : de 60 $ (fleuriste) à 1800 $ (discothèque), au lieu de 60 à 800 $. L'écart grandit d'une boutique à la suivante (fleuriste 60, kiosque 70, boulangerie 100, café 120, glacier 160, librairie 200… casino 1650, discothèque 1800). Les gains, les améliorations et les boucliers suivent les prix. Avec les 140 $ du départ, on peut toujours ouvrir une boulangerie ou un café, ou deux fleuristes ou deux kiosques.
