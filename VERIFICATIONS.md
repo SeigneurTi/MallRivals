@@ -34,7 +34,9 @@
 - [ ] Carte « Musique » (370 $, icône deux croches) entre Jouets et Coiffeur. Le magasin montre six guitares au mur, un piano à queue avec son banc, une batterie sur un tapis rouge, un ampli et un comptoir.
 - [ ] Un client s'assoit au piano, tourné vers le clavier : des notes de couleur s'envolent du piano tant qu'il joue.
 - [ ] Pharmacie : deux rayons de boîtes colorées au milieu ; les clients s'arrêtent dans les allées et ne traversent pas les rayons, y compris sur une case tournée.
-- [ ] Un vendeur (chemise à la couleur de la boutique, tablier blanc) dans la plupart des boutiques : buste derrière le comptoir, ou debout (coiffeur, restaurant, galerie, manège, librairie, jouets, vêtements). Il se tourne de temps en temps ; il n'a pas d'info-bulle. Pas de vendeur au bowling, cinéma, laser game, billard, piscine, ni à la banque.
+- [ ] Un vendeur (chemise à la couleur de la boutique, tablier blanc) dans la plupart des boutiques : derrière le comptoir, on ne voit que sa tête et ses épaules qui dépassent, mains posées sur le plateau ; ailleurs il est debout (coiffeur, restaurant, galerie, manège, librairie, jouets, vêtements). Il regarde le client le plus proche ; il n'a pas d'info-bulle.
+- [ ] Quand un client entre et paie, le vendeur hoche la tête, tapote la caisse (une pièce d'or saute) et dit « Bonjour ! », « Merci ! »… dans une bulle. Quand un client s'en va, il fait coucou de la main (« Au revoir ! »). Sans client, le vendeur derrière un comptoir l'essuie de la main.
+- [ ] Partie à distance : l'ami voit aussi les bulles et les gestes des vendeurs. Pas de vendeur au bowling, cinéma, laser game, billard, piscine, ni à la banque.
 
 ## Construire, améliorer, protéger
 

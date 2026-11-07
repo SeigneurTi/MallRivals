@@ -352,7 +352,7 @@
 
     // 5 machines à sous (debout) et 4 places à la table de roulette (assis).
     casino: {
-      seller: { u: 0.38, v: 0.58, behindCounter: true },   // vendeur (décor)
+      seller: { u: 0.38, v: 0.58, behindCounter: true, counterColor: '#6b3a1e' },   // vendeur (décor)
       activity: 'mix',
       slots: [...SLOT_MACHINE_U.map(u => slot(u, 0.4, 'play')), ...CASINO_TABLE_SLOTS],
       drawFurniture(g) {
@@ -413,7 +413,7 @@
 
     // 8 danseurs sur la piste.
     discotheque: {
-      seller: { u: 0.42, v: 0.15, behindCounter: true },   // vendeur (décor)
+      seller: { u: 0.42, v: 0.15, behindCounter: true, counterColor: '#3a2f55' },   // vendeur (décor)
       activity: 'dance',
       slots: DANCER_POSITIONS,
       drawFurniture(g) {

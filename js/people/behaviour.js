@@ -128,6 +128,9 @@
   // Fin de l'activité : le passant regagne la porte à pied.
   function leaveShop(person) {
     takeSouvenir(person);
+    if (person.lot.shop) {
+      Game.sellers.react(person.lot, 'goodbye', person);
+    }
     releaseSlot(person);
     person.state = PERSON_STATE.LEAVING;
     person.target = person.door;
@@ -205,6 +208,7 @@
     if (lot.owner != null) {
       Game.state.bucks[lot.owner] += income;
     }
+    Game.sellers.react(lot, 'serve', person);
     Game.feedback.floatText(lot, '+' + income, lot.owner != null ? Game.config.players.COLORS[lot.owner] : '#555');
   }
 

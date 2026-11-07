@@ -40,7 +40,8 @@ bourg-les-bonhommes/
 │   │   ├── interiors-lasergame.js Laser game (équipes, tirs)
 │   │   ├── interiors-gallery.js  Galerie d'art (tableaux, mobile, visiteurs)
 │   │   ├── interiors-music.js    Magasin de musique (guitares, piano, batterie)
-│   │   └── shop.js          Ouverture, places libres, séances, pistes, dessin du bâtiment et du vendeur
+│   │   ├── seller.js        Vendeur : derrière son comptoir, salue, encaisse, fait coucou
+│   │   └── shop.js          Ouverture, places libres, séances, pistes, dessin du bâtiment
 │   ├── state.js             État de la partie (Game.state), nouvelle partie, destruction
 │   ├── feedback.js          Journal, bannière, textes flottants
 │   ├── render/
@@ -100,7 +101,8 @@ bourg-les-bonhommes/
 | Durée de l'attente et de la partie au laser game, cadence de tir | `js/config.js` | `lasergame` |
 | Ce que les clients emportent (fleur, cornet, écrin) | `js/shops/interiors-*.js` | `souvenir` de la boutique |
 | Obstacles que les clients contournent dans une boutique | `js/shops/interiors-*.js` | `obstacles(lot)` de la boutique |
-| Vendeur d'une boutique (place, derrière un comptoir ou debout) | `js/shops/interiors-*.js` | `seller: { u, v, behindCounter }` de la boutique (sans `seller` : pas de vendeur) |
+| Vendeur d'une boutique (place, derrière un comptoir ou debout) | `js/shops/interiors-*.js` | `seller: { u, v, behindCounter, counterColor }` de la boutique (sans `seller` : pas de vendeur) |
+| Réactions des vendeurs (durées, mots dans les bulles) | `js/config.js` | `sellers` |
 | Rayons de la pharmacie | `js/shops/interiors-shops.js` | `PHARMACY_AISLES` |
 | Réussite de la voiture-voleur, vitesse de la voiture | `js/config.js` | `thief` |
 | Fréquence des incendies, monstres, OVNI, délai avant le premier (6 min) | `js/config.js` | `events` (`START_DELAY_SECONDS`) |

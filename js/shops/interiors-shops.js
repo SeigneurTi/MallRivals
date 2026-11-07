@@ -150,7 +150,7 @@
 
   Object.assign(Game.interiors, {
     fleuriste: {
-      seller: { u: 0.84, v: 0.66, behindCounter: true },   // vendeur (décor)
+      seller: { u: 0.84, v: 0.66, behindCounter: true, counterColor: '#c9a27a' },   // vendeur (décor)
       activity: 'browse',
       slots: [slot(0.22, 0.45), slot(0.45, 0.45), slot(0.7, 0.45), slot(0.2, 0.75)],
       // Chaque client repart avec une fleur.
@@ -199,7 +199,7 @@
     },
 
     kiosque: {
-      seller: { u: 0.83, v: 0.64, behindCounter: true },   // vendeur (décor)
+      seller: { u: 0.83, v: 0.64, behindCounter: true, counterColor: '#3d6fb6' },   // vendeur (décor)
       activity: 'browse',
       slots: [slot(0.22, 0.42), slot(0.5, 0.42), slot(0.82, 0.42)],
       drawFurniture(g) {
@@ -216,7 +216,7 @@
     },
 
     boulangerie: {
-      seller: { u: 0.5, v: 0.22, behindCounter: true },   // vendeur (décor)
+      seller: { u: 0.5, v: 0.22, behindCounter: true, counterColor: '#c08a4e' },   // vendeur (décor)
       activity: 'browse',
       slots: [slot(0.2, 0.45), slot(0.4, 0.45), slot(0.6, 0.45), slot(0.8, 0.45)],
       drawFurniture(g) {
@@ -250,7 +250,7 @@
     // Pharmacie : comptoir au fond, étagères le long des murs et deux rayons au milieu,
     // que les clients contournent pour flâner dans les allées.
     pharmacie: {
-      seller: { u: 0.4, v: 0.2, behindCounter: true },   // vendeur (décor)
+      seller: { u: 0.4, v: 0.2, behindCounter: true, counterColor: '#27a35a' },   // vendeur (décor)
       activity: 'browse',
       slots: [slot(0.17, 0.52), slot(0.5, 0.45), slot(0.84, 0.52), slot(0.5, 0.78)],
       obstacles: lot => PHARMACY_AISLES.map(aisle => boardRect(lot, aisle.u - 0.02, aisle.v - 0.02, aisle.width + 0.04, aisle.height + 0.04)),
@@ -327,7 +327,7 @@
     // Bijouterie : comptoir vitré au fond, vitrines murales, deux îlots de présentation
     // et un gros diamant sur son coussin ; les pierres scintillent (drawAnimated).
     bijouterie: {
-      seller: { u: 0.27, v: 0.19, behindCounter: true },   // vendeur (décor)
+      seller: { u: 0.27, v: 0.19, behindCounter: true, counterColor: '#1f2a44' },   // vendeur (décor)
       activity: 'browse',
       slots: [slot(0.3, 0.33), slot(0.7, 0.33), slot(0.2, 0.62), slot(0.8, 0.62)],
       // Chaque client repart avec un petit écrin emballé.

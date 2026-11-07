@@ -33,7 +33,7 @@
   Object.assign(Game.interiors, {
     // 3 tables de 2 places.
     cafe: {
-      seller: { u: 0.3, v: 0.17, behindCounter: true },   // vendeur (décor)
+      seller: { u: 0.3, v: 0.17, behindCounter: true, counterColor: '#5a3a22' },   // vendeur (décor)
       activity: 'sit',
       slots: CAFE_SLOTS,
       drawFurniture(g) {
@@ -57,7 +57,7 @@
 
     // 2 tables de 2 places.
     glacier: {
-      seller: { u: 0.5, v: 0.2, behindCounter: true },   // vendeur (décor)
+      seller: { u: 0.5, v: 0.2, behindCounter: true, counterColor: '#9cc9e0' },   // vendeur (décor)
       activity: 'sit',
       slots: seatPairs([0.27, 0.73], 0.62, 0.1),
       // On repart avec un cornet de 1 à 3 boules de parfums différents.
@@ -80,7 +80,7 @@
 
     // 3 tables de 2 places.
     pizzeria: {
-      seller: { u: 0.6, v: 0.2, behindCounter: true },   // vendeur (décor)
+      seller: { u: 0.6, v: 0.2, behindCounter: true, counterColor: '#c8402f' },   // vendeur (décor)
       activity: 'sit',
       slots: seatPairs([0.2, 0.5, 0.8], 0.64, 0.1),
       drawFurniture(g) {
@@ -97,7 +97,7 @@
 
     // 3 tables de 2 places, avec banquettes.
     burger: {
-      seller: { u: 0.5, v: 0.2, behindCounter: true },   // vendeur (décor)
+      seller: { u: 0.5, v: 0.2, behindCounter: true, counterColor: '#e2552a' },   // vendeur (décor)
       activity: 'sit',
       slots: seatPairs([0.2, 0.5, 0.8], 0.55, 0.11),
       drawFurniture(g) {

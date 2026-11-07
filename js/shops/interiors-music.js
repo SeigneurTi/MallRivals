@@ -82,7 +82,7 @@
 
   Object.assign(Game.interiors, {
     musique: {
-      seller: { u: 0.7, v: 0.7, behindCounter: true },   // vendeur (décor)
+      seller: { u: 0.7, v: 0.7, behindCounter: true, counterColor: '#5a3d2b' },   // vendeur (décor)
       activity: 'browse',
       // Un client s'assoit au piano ; les autres regardent les guitares et la batterie.
       slots: [slot(PIANO_BENCH.u, PIANO_BENCH.v, 'sit', -1), slot(0.3, 0.27), slot(0.6, 0.27), slot(0.62, 0.55)],

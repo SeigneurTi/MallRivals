@@ -50,7 +50,7 @@
     // 5 bornes en colonne contre le mur de gauche ; chaque joueur se tient à droite de la sienne,
     // tourné vers l'écran. À droite : machine à pince, flippers et comptoir à lots (décor).
     arcade: {
-      seller: { u: 0.58, v: 0.77, behindCounter: true },   // vendeur (décor)
+      seller: { u: 0.58, v: 0.77, behindCounter: true, counterColor: '#5a3a22' },   // vendeur (décor)
       activity: 'play',
       slots: ARCADE_ROWS_V.map(v => slot(0.25, v + 0.11, undefined, -1)),
       drawFurniture(g) {
@@ -349,7 +349,7 @@
     },
 
     hotel: {
-      seller: { u: 0.38, v: 0.17, behindCounter: true },   // vendeur (décor)
+      seller: { u: 0.38, v: 0.17, behindCounter: true, counterColor: '#b08a2e' },   // vendeur (décor)
       activity: 'lobby',
       slots: [slot(0.5, 0.36), slot(0.15, 0.4), slot(0.15, 0.62), slot(0.85, 0.4), slot(0.85, 0.62)],
       drawFurniture(g) {

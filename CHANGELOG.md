@@ -2,6 +2,16 @@
 
 Les versions les plus récentes sont en haut.
 
+## v2.21 — Vendeurs derrière leur comptoir, qui parlent aux clients (7 novembre 2026)
+
+- **Derrière un comptoir**, le vendeur est maintenant debout et de face, et la façade du comptoir (à la couleur du comptoir de la boutique) passe devant lui : seules sa tête et ses épaules dépassent, ses mains sont posées sur le plateau. Avant, on voyait son buste de dos, posé sur le comptoir.
+- **Interactions avec les clients** :
+  - un client entre et paie : le vendeur le regarde, hoche la tête, tapote la caisse (une pièce d'or saute) et dit « Bonjour ! », « Bienvenue ! », « Merci ! » ou « Salut ! » dans une bulle ;
+  - un client s'en va : il lui fait coucou de la main (« Au revoir ! », « À bientôt ! », « Bonne journée ! ») ;
+  - le reste du temps, il respire, regarde le client le plus proche, et essuie son comptoir quand la boutique est vide.
+- Les vendeurs debout (coiffeuse, serveur, gardien…) saluent et font coucou de la même façon.
+- Fichiers : `js/shops/seller.js` (nouveau : dessin et réactions du vendeur), `js/shops/shop.js` (`lot.sellerAction`, ancien `drawSeller` retiré), `js/people/behaviour.js` (le vendeur réagit à l'entrée et au départ d'un client), `js/config.js` (`sellers`), `js/shops/interiors-*.js` (`counterColor`), `index.html`, `README.md`, `VERIFICATIONS.md`.
+
 ## v2.20 — Magasin de musique, rayons de la pharmacie, vendeurs (7 novembre 2026)
 
 - **Magasin de musique** (370 $, entre Jouets et Coiffeur) : mur de guitares, piano à queue, batterie sur un tapis, ampli et comptoir. Un client s'assoit au piano et joue : des notes de musique s'envolent. Nouvelle icône (deux croches).

@@ -221,6 +221,14 @@
       FILL_SPEED: 3,                   // vitesse à laquelle la jauge rattrape l'argent du joueur
     },
 
+    // Vendeurs des boutiques (js/shops/seller.js) : réactions aux clients.
+    sellers: {
+      SERVE_SECONDS: 1.6,              // salut et encaissement quand un client entre
+      GOODBYE_SECONDS: 1.3,            // coucou quand un client s'en va
+      SERVE_WORDS: ['Bonjour !', 'Bienvenue !', 'Merci !', 'Salut !'],
+      GOODBYE_WORDS: ['Au revoir !', 'À bientôt !', 'Bonne journée !'],
+    },
+
     feedback: {
       FLOATING_TEXT_SECONDS: 1.4,
       BANNER_SECONDS: 4,
