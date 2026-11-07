@@ -69,8 +69,8 @@
     return lot.owner === 1 - player;
   }
 
-  // Joue un malus. Renvoie null s'il est parti, sinon le message à afficher (rien n'est payé).
-  function playMalus(player, card, lot) {
+  // Raison pour laquelle un malus ne peut pas partir sur cette case, ou null.
+  function malusRefusal(player, card, lot) {
     if (lot.isBank) {
       if (card.id !== 'voleur') {
         return 'La banque est trop solide !';
@@ -81,6 +81,15 @@
     } else if (lot.owner !== 1 - player) {
       return 'Vise une boutique adverse';
     }
+    return null;
+  }
+
+  // Joue un malus. Renvoie null s'il est parti, sinon le message à afficher (rien n'est payé).
+  function playMalus(player, card, lot) {
+    const refusal = malusRefusal(player, card, lot);
+    if (refusal) {
+      return refusal;
+    }
     Game.state.bucks[player] -= card.price;
     if (card.id === 'meteorite') {
       Game.events.launchMeteor(player, lot);
@@ -90,5 +99,73 @@
     return null;
   }
 
-  Game.actions = { canAfford, ownedCount, canBuild, build, canUpgrade, upgrade, canAddShield, addShield, isValidTarget, playMalus };
+  // ---------- Ordres des joueurs ----------
+  // Un ordre est un petit objet, qui peut voyager sur le réseau (partie à distance) :
+  //   { type: 'build' | 'malus', lotIndex, cardIndex }   jouer une carte sur une case
+  //   { type: 'upgrade' | 'shield', lotIndex }            améliorer ou protéger sa boutique
+
+  // Raison pour laquelle l'ordre est impossible (message à afficher), ou null s'il est possible.
+  function commandRefusal(player, command) {
+    const state = Game.state;
+    const lot = state.lots[command.lotIndex];
+    if (!lot) {
+      return 'Case inconnue';
+    }
+    if (command.type === 'build' || command.type === 'malus') {
+      const card = Game.catalog.CARDS[command.cardIndex];
+      if (!card || Boolean(card.isAction) !== (command.type === 'malus')) {
+        return 'Carte inconnue';
+      }
+      if (!canAfford(player, card.price)) {
+        return 'Pas assez de bucks';
+      }
+      if (command.type === 'build') {
+        if (lot.shop) {
+          return 'Case déjà prise';
+        }
+        return canBuild(player, card) ? null : `Déjà ${ECONOMY.MAX_SAME_SHOP_PER_PLAYER} fois !`;
+      }
+      if (!lot.shop || lot.isBusy) {
+        return 'Pas maintenant';
+      }
+      return malusRefusal(player, card, lot);
+    }
+    if (command.type === 'upgrade' || command.type === 'shield') {
+      if (!lot.shop || lot.owner !== player) {
+        return "Ce n'est pas ta boutique";
+      }
+      const isUpgrade = command.type === 'upgrade';
+      if (isUpgrade ? !canUpgrade(lot) : !canAddShield(lot)) {
+        return isUpgrade ? 'Niveau max' : 'Boucliers au max';
+      }
+      const cost = isUpgrade ? Game.catalog.upgradeCost(lot) : Game.catalog.shieldCost(lot);
+      return canAfford(player, cost) ? null : 'Pas assez de bucks';
+    }
+    return 'Ordre inconnu';
+  }
+
+  // Exécute l'ordre d'un joueur. Renvoie null s'il a été exécuté, sinon le message de refus.
+  function perform(player, command) {
+    const refusal = commandRefusal(player, command);
+    if (refusal) {
+      return refusal;
+    }
+    const lot = Game.state.lots[command.lotIndex];
+    const card = Game.catalog.CARDS[command.cardIndex];
+    if (command.type === 'build') {
+      build(player, lot, card);
+    } else if (command.type === 'malus') {
+      playMalus(player, card, lot);
+    } else if (command.type === 'upgrade') {
+      upgrade(lot);
+    } else {
+      addShield(lot);
+    }
+    return null;
+  }
+
+  Game.actions = {
+    canAfford, ownedCount, canBuild, build, canUpgrade, upgrade, canAddShield, addShield, isValidTarget, playMalus,
+    commandRefusal, perform,
+  };
 })();

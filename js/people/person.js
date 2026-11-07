@@ -25,6 +25,8 @@
     RETURNING: 'returning',   // de la porte jusqu'à la rue
   };
 
+  let nextPersonId = 1;
+
   // Boutique pour laquelle un nouveau passant vient en ville : tirée au hasard parmi les boutiques
   // ouvertes, les plus attirantes un peu plus souvent. Ainsi chaque boutique reçoit sa part de clients,
   // où qu'elle soit sur la carte. null s'il n'y a encore aucune boutique.
@@ -80,6 +82,7 @@
 
     const isGirl = Math.random() < 0.5;
     const person = {
+      id: nextPersonId++,       // numéro unique (partie à distance : retrouver le passant d'une photo à l'autre)
       routeNodes,
       routePoints: routeNodes.map(id => map.nodes[id]),
       segmentIndex: 0,          // segment du trajet en cours

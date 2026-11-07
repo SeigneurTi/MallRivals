@@ -70,6 +70,7 @@
     Game.overlay.drawBanner(ctx);
     Game.overlay.drawPauseBadge(ctx);
     Game.overlay.drawVictory(ctx);
+    Game.overlay.drawWaitingForHost(ctx);
     ctx.restore();
 
     Game.trays.draw(0);
@@ -82,7 +83,12 @@
     const realDt = Math.min(Game.config.loop.MAX_FRAME_SECONDS, (timestamp - lastTimestamp) / 1000 || 0);
     lastTimestamp = timestamp;
     const state = Game.state;
-    if (state.winner != null) {
+    if (Game.home.isOpen()) {
+      return;   // page d'accueil : la ville attend
+    }
+    if (Game.online.isGuest()) {
+      // Partie à distance, chez l'ami : c'est l'hôte qui fait tourner la ville (voir js/net/online.js).
+    } else if (state.winner != null) {
       // Partie finie : la ville s'arrête ; en partie auto, une nouvelle partie commence peu après.
       state.victoryAge += realDt;
       if (state.isAutoplay && state.victoryAge >= Game.config.victory.AUTOPLAY_RESTART_SECONDS) {
@@ -91,6 +97,7 @@
     } else if (state.isRunning) {
       simulate(realDt * state.speedMultiplier);
     }
+    Game.online.update(realDt);
     Game.feedback.update(realDt);
     Game.trays.update(realDt);
     render(timestamp);
@@ -120,5 +127,6 @@
   Game.world.reset();
   Game.view.resize();
   Game.input.syncPlayButton();
+  Game.home.bind();
   requestAnimationFrame(frame);
 })();

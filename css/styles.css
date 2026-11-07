@@ -191,8 +191,231 @@ button[aria-pressed="true"] {
 
 .btns {
   display: flex;
+  flex-wrap: wrap;
   gap: 8px;
   margin-left: auto;
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: .45;
+}
+
+/* Partie à distance : qui joue quoi, sous le titre. */
+.net-status {
+  margin: 8px 0 0;
+  padding: 6px 12px;
+  border-radius: 10px;
+  background: #e6f4ec;
+  color: #1d5c39;
+  font-weight: 700;
+  font-size: 14px;
+  max-width: 80ch;
+}
+
+/* ---------- Page d'accueil ---------- */
+
+[hidden] {
+  display: none !important;
+}
+
+.home {
+  max-width: 760px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding-top: clamp(8px, 6vh, 56px);
+}
+
+.home-hero h1 {
+  font-size: clamp(34px, 8vw, 58px);
+}
+
+.home-hero .sub {
+  font-size: 17px;
+}
+
+.home-kicker {
+  margin: 0 0 6px;
+  color: var(--accent);
+  font-weight: 800;
+  font-size: 13px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.home-notice {
+  margin: 0;
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: #fdecea;
+  color: #8a1f14;
+  font-weight: 700;
+}
+
+.home-panel {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 18px;
+}
+
+#homeMenu {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.home-choice {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  text-align: left;
+  padding: 16px;
+  border-radius: 14px;
+  background: var(--bg);
+  min-height: 150px;
+  transition: transform .12s ease, border-color .12s ease;
+}
+
+.home-choice:hover:not(:disabled) {
+  transform: translateY(-2px);
+  border-color: var(--accent);
+}
+
+.home-choice-main {
+  background: #fff1e6;
+  border-color: #f3b48f;
+}
+
+.home-choice-icon {
+  font-size: 28px;
+  line-height: 1;
+  margin-bottom: 6px;
+}
+
+.home-choice-title {
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: 21px;
+  line-height: 1.1;
+}
+
+.home-choice-text {
+  font-weight: 600;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.home-steps h2 {
+  font-family: var(--display);
+  font-size: 26px;
+  line-height: 1.1;
+  margin: 0 0 8px;
+}
+
+.home-steps p {
+  margin: 0 0 14px;
+  color: var(--muted);
+}
+
+.home-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+button.primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--accent-ink);
+}
+
+button.link {
+  border: none;
+  background: none;
+  padding: 4px 0;
+  color: var(--muted);
+}
+
+button.link:hover {
+  color: var(--fg);
+}
+
+.steps {
+  margin: 0 0 12px;
+  padding-left: 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.steps li {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.steps li::marker {
+  font-family: var(--display);
+  font-weight: 800;
+  color: var(--accent);
+}
+
+/* Étape pas encore disponible (le code réponse n'existe pas encore). */
+.steps li.is-waiting {
+  opacity: .45;
+}
+
+.steps textarea,
+.link-row input {
+  width: 100%;
+  font: 13px/1.4 ui-monospace, Consolas, monospace;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 8px 10px;
+  background: #fbfbf9;
+  color: var(--fg);
+  resize: vertical;
+  word-break: break-all;
+}
+
+.steps textarea:focus-visible,
+.link-row input:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+.link-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.link-row input {
+  flex: 1 1 200px;
+  width: auto;
+}
+
+.home-status {
+  min-height: 1.5em;
+  font-weight: 700;
+}
+
+.home-steps .home-status {
+  color: #1d5c39;
+}
+
+.home-steps .home-status.is-error {
+  color: #b42318;
 }
 
 /* ---------- Règles et journal ---------- */
@@ -265,5 +488,13 @@ button[aria-pressed="true"] {
 
   .btns {
     margin-left: 0;
+  }
+
+  #homeMenu {
+    grid-template-columns: 1fr;
+  }
+
+  .home-choice {
+    min-height: 0;
   }
 }

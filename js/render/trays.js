@@ -174,7 +174,9 @@
     c.textBaseline = 'middle';
     c.font = '800 16px "Baloo 2", system-ui, sans-serif';
     c.fillStyle = '#ffffff';
-    c.fillText(PLAYERS.NAMES[player], middle, 21);
+    // Partie à distance : « Joueur 1 (toi) » sur le bac de ce navigateur.
+    const isMine = Game.online.myPlayer() === player;
+    c.fillText(isMine ? `${PLAYERS.NAMES[player]} (toi)` : PLAYERS.NAMES[player], middle, 21, BOARD.TRAY_WIDTH - 8);
 
     c.font = '700 11px Nunito, system-ui, sans-serif';
     if (selection && selection.player === player) {

@@ -173,9 +173,26 @@
     ctx.fillStyle = '#5d6560';
     ctx.font = '600 13px Nunito, system-ui, sans-serif';
     const restartIn = Math.ceil(victory.AUTOPLAY_RESTART_SECONDS - state.victoryAge);
-    const hint = state.isAutoplay ? `Nouvelle partie dans ${restartIn} s` : 'Touche « Recommencer » pour rejouer';
+    let hint = state.isAutoplay ? `Nouvelle partie dans ${restartIn} s` : 'Touche « Recommencer » pour rejouer';
+    if (Game.online.isGuest()) {
+      hint = `${players.NAMES[Game.online.HOST_PLAYER]} peut relancer une partie (« Recommencer »)`;
+    }
     ctx.fillText(hint, BOARD.MAP_WIDTH / 2, top + 132);
     ctx.globalAlpha = 1;
+  }
+
+  // Partie à distance, chez l'ami : la ville de l'hôte n'est pas encore arrivée.
+  function drawWaitingForHost(ctx) {
+    if (!Game.online.isWaitingForSnapshot()) {
+      return;
+    }
+    ctx.fillStyle = 'rgba(20,25,30,.6)';
+    ctx.fillRect(0, 0, BOARD.MAP_WIDTH, BOARD.HEIGHT);
+    ctx.fillStyle = '#ffffff';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.font = '800 22px "Baloo 2", system-ui, sans-serif';
+    ctx.fillText(`Connexion à la ville de ${Game.config.players.NAMES[Game.online.HOST_PLAYER]}…`, BOARD.MAP_WIDTH / 2, BOARD.HEIGHT / 2);
   }
 
   function drawPauseBadge(ctx) {
@@ -191,5 +208,5 @@
     ctx.fillText('Pause', BOARD.MAP_WIDTH / 2, 29.5);
   }
 
-  Game.overlay = { drawSelectionTargets, drawFloatingTexts, drawTooltip, drawSalesClock, drawBanner, drawPauseBadge, drawVictory };
+  Game.overlay = { drawSelectionTargets, drawFloatingTexts, drawTooltip, drawSalesClock, drawBanner, drawPauseBadge, drawVictory, drawWaitingForHost };
 })();

@@ -2,6 +2,18 @@
 
 Les versions les plus récentes sont en haut.
 
+## v2.19 — Page d'accueil et partie à distance (7 novembre 2026)
+
+- **Page d'accueil** : à l'ouverture, on choisit « Deux joueurs, un écran », « À distance » ou « Partie auto ». Le bouton « Accueil » sous le plateau y ramène.
+- **Partie à distance** : chacun joue chez soi, dans son navigateur, sans serveur de jeu. L'hôte crée la partie et envoie son code d'invitation (SMS, Discord…) ; son ami le colle et renvoie un code réponse ; l'hôte le colle et la partie commence, en connexion directe entre les deux navigateurs (WebRTC).
+  - L'hôte (Joueur 1) fait tourner la ville et envoie une photo compressée de la ville 10 fois par seconde (4 à 7 Ko) ; chez son ami (Joueur 2), les passants glissent d'une photo à l'autre.
+  - L'ami envoie seulement ses ordres (construire, malus, améliorer, bouclier) ; l'hôte les vérifie avant de les exécuter.
+  - Chacun ne peut toucher que son bac de cartes ; le menu d'une boutique adverse n'a que « Fermer ». Le bac du joueur affiche « (toi) ».
+  - L'hôte règle la pause, la vitesse, les passants et « Recommencer » (grisés chez l'ami) ; pas de partie auto à distance. Le journal de l'hôte s'affiche aussi chez l'ami.
+  - Si l'un quitte (« Accueil ») ou si la connexion se coupe, l'autre revient à l'accueil avec un message.
+  - Les codes portent un numéro de version : deux versions différentes du jeu refusent de jouer ensemble. Un code mal collé ou inversé donne un message clair.
+- Fichiers : `js/home.js` (accueil, échange des codes), `js/net/connection.js` (WebRTC, codes), `js/net/snapshot.js` (photo de la ville), `js/net/online.js` (rôles, messages), `js/actions.js` (ordres : `commandRefusal`, `perform`), `js/input.js`, `js/main.js`, `js/feedback.js`, `js/state.js` (`round`), `js/people/person.js` (`id`), `js/events/animations.js`, `js/render/menu.js`, `js/render/trays.js`, `js/render/overlay.js`, `js/config.js` (`net`), `index.html`, `css/styles.css`.
+
 ## v2.18 — Victoire à 20 000 $, coup de pouce au joueur qui perd (6 novembre 2026)
 
 - **Victoire** : le premier joueur qui atteint 20 000 $ gagne. La ville s'arrête et un panneau annonce le gagnant, la durée de la partie et l'argent des deux joueurs ; « Recommencer » relance une partie. En partie auto, une nouvelle partie commence toute seule 10 s plus tard. L'objectif est rappelé sous l'argent de chaque joueur.

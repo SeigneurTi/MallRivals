@@ -2,6 +2,19 @@
 
 À faire dans le navigateur après une modification, en ouvrant `index.html` par un double-clic. Astuce : le curseur **Vitesse** à ×3 accélère les attentes.
 
+## Accueil et partie à distance
+
+- [ ] La page s'ouvre sur l'accueil : trois choix « Deux joueurs, un écran », « À distance », « Partie auto ». Les deux premiers lancent une partie normale, le troisième une partie auto. « Accueil » sous le plateau y ramène.
+- [ ] Ouvrir le jeu dans deux navigateurs (ou deux fenêtres). Dans le premier : « À distance » → « Créer une partie » : un code « BLB… » apparaît, « Copier le code » le copie.
+- [ ] Dans le second : « À distance » → « Rejoindre une partie », coller le code, « Valider » : un code réponse apparaît. Le recoller chez l'hôte et « Commencer la partie » : les deux plateaux s'affichent, avec le bandeau vert « Partie à distance : tu joues… ».
+- [ ] Coller le code d'invitation à la place du code réponse (ou un texte quelconque) : message d'erreur rouge clair, rien ne casse.
+- [ ] Les deux villes sont identiques (passants, boutiques, argent, compte à rebours des soldes). Chez l'ami, les passants marchent sans saccades.
+- [ ] Chacun ne peut prendre que les cartes de son bac (« Joueur 1 (toi) » / « Joueur 2 (toi) »). Une boutique construite par l'un apparaît chez l'autre ; le journal est le même des deux côtés.
+- [ ] Le menu de sa boutique propose « Améliorer » et « Bouclier » ; celui d'une boutique adverse seulement « Fermer ».
+- [ ] Une météorite ou une voiture-voleur envoyée par l'un se voit chez l'autre.
+- [ ] Chez l'ami, Pause, Recommencer, Partie auto et les curseurs sont grisés. Pause chez l'hôte : « Pause » s'affiche chez les deux. « Recommencer » chez l'hôte : nouvelle partie chez les deux.
+- [ ] « Accueil » chez l'un : l'autre revient à l'accueil avec « Ton ami a quitté la partie. ». Fermer l'onglet de l'un : l'autre reçoit « La connexion avec ton ami a été coupée. ».
+
 ## Démarrage
 
 - [ ] La page s'ouvre sans message d'erreur rouge sous le titre.

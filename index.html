@@ -10,10 +10,91 @@
 </head>
 <body>
 
-<div class="wrap">
+<!-- Page d'accueil : choix du mode de jeu, échange des codes d'une partie à distance (js/home.js). -->
+<main id="home" class="home">
+  <div class="home-hero">
+    <p class="home-kicker">Jeu de ville pour deux joueurs</p>
+    <h1>Bourg-les-Bonhommes 2</h1>
+    <p class="sub">Construis des boutiques, attire les passants qui arrivent par les quatre routes, et sois le premier à 20 000 $.</p>
+  </div>
+
+  <p id="homeNotice" class="home-notice" role="alert" hidden></p>
+
+  <section id="homeMenu" class="home-panel" aria-label="Choisir une partie">
+    <button class="home-choice" type="button" data-choice="local">
+      <span class="home-choice-icon" aria-hidden="true">👥</span>
+      <span class="home-choice-title">Deux joueurs, un écran</span>
+      <span class="home-choice-text">Chacun son bac de cartes, sur la même tablette ou le même ordinateur.</span>
+    </button>
+    <button class="home-choice home-choice-main" type="button" data-choice="online">
+      <span class="home-choice-icon" aria-hidden="true">🌍</span>
+      <span class="home-choice-title">À distance</span>
+      <span class="home-choice-text">Chacun chez soi, sur son navigateur. Tu invites un ami avec un code.</span>
+    </button>
+    <button class="home-choice" type="button" data-choice="auto">
+      <span class="home-choice-icon" aria-hidden="true">🍿</span>
+      <span class="home-choice-title">Partie auto</span>
+      <span class="home-choice-text">Les deux joueurs jouent tout seuls : regarde la ville vivre.</span>
+    </button>
+  </section>
+
+  <section id="homeOnline" class="home-panel home-steps" aria-labelledby="homeOnlineTitle" hidden>
+    <h2 id="homeOnlineTitle">Jouer à distance</h2>
+    <p>L'un de vous crée la partie (il joue Joueur 1), l'autre la rejoint (Joueur 2). Vous vous échangez deux codes par SMS, Discord, mail… puis la partie commence, en direct d'un navigateur à l'autre.</p>
+    <div class="home-actions">
+      <button class="primary" type="button" data-choice="host">Créer une partie</button>
+      <button class="primary" type="button" data-choice="join">Rejoindre une partie</button>
+    </div>
+    <button class="link" type="button" data-choice="back">← Retour</button>
+  </section>
+
+  <section id="homeHost" class="home-panel home-steps" aria-labelledby="homeHostTitle" hidden>
+    <h2 id="homeHostTitle">Créer une partie</h2>
+    <ol class="steps">
+      <li>
+        <label for="inviteCode"><b>Envoie ce code d'invitation à ton ami.</b></label>
+        <textarea id="inviteCode" rows="3" readonly spellcheck="false"></textarea>
+        <button type="button" id="copyInvite">Copier le code</button>
+        <span id="inviteLinkRow" class="link-row" hidden>
+          <label for="inviteLink">ou ce lien :</label>
+          <input id="inviteLink" type="text" readonly>
+          <button type="button" id="copyInviteLink">Copier le lien</button>
+        </span>
+      </li>
+      <li>
+        <label for="answerInput"><b>Colle ici le code réponse qu'il te renvoie.</b></label>
+        <textarea id="answerInput" rows="3" spellcheck="false" placeholder="BLB…"></textarea>
+        <button class="primary" type="button" id="answerSubmit">Commencer la partie</button>
+      </li>
+    </ol>
+    <p id="hostStatus" class="home-status" role="status"></p>
+    <button class="link" type="button" data-choice="back-online">← Retour</button>
+  </section>
+
+  <section id="homeGuest" class="home-panel home-steps" aria-labelledby="homeGuestTitle" hidden>
+    <h2 id="homeGuestTitle">Rejoindre une partie</h2>
+    <ol class="steps">
+      <li>
+        <label for="inviteInput"><b>Colle le code d'invitation de ton ami.</b></label>
+        <textarea id="inviteInput" rows="3" spellcheck="false" placeholder="BLB…"></textarea>
+        <button class="primary" type="button" id="inviteSubmit">Valider</button>
+      </li>
+      <li id="answerStep" class="is-waiting">
+        <label for="answerCode"><b>Renvoie-lui ce code réponse.</b></label>
+        <textarea id="answerCode" rows="3" readonly spellcheck="false"></textarea>
+        <button type="button" id="copyAnswer">Copier le code</button>
+      </li>
+    </ol>
+    <p id="guestStatus" class="home-status" role="status"></p>
+    <button class="link" type="button" data-choice="back-online">← Retour</button>
+  </section>
+</main>
+
+<div id="game" class="wrap" hidden>
   <div>
     <h1>Bourg-les-Bonhommes 2</h1>
     <p id="err" class="error" hidden></p>
+    <p id="netStatus" class="net-status" hidden></p>
     <p class="sub">Deux joueurs construisent des boutiques. Les passants arrivent par les quatre routes, entrent dans les magasins qui les attirent, y restent un moment puis repartent.</p>
   </div>
 
@@ -43,6 +124,7 @@
       <button id="play" type="button">Pause</button>
       <button id="reset" type="button">Recommencer</button>
       <button id="autoplay" type="button" aria-pressed="false" title="Les deux joueurs jouent tout seuls">Partie auto</button>
+      <button id="home-button" type="button" title="Retour à la page d'accueil (une partie à distance est fermée)">Accueil</button>
     </div>
   </div>
 
@@ -62,6 +144,7 @@
         <li><b>Hasard :</b> au bout de 6 minutes de jeu, monstres, OVNI et, très rarement, incendies. Un incendie ne détruit pas toujours la boutique.</li>
         <li><b>Places limitées :</b> chaque boutique a un nombre de places (2 places par table au café, 3 pistes au bowling, une salle de cinéma avec séances). Quand c'est complet, personne n'entre. Moins il y a de places, plus chaque client rapporte.</li>
         <li>Les terrains avec un rond rose rapportent le double.</li>
+        <li><b>À distance :</b> depuis l'accueil, l'un crée la partie et envoie son code d'invitation, l'autre colle ce code et renvoie son code réponse. L'hôte (Joueur 1) fait tourner la ville : il règle la pause, la vitesse et « Recommencer », et doit garder son onglet au premier plan. Chacun ne touche que son bac de cartes et ses boutiques.</li>
         <li><b>Partie auto :</b> les deux joueurs jouent tout seuls, pour regarder la ville vivre.</li>
       </ul>
     </div>
@@ -127,10 +210,16 @@
 <script src="js/events/random-events.js"></script>
 <script src="js/events/sales.js"></script>
 
+<!-- Partie à distance -->
+<script src="js/net/snapshot.js"></script>
+<script src="js/net/connection.js"></script>
+<script src="js/net/online.js"></script>
+
 <!-- Interactions et démarrage -->
 <script src="js/actions.js"></script>
 <script src="js/autoplay.js"></script>
 <script src="js/input.js"></script>
+<script src="js/home.js"></script>
 <script src="js/main.js"></script>
 </body>
 </html>

@@ -25,6 +25,7 @@
     isAutoplay: false,        // bouton « Partie auto » : les joueurs jouent tout seuls
     winner: null,             // joueur qui a atteint l'objectif (la partie est alors finie)
     victoryAge: 0,            // temps réel écoulé depuis la victoire (s)
+    round: 0,                 // numéro de la partie (partie à distance : l'ami voit qu'une nouvelle partie commence)
   };
 
   function createLots() {
@@ -74,6 +75,7 @@
     state.gameTime = 0;
     state.winner = null;
     state.victoryAge = 0;
+    state.round++;
     Game.events.resetSales();
     state.people = [];
     const startingPopulation = Game.people.targetPopulation();

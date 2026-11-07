@@ -5,6 +5,8 @@
 
   const FEEDBACK = Game.config.feedback;
   const logElement = document.getElementById('log');
+  const logListeners = [];       // prévenus à chaque message, avec null quand le journal est vidé
+                                 // (partie à distance : l'hôte les envoie à son ami)
 
   // Ajoute une ligne en haut du journal et l'affiche en bannière.
   function log(text) {
@@ -15,15 +17,27 @@
     while (logElement.children.length > FEEDBACK.LOG_MAX_ENTRIES) {
       logElement.lastChild.remove();
     }
+    for (const listener of logListeners) {
+      listener(text);
+    }
+  }
+
+  function addLogListener(listener) {
+    logListeners.push(listener);
   }
 
   function clearLog() {
     logElement.innerHTML = '<li>La ville se réveille.</li>';
+    for (const listener of logListeners) {
+      listener(null);
+    }
   }
 
   // Texte qui monte et s'efface au-dessus d'une case.
+  // Chez l'ami d'une partie à distance, il est gardé quand une nouvelle photo de la ville arrive.
   function floatText(lot, text, color) {
-    Game.state.floatingTexts.push({ x: lot.x + lot.width / 2, y: lot.y, text, color, age: 0 });
+    const isLocal = Boolean(Game.online && Game.online.isGuest());
+    Game.state.floatingTexts.push({ x: lot.x + lot.width / 2, y: lot.y, text, color, age: 0, isLocal });
   }
 
   // Vieillit textes et bannière (en temps réel : ils continuent pendant la pause).
@@ -41,5 +55,5 @@
     }
   }
 
-  Game.feedback = { log, clearLog, floatText, update };
+  Game.feedback = { log, addLogListener, clearLog, floatText, update };
 })();

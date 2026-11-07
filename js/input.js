@@ -16,55 +16,46 @@
     return x >= left && x <= left + width && y >= top && y <= top + height;
   }
 
+  // Ligne du menu d'une boutique. Sur un seul écran, c'est le propriétaire qui paie ;
+  // dans une partie à distance, seul le joueur de ce navigateur peut toucher ses boutiques.
   function chooseMenuItem(lot, item) {
-    const actions = Game.actions;
-    if (item.action === 'upgrade' && actions.canAfford(lot.owner, item.cost)) {
-      actions.upgrade(lot);
-    } else if (item.action === 'shield' && actions.canAfford(lot.owner, item.cost)) {
-      actions.addShield(lot);
-    } else if (item.action && item.action !== 'close') {
+    if (item.action !== 'upgrade' && item.action !== 'shield') {
+      return;
+    }
+    const player = Game.online.isOnline() ? Game.online.myPlayer() : lot.owner;
+    const refusal = Game.online.submit(player, { type: item.action, lotIndex: lot.index });
+    if (refusal) {
       // Pas assez d'argent : le menu reste ouvert.
       Game.state.menuLot = lot;
-      floatText(lot, 'Pas assez de bucks', '#c0392b');
+      floatText(lot, refusal, '#c0392b');
     }
   }
 
-  // Joue la carte choisie sur une case. Renvoie false si rien ne s'est passé.
+  // Joue la carte choisie sur une case. Renvoie false si rien ne s'est passé
+  // (carte boutique sur une case prise, malus sur une case vide ou occupée par une attaque).
   function playSelectedCard(lot) {
     const state = Game.state;
     const card = Game.catalog.CARDS[state.selection.cardIndex];
-    const player = state.selection.player;
-    if (state.bucks[player] < card.price) {
-      floatText(lot, 'Pas assez de bucks', '#c0392b');
-      return true;
+    const isPlayable = card.isAction ? lot.shop && !lot.isBusy : !lot.shop;
+    if (!isPlayable) {
+      return false;
     }
-    if (!card.isAction && !lot.shop && !Game.actions.canBuild(player, card)) {
-      floatText(lot, `Déjà ${Game.config.economy.MAX_SAME_SHOP_PER_PLAYER} fois !`, '#c0392b');
-      return true;
-    }
-    if (!card.isAction && !lot.shop) {
+    const command = { type: card.isAction ? 'malus' : 'build', lotIndex: lot.index, cardIndex: state.selection.cardIndex };
+    const refusal = Game.online.submit(state.selection.player, command);
+    if (refusal) {
+      floatText(lot, refusal, '#c0392b');
+    } else {
       state.selection = null;
-      Game.actions.build(player, lot, card);
-      return true;
     }
-    if (card.isAction && lot.shop && !lot.isBusy) {
-      const refusal = Game.actions.playMalus(player, card, lot);
-      if (refusal) {
-        floatText(lot, refusal, '#c0392b');
-      } else {
-        state.selection = null;
-      }
-      return true;
-    }
-    return false;
+    return true;
   }
 
   function onPointerDown(event) {
     const state = Game.state;
     const [x, y] = toBoardPoint(event);
     const mapX = x - BOARD.MAP_LEFT;
-    if (state.winner != null) {
-      return;   // partie finie : on attend « Recommencer »
+    if (state.winner != null || Game.online.isWaitingForSnapshot()) {
+      return;   // partie finie (on attend « Recommencer »), ou ville de l'ami pas encore reçue
     }
 
     // Un menu est ouvert : tout clic le ferme, et active la ligne touchée.
@@ -84,7 +75,8 @@
     }
 
     // Une carte d'un bac : la choisir, ou la reposer si elle était déjà choisie.
-    for (const player of [0, 1]) {
+    // Dans une partie à distance, seulement le bac de ce navigateur.
+    for (const player of [0, 1].filter(Game.online.canControl)) {
       for (let cardIndex = 0; cardIndex < Game.catalog.CARDS.length; cardIndex++) {
         if (isInside(x, y, Game.trays.cardRect(player, cardIndex))) {
           const alreadySelected = state.selection && state.selection.player === player && state.selection.cardIndex === cardIndex;
@@ -109,6 +101,12 @@
 
   function syncPlayButton() {
     document.getElementById('play').textContent = Game.state.isRunning ? 'Pause' : 'Lecture';
+  }
+
+  function syncAutoplayButton() {
+    const autoplayButton = document.getElementById('autoplay');
+    autoplayButton.setAttribute('aria-pressed', String(Game.state.isAutoplay));
+    autoplayButton.textContent = Game.state.isAutoplay ? 'Partie auto ✓' : 'Partie auto';
   }
 
   function bind() {
@@ -137,13 +135,11 @@
       syncPlayButton();
     });
     document.getElementById('reset').addEventListener('click', Game.world.reset);
-    const autoplayButton = document.getElementById('autoplay');
-    autoplayButton.addEventListener('click', () => {
+    document.getElementById('autoplay').addEventListener('click', () => {
       Game.state.isAutoplay = !Game.state.isAutoplay;
-      autoplayButton.setAttribute('aria-pressed', String(Game.state.isAutoplay));
-      autoplayButton.textContent = Game.state.isAutoplay ? 'Partie auto ✓' : 'Partie auto';
+      syncAutoplayButton();
     });
   }
 
-  Game.input = { bind, syncPlayButton };
+  Game.input = { bind, syncPlayButton, syncAutoplayButton };
 })();

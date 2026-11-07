@@ -1,10 +1,12 @@
 # Bourg-les-Bonhommes 2
 
-Petit jeu de ville pour deux joueurs sur le même écran, inspiré de CityBucks sur iPad. Les passants arrivent par les quatre routes, entrent dans les boutiques qui les attirent, s'y installent puis repartent. Chaque client rapporte des bucks au propriétaire de la boutique.
+Petit jeu de ville pour deux joueurs, sur le même écran ou à distance, inspiré de CityBucks sur iPad. Les passants arrivent par les quatre routes, entrent dans les boutiques qui les attirent, s'y installent puis repartent. Chaque client rapporte des bucks au propriétaire de la boutique.
 
 ## Lancer le jeu
 
-Double-cliquer sur `index.html`. Aucune installation, aucune dépendance, aucun outil de compilation.
+Double-cliquer sur `index.html`. Aucune installation, aucune dépendance, aucun outil de compilation. La page d'accueil propose de jouer à deux sur un écran, à distance ou de regarder une partie auto.
+
+**À distance** : chaque joueur ouvre le jeu dans son navigateur. L'un clique « Créer une partie » et envoie le code d'invitation à l'autre, qui le colle dans « Rejoindre une partie » et renvoie son code réponse. Les deux navigateurs se connectent directement (WebRTC). Seuls des serveurs publics « STUN » (Google, Cloudflare) sont consultés pour que les navigateurs trouvent leur adresse sur Internet ; ils ne voient pas la partie. Certains réseaux très fermés (entreprise, école) bloquent ces connexions directes. L'hôte doit garder son onglet au premier plan : c'est lui qui fait tourner la ville.
 
 Le code utilise des **scripts classiques** et non des modules ES (`import`/`export`) : les modules ne fonctionnent pas quand la page est ouverte directement depuis le disque (`file://`). Seules les polices viennent d'Internet (Google Fonts) ; sans connexion, le jeu utilise les polices système.
 
@@ -12,7 +14,7 @@ Le code utilise des **scripts classiques** et non des modules ES (`import`/`expo
 
 ```
 bourg-les-bonhommes/
-├── index.html               Page du jeu : titre, plateau, commandes, règles, journal
+├── index.html               Accueil, puis page du jeu : titre, plateau, commandes, règles, journal
 ├── css/styles.css           Mise en page autour du plateau
 ├── js/                      Chargés dans l'ordre de index.html
 │   ├── polyfills.js         roundRect pour les navigateurs anciens (iOS < 16)
@@ -57,9 +59,14 @@ bourg-les-bonhommes/
 │   │   ├── attacks.js       Météorite, voiture-voleur
 │   │   ├── random-events.js Incendie, monstre, OVNI
 │   │   └── sales.js         Soldes : compte à rebours, clients qui se ruent dans les boutiques
-│   ├── actions.js           Actions d'un joueur : construire, améliorer, protéger, malus
+│   ├── net/
+│   │   ├── snapshot.js      Partie à distance : photo de la ville envoyée par l'hôte, affichée chez l'ami
+│   │   ├── connection.js    Connexion directe WebRTC, codes d'invitation et de réponse
+│   │   └── online.js        Rôles (hôte, ami), ordres et messages échangés
+│   ├── actions.js           Actions d'un joueur : construire, améliorer, protéger, malus ; ordres (perform)
 │   ├── autoplay.js          Partie auto : les deux joueurs jouent tout seuls
 │   ├── input.js             Clics, survol, curseurs et boutons
+│   ├── home.js              Page d'accueil : choix du mode, échange des codes
 │   └── main.js              Boucle d'animation et démarrage
 ├── CHANGELOG.md             Ce qui a changé à chaque version
 ├── CLAUDE.md                Règles pour les prochaines modifications
@@ -78,6 +85,7 @@ bourg-les-bonhommes/
 | Nombre maximal de fois la même boutique par joueur (2) | `js/config.js` | `economy.MAX_SAME_SHOP_PER_PLAYER` |
 | Objectif de victoire (20 000 $), relance en partie auto | `js/config.js` | `victory` |
 | Coup de pouce au joueur qui perd (seuil, bonus) | `js/config.js` | `catchUp` |
+| Partie à distance : photos par seconde, serveurs STUN, délais, version | `js/config.js` | `net` |
 | Soldes : compte à rebours, nombre de boutiques et de clients, gain réduit | `js/config.js` | `sales` |
 | Vitesse de la jauge d'argent derrière les cartes | `js/config.js` | `moneyGauge` |
 | Plan de la ville (rues, cases, parcs) | `js/map.js` | `STREET_X`, `STREET_Y`, `STREETS`, `LOT_ROWS`, `PARKS` |

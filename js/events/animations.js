@@ -67,6 +67,28 @@
     state.animations = state.animations.filter(animation => !animation.done);
   }
 
+  // Partie à distance, chez l'ami : les animations continuent d'avancer entre deux photos de la ville,
+  // sans rien déclencher (c'est l'hôte qui décide de la suite).
+  function advanceAnimationsForDisplay(dt) {
+    for (const animation of Game.state.animations) {
+      if (animation.kind !== 'car') {
+        animation.elapsed = Math.min(animation.duration, animation.elapsed + dt);
+        continue;
+      }
+      animation.distance += Game.config.thief.CAR_SPEED * dt;
+      while (animation.segmentIndex < animation.points.length - 2) {
+        const start = animation.points[animation.segmentIndex];
+        const end = animation.points[animation.segmentIndex + 1];
+        const length = Math.hypot(end[0] - start[0], end[1] - start[1]);
+        if (animation.distance < length) {
+          break;
+        }
+        animation.distance -= length;
+        animation.segmentIndex++;
+      }
+    }
+  }
+
   // ---------- Dessin ----------
 
   // Point entre from et to, selon progress (0 à 1).
@@ -281,5 +303,5 @@
     }
   }
 
-  Game.events = { addAnimation, addExplosion, addSmoke, updateAnimations, drawAnimations };
+  Game.events = { addAnimation, addExplosion, addSmoke, updateAnimations, advanceAnimationsForDisplay, drawAnimations };
 })();

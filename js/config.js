@@ -230,5 +230,17 @@
     loop: {
       MAX_FRAME_SECONDS: 0.05,         // évite les sauts après un onglet en arrière-plan
     },
+
+    // Partie à distance (js/net/) : l'hôte envoie une photo de la ville à son ami.
+    net: {
+      SNAPSHOT_INTERVAL_SECONDS: 0.1,  // une photo toutes les 0,1 s (10 par seconde)
+      MAX_BUFFERED_BYTES: 256 * 1024,  // au-delà, connexion trop lente : on saute une photo
+      ADDRESS_SEARCH_MAX_MS: 4000,     // temps maximal pour trouver ses adresses réseau avant d'écrire le code
+      CONNECT_TIMEOUT_SECONDS: 20,     // sans connexion au bout de ce temps, on explique pourquoi ça peut bloquer
+      PROTOCOL_VERSION: 1,             // à changer si les messages changent : deux versions différentes refusent de jouer ensemble
+      // Serveurs publics qui aident deux navigateurs à se trouver à travers les box internet (STUN).
+      // Ils ne voient passer que les adresses réseau, jamais la partie.
+      ICE_SERVERS: [{ urls: ['stun:stun.l.google.com:19302', 'stun:stun.cloudflare.com:3478'] }],
+    },
   };
 })();

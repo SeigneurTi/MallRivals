@@ -14,7 +14,8 @@
   // action vaut 'upgrade', 'shield', 'close', ou null pour une ligne grisée (maximum atteint).
   function layout(lot) {
     const items = [];
-    if (lot.owner != null) {
+    // Dans une partie à distance, on n'améliore que ses propres boutiques.
+    if (lot.owner != null && Game.online.canControl(lot.owner)) {
       const canUpgrade = lot.level < ECONOMY.MAX_LEVEL;
       items.push({
         label: canUpgrade ? `Améliorer → niv. ${lot.level + 1}` : 'Niveau max atteint',
