@@ -1,5 +1,6 @@
 // Menu d'une boutique : informations, amélioration, bouclier, fermer.
-// Coordonnées dans le repère de la carte.
+// Coordonnées dans le repère de la carte. Sur petit écran, tout le menu est grossi
+// (Game.layout.uiScale) : il est dessiné à sa taille normale dans un repère agrandi.
 (function () {
   'use strict';
 
@@ -32,18 +33,23 @@
     items.push({ label: 'Fermer', cost: null, action: 'close' });
 
     // Sous la case, ou au-dessus s'il n'y a pas la place, sans sortir de la carte.
-    const height = 58 + items.length * ITEM_HEIGHT;
-    let x = lot.x + lot.width / 2 - MENU_WIDTH / 2;
+    // rect : place de la ligne sur la carte ; localRect : dans le menu, avant grossissement.
+    const scale = Game.layout.uiScale;
+    const localHeight = 58 + items.length * ITEM_HEIGHT;
+    const width = MENU_WIDTH * scale;
+    const height = localHeight * scale;
+    let x = lot.x + lot.width / 2 - width / 2;
     let y = lot.y + lot.height + 8;
     if (y + height > BOARD.HEIGHT - 6) {
       y = lot.y - height - 8;
     }
-    x = Math.max(6, Math.min(BOARD.MAP_WIDTH - MENU_WIDTH - 6, x));
-    y = Math.max(6, y);
+    x = Math.max(6, Math.min(BOARD.MAP_WIDTH - width - 6, x));
+    y = Math.max(6, Math.min(BOARD.HEIGHT - height - 6, y));
     items.forEach((item, k) => {
-      item.rect = [x + 10, y + 50 + k * ITEM_HEIGHT, MENU_WIDTH - 20, 30];
+      item.localRect = [10, 50 + k * ITEM_HEIGHT, MENU_WIDTH - 20, 30];
+      item.rect = item.localRect.map((value, index) => value * scale + (index === 0 ? x : index === 1 ? y : 0));
     });
-    return { x, y, width: MENU_WIDTH, height, items };
+    return { x, y, width, height, scale, localHeight, items };
   }
 
   // « À personne · coffre plein : 600 $ à piller » ou « … · coffre plein dans 1 min 20 s ».
@@ -60,13 +66,16 @@
   function draw(c, lot) {
     const menu = layout(lot);
     const ownerName = lot.owner != null ? Game.autoplay.nameOf(lot.owner) : 'Sans propriétaire';
+    c.save();
+    c.translate(menu.x, menu.y);
+    c.scale(menu.scale, menu.scale);
 
     // Ombre et fond.
     c.fillStyle = 'rgba(20,25,20,.25)';
-    roundedRectPath(c, menu.x + 3, menu.y + 4, menu.width, menu.height, 12);
+    roundedRectPath(c, 3, 4, MENU_WIDTH, menu.localHeight, 12);
     c.fill();
     c.fillStyle = '#ffffff';
-    roundedRectPath(c, menu.x, menu.y, menu.width, menu.height, 12);
+    roundedRectPath(c, 0, 0, MENU_WIDTH, menu.localHeight, 12);
     c.fill();
 
     // Titre et résumé.
@@ -74,14 +83,14 @@
     c.textBaseline = 'middle';
     c.fillStyle = '#23272b';
     c.font = '800 17px "Baloo 2", system-ui, sans-serif';
-    c.fillText(lot.shop.name, menu.x + 12, menu.y + 18);
+    c.fillText(lot.shop.name, 12, 18);
     c.fillStyle = '#5d6560';
     c.font = '600 11px Nunito, system-ui, sans-serif';
     const summary = lot.isBank ? bankSummary(lot) : `${ownerName} · niv. ${lot.level} · ${Game.catalog.capacityOf(lot.shop)} places · ${Game.catalog.incomePerCustomer(lot)} $/client`;
-    c.fillText(summary, menu.x + 12, menu.y + 37, menu.width - 20);
+    c.fillText(summary, 12, 37, MENU_WIDTH - 20);
 
     for (const item of menu.items) {
-      const [x, y, width, height] = item.rect;
+      const [x, y, width, height] = item.localRect;
       const enabled = item.action === 'close' || (item.action && Game.state.bucks[lot.owner] >= item.cost);
       if (item.action === 'close') {
         c.fillStyle = '#eef0ec';
@@ -102,6 +111,7 @@
         c.fillText(item.cost + ' $', x + width - 10, y + height / 2 + 0.5);
       }
     }
+    c.restore();
   }
 
   Game.menu = { layout, draw };

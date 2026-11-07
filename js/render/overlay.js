@@ -1,6 +1,7 @@
 // Ce qui se dessine par-dessus la carte : cases jouables, textes flottants,
 // info-bulle d'un passant, compte à rebours des soldes, bannière du journal, badge « Pause ».
-// Coordonnées dans le repère de la carte.
+// Coordonnées dans le repère de la carte. Sur petit écran, textes, bannière et panneaux
+// grossissent (Game.layout.uiScale) pour rester lisibles.
 (function () {
   'use strict';
 
@@ -31,13 +32,14 @@
 
   // Textes qui montent et s'effacent (règle aussi l'alignement utilisé par l'info-bulle).
   function drawFloatingTexts(ctx) {
+    const scale = Game.layout.uiScale;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     for (const floating of Game.state.floatingTexts) {
-      const y = floating.y - floating.age * 30;
+      const y = floating.y - floating.age * 30 * scale;
       ctx.globalAlpha = 1 - floating.age / FEEDBACK.FLOATING_TEXT_SECONDS;
-      ctx.font = '800 18px "Baloo 2", system-ui, sans-serif';
-      ctx.lineWidth = 4;
+      ctx.font = `800 ${18 * scale}px "Baloo 2", system-ui, sans-serif`;
+      ctx.lineWidth = 4 * scale;
       ctx.strokeStyle = '#ffffff';
       ctx.strokeText(floating.text, floating.x, y);
       ctx.fillStyle = floating.color;
@@ -57,16 +59,18 @@
     const text = isInShop
       ? `${person.name} · ${person.lot.shop.name}`
       : `${person.name} · de ${exitNames[person.from]} vers ${exitNames[person.to]}`;
-    ctx.font = '700 14px Nunito, system-ui, sans-serif';
-    const width = ctx.measureText(text).width + 18;
+    const scale = Game.layout.uiScale;
+    ctx.font = `700 ${14 * scale}px Nunito, system-ui, sans-serif`;
+    const width = ctx.measureText(text).width + 18 * scale;
+    const height = 26 * scale;
     const x = Math.max(6, Math.min(BOARD.MAP_WIDTH - width - 6, person.x - width / 2));
-    const y = Math.max(6, person.y - 52);
+    const y = Math.max(6, person.y - 26 - height);
     ctx.fillStyle = '#ffffff';
-    roundedRectPath(ctx, x, y, width, 26, 8);
+    roundedRectPath(ctx, x, y, width, height, 8 * scale);
     ctx.fill();
     ctx.fillStyle = '#23272b';
     ctx.textAlign = 'left';
-    ctx.fillText(text, x + 9, y + 13.5);
+    ctx.fillText(text, x + 9 * scale, y + height / 2 + 0.5);
   }
 
   // Dernier message du journal, en bas de la carte : apparaît puis s'efface.
@@ -75,16 +79,19 @@
     if (!banner) {
       return;
     }
-    ctx.font = '800 16px Nunito, system-ui, sans-serif';
-    const width = Math.min(BOARD.MAP_WIDTH - 40, ctx.measureText(banner.text).width + 30);
+    const scale = Game.layout.uiScale;
+    ctx.font = `800 ${16 * scale}px Nunito, system-ui, sans-serif`;
+    const width = Math.min(BOARD.MAP_WIDTH - 20, ctx.measureText(banner.text).width + 30 * scale);
+    const height = 34 * scale;
+    const top = BOARD.HEIGHT - 18 - height;
     const fadeInOut = Math.min(1, banner.age * 4, (FEEDBACK.BANNER_SECONDS - banner.age) * 2);
     ctx.globalAlpha = fadeInOut;
     ctx.fillStyle = 'rgba(30,34,40,.88)';
-    roundedRectPath(ctx, BOARD.MAP_WIDTH / 2 - width / 2, BOARD.HEIGHT - 52, width, 34, 17);
+    roundedRectPath(ctx, BOARD.MAP_WIDTH / 2 - width / 2, top, width, height, height / 2);
     ctx.fill();
     ctx.fillStyle = '#fff';
     ctx.textAlign = 'center';
-    ctx.fillText(banner.text, BOARD.MAP_WIDTH / 2, BOARD.HEIGHT - 34.5, width - 20);
+    ctx.fillText(banner.text, BOARD.MAP_WIDTH / 2, top + height / 2 + 0.5, width - 20 * scale);
     ctx.globalAlpha = 1;
   }
 
@@ -152,8 +159,12 @@
     ctx.fillRect(0, 0, BOARD.MAP_WIDTH, BOARD.HEIGHT);
     const width = 420;
     const height = 170;
-    const left = BOARD.MAP_WIDTH / 2 - width / 2;
-    const top = BOARD.HEIGHT / 2 - height / 2;
+    const left = -width / 2;
+    const top = -height / 2;
+    const scale = Math.min(Game.layout.uiScale, (BOARD.MAP_WIDTH - 20) / width);
+    ctx.save();
+    ctx.translate(BOARD.MAP_WIDTH / 2, BOARD.HEIGHT / 2);
+    ctx.scale(scale, scale);
     ctx.fillStyle = '#ffffff';
     roundedRectPath(ctx, left, top, width, height, 18);
     ctx.fill();
@@ -164,12 +175,12 @@
     ctx.textBaseline = 'middle';
     ctx.fillStyle = players.COLORS[state.winner];
     ctx.font = '800 34px "Baloo 2", system-ui, sans-serif';
-    ctx.fillText(`${Game.autoplay.nameOf(state.winner)} gagne !`, BOARD.MAP_WIDTH / 2, top + 55);
+    ctx.fillText(`${Game.autoplay.nameOf(state.winner)} gagne !`, 0, top + 55);
     const minutes = Math.floor(state.gameTime / 60);
     const seconds = Math.floor(state.gameTime % 60);
     ctx.fillStyle = '#23272b';
     ctx.font = '700 15px Nunito, system-ui, sans-serif';
-    ctx.fillText(`${victory.TARGET_BUCKS} $ atteints en ${minutes} min ${seconds} s · ${state.bucks[0]} $ contre ${state.bucks[1]} $`, BOARD.MAP_WIDTH / 2, top + 98, width - 30);
+    ctx.fillText(`${victory.TARGET_BUCKS} $ atteints en ${minutes} min ${seconds} s · ${state.bucks[0]} $ contre ${state.bucks[1]} $`, 0, top + 98, width - 30);
     ctx.fillStyle = '#5d6560';
     ctx.font = '600 13px Nunito, system-ui, sans-serif';
     const restartIn = Math.ceil(victory.AUTOPLAY_RESTART_SECONDS - state.victoryAge);
@@ -177,7 +188,8 @@
     if (Game.online.isGuest()) {
       hint = `${players.NAMES[Game.online.HOST_PLAYER]} peut relancer une partie (« Recommencer »)`;
     }
-    ctx.fillText(hint, BOARD.MAP_WIDTH / 2, top + 132);
+    ctx.fillText(hint, 0, top + 132, width - 20);
+    ctx.restore();
     ctx.globalAlpha = 1;
   }
 
@@ -191,21 +203,27 @@
     ctx.fillStyle = '#ffffff';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    ctx.font = '800 22px "Baloo 2", system-ui, sans-serif';
-    ctx.fillText(`Connexion à la ville de ${Game.config.players.NAMES[Game.online.HOST_PLAYER]}…`, BOARD.MAP_WIDTH / 2, BOARD.HEIGHT / 2);
+    ctx.font = `800 ${22 * Game.layout.uiScale}px "Baloo 2", system-ui, sans-serif`;
+    ctx.fillText(`Connexion à la ville de ${Game.config.players.NAMES[Game.online.HOST_PLAYER]}…`, BOARD.MAP_WIDTH / 2, BOARD.HEIGHT / 2, BOARD.MAP_WIDTH - 30);
   }
 
   function drawPauseBadge(ctx) {
     if (Game.state.isRunning) {
       return;
     }
+    const scale = Game.layout.uiScale;
+    ctx.save();
+    ctx.translate(BOARD.MAP_WIDTH / 2, 14);
+    ctx.scale(scale, scale);
     ctx.fillStyle = 'rgba(30,34,40,.75)';
-    roundedRectPath(ctx, BOARD.MAP_WIDTH / 2 - 50, 14, 100, 30, 15);
+    roundedRectPath(ctx, -50, 0, 100, 30, 15);
     ctx.fill();
     ctx.fillStyle = '#fff';
     ctx.font = '800 15px Nunito, system-ui, sans-serif';
     ctx.textAlign = 'center';
-    ctx.fillText('Pause', BOARD.MAP_WIDTH / 2, 29.5);
+    ctx.textBaseline = 'middle';
+    ctx.fillText('Pause', 0, 15.5);
+    ctx.restore();
   }
 
   Game.overlay = { drawSelectionTargets, drawFloatingTexts, drawTooltip, drawSalesClock, drawBanner, drawPauseBadge, drawVictory, drawWaitingForHost };

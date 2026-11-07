@@ -22,6 +22,7 @@ bourg-les-bonhommes/
 │   ├── config.js            ★ Dimensions et toutes les valeurs d'équilibrage
 │   ├── utils.js             Hasard, mélange de couleurs
 │   ├── canvas.js            Canvas, mise à l'échelle de l'écran (Game.view)
+│   ├── layout.js            Disposition large (ordinateur) ou haute (téléphone en hauteur)
 │   ├── draw.js              Primitives : rectangle, disque, ellipse, rectangle arrondi
 │   ├── map.js               Carte en moulinet : carrefours, rues, 4 sorties, cases, parcs, trajets
 │   ├── catalog.js           ★ Les 26 boutiques, la banque et les 2 malus, formules de gains
@@ -96,7 +97,8 @@ bourg-les-bonhommes/
 | Bowling (lancers, durées, chance de strike, chute des quilles) | `js/config.js` | `bowling` |
 | Temps passé devant chaque tableau de la galerie d'art | `js/config.js` | `gallery` |
 | Temps pour se changer au vestiaire de la piscine | `js/config.js` | `pool` |
-| Grossissement et taille de la loupe | `js/config.js` | `magnifier` |
+| Grossissement et taille de la loupe, loupe au doigt | `js/config.js` | `magnifier` |
+| Téléphone : colonnes de cartes en hauteur, grossissement des menus et textes, marges | `js/config.js` | `layout` |
 | Durée de l'attente et du film au cinéma | `js/config.js` | `cinema` |
 | Durée de l'attente et de la partie au laser game, cadence de tir | `js/config.js` | `lasergame` |
 | Ce que les clients emportent (fleur, cornet, écrin) | `js/shops/interiors-*.js` | `souvenir` de la boutique |

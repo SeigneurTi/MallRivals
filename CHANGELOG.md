@@ -2,6 +2,21 @@
 
 Les versions les plus récentes sont en haut.
 
+## v2.23 — Adapté au téléphone (8 novembre 2026)
+
+- **Téléphone tenu en hauteur** : nouvelle disposition du plateau. La carte de la ville est en haut, sur toute la largeur ; les deux bacs sont côte à côte en dessous, avec des cartes deux fois plus grandes (4 colonnes) et l'argent de chaque joueur en haut de son bac. Le jeu choisit tout seul la disposition qui affiche le plateau le plus grand (aussi sur une tablette tenue en hauteur).
+- **Téléphone tenu en largeur** : le plateau habituel prend toute la hauteur de l'écran, sans le titre.
+- **Le plateau tient toujours en entier dans la fenêtre**, sur ordinateur aussi (sur une fenêtre basse, il rapetisse au lieu de dépasser).
+- **Petits écrans** : le menu d'une boutique, les textes qui s'envolent, la bannière du journal, l'info-bulle d'un passant, le badge « Pause » et le panneau de victoire grossissent (jusqu'à ×2,2) pour rester lisibles et faciles à toucher.
+- **Au doigt** :
+  - on choisit une carte en touchant aussi son nom, sous la carte ;
+  - l'info-bulle d'un passant touché reste affichée (elle disparaissait dès que le doigt se relevait) ;
+  - loupe : faire glisser le doigt sur la carte la déplace (la page ne défile plus), elle s'affiche au-dessus du doigt pour ne pas être cachée ; un toucher bref joue toujours, un glissement ne joue rien ;
+  - pas de menu « Enregistrer l'image » en laissant le doigt appuyé sur le plateau.
+- Nouveau bouton **« Plein écran »** sous le plateau (caché sur iPhone, où le navigateur ne le permet pas).
+- Sur téléphone, la loupe est au-dessus de la tablette, à droite du titre ; marges réduites.
+- Fichiers : `js/layout.js` (nouveau : choix de la disposition), `js/canvas.js` (taille du plateau), `js/render/trays.js` (bacs dans les deux dispositions), `js/render/menu.js`, `js/render/overlay.js` (grossissement), `js/render/magnifier.js` et `js/input.js` (doigt, plein écran), `js/render/board.js`, `js/main.js`, `js/config.js` (`layout`, `magnifier`), `index.html`, `css/styles.css`, `README.md`, `VERIFICATIONS.md`.
+
 ## v2.22 — Mode contre un bot, trois niveaux (7 novembre 2026)
 
 - **Contre un bot** : nouveau choix sur l'accueil. Tu joues Joueur 1 (bac de gauche), l'ordinateur joue Joueur 2, avec les mêmes cartes et les mêmes règles. Trois niveaux :

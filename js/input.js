@@ -1,10 +1,11 @@
 // Interactions : toucher les cartes, les cases et le menu ; survoler les passants ;
-// curseurs et boutons sous le plateau.
+// curseurs et boutons sous le plateau. Marche à la souris comme au doigt (téléphone, tablette).
 (function () {
   'use strict';
 
-  const BOARD = Game.config.board;
+  const MAGNIFIER = Game.config.magnifier;
   const { floatText } = Game.feedback;
+  let pendingTap = null;   // au doigt, loupe allumée : toucher en attente (on ne sait pas encore si le doigt va glisser)
 
   // Position du pointeur en unités logiques du plateau.
   function toBoardPoint(event) {
@@ -53,7 +54,7 @@
   function onPointerDown(event) {
     const state = Game.state;
     const [x, y] = toBoardPoint(event);
-    const mapX = x - BOARD.MAP_LEFT;
+    const mapX = x - Game.layout.mapLeft;
     if (state.winner != null || Game.online.isWaitingForSnapshot()) {
       return;   // partie finie (on attend « Recommencer »), ou ville de l'ami pas encore reçue
     }
@@ -78,7 +79,7 @@
     // Dans une partie à distance, seulement le bac de ce navigateur.
     for (const player of [0, 1].filter(Game.online.canControl)) {
       for (let cardIndex = 0; cardIndex < Game.catalog.CARDS.length; cardIndex++) {
-        if (isInside(x, y, Game.trays.cardRect(player, cardIndex))) {
+        if (isInside(x, y, Game.trays.cardTouchRect(player, cardIndex))) {
           const alreadySelected = state.selection && state.selection.player === player && state.selection.cardIndex === cardIndex;
           state.selection = alreadySelected ? null : { player, cardIndex };
           return;
@@ -95,8 +96,30 @@
       state.menuLot = lot;
       return;
     }
-    // Sinon (sur tablette, pas de survol) : toucher un passant affiche son info-bulle.
+    // Sinon (au doigt, pas de survol) : toucher un passant affiche son info-bulle.
     state.hoveredPerson = Game.people.findNear(mapX, y);
+  }
+
+  // Au doigt avec la loupe allumée, faire glisser le doigt sert à regarder : on ne joue
+  // qu'un toucher bref, quand le doigt se relève sans avoir bougé.
+  function onPointerDownOrTap(event) {
+    if (event.pointerType !== 'mouse' && Game.magnifier.isActive()) {
+      pendingTap = { event, x: event.clientX, y: event.clientY };
+      return;
+    }
+    onPointerDown(event);
+  }
+
+  function onPointerUp(event) {
+    if (!pendingTap) {
+      return;
+    }
+    const moved = Math.hypot(event.clientX - pendingTap.x, event.clientY - pendingTap.y);
+    const tap = pendingTap.event;
+    pendingTap = null;
+    if (moved <= MAGNIFIER.TAP_MAX_MOVE) {
+      onPointerDown(tap);
+    }
   }
 
   function syncPlayButton() {
@@ -111,13 +134,24 @@
 
   function bind() {
     const canvas = Game.view.canvas;
-    canvas.addEventListener('pointerdown', onPointerDown);
-    canvas.addEventListener('pointermove', event => {
-      const [x, y] = toBoardPoint(event);
-      Game.state.hoveredPerson = Game.people.findNear(x - BOARD.MAP_LEFT, y);
+    canvas.addEventListener('pointerdown', onPointerDownOrTap);
+    canvas.addEventListener('pointerup', onPointerUp);
+    canvas.addEventListener('pointercancel', () => {
+      pendingTap = null;
     });
-    canvas.addEventListener('pointerleave', () => {
-      Game.state.hoveredPerson = null;
+    canvas.addEventListener('pointermove', event => {
+      // Au doigt, sans loupe, un glissement fait défiler la page : l'info-bulle reste celle du toucher.
+      if (event.pointerType !== 'mouse' && !Game.magnifier.isActive()) {
+        return;
+      }
+      const [x, y] = toBoardPoint(event);
+      Game.state.hoveredPerson = Game.people.findNear(x - Game.layout.mapLeft, y);
+    });
+    canvas.addEventListener('pointerleave', event => {
+      // Au doigt, le pointeur « quitte » le plateau dès que le doigt se relève : l'info-bulle reste affichée.
+      if (event.pointerType === 'mouse') {
+        Game.state.hoveredPerson = null;
+      }
     });
 
     const populationSlider = document.getElementById('pop');
@@ -138,6 +172,29 @@
     document.getElementById('autoplay').addEventListener('click', () => {
       Game.state.isAutoplay = !Game.state.isAutoplay;
       syncAutoplayButton();
+    });
+    bindFullscreenButton();
+  }
+
+  // Bouton « Plein écran » (surtout utile sur téléphone), caché si le navigateur ne le permet pas (iPhone).
+  function bindFullscreenButton() {
+    const button = document.getElementById('fullscreen');
+    const root = document.documentElement;
+    if (!document.fullscreenEnabled || !root.requestFullscreen) {
+      button.hidden = true;
+      return;
+    }
+    button.addEventListener('click', () => {
+      if (document.fullscreenElement) {
+        document.exitFullscreen();
+      } else {
+        root.requestFullscreen({ navigationUI: 'hide' }).catch(() => {});
+      }
+    });
+    document.addEventListener('fullscreenchange', () => {
+      const isFullscreen = Boolean(document.fullscreenElement);
+      button.textContent = isFullscreen ? 'Quitter le plein écran' : 'Plein écran';
+      button.setAttribute('aria-pressed', String(isFullscreen));
     });
   }
 

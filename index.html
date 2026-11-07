@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#16181c">
 <title>Bourg-les-Bonhommes 2</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&family=Nunito:wght@400;600;700;800&display=swap">
@@ -131,7 +132,7 @@
     <canvas id="board" aria-label="Plateau de jeu : carte de la ville et cartes des deux joueurs"></canvas>
     <!-- Loupe : bouton sur le bord de la tablette, et rond grossi qui suit le curseur (js/render/magnifier.js). -->
     <canvas id="lens" class="lens" hidden></canvas>
-    <button id="magnifier" class="lens-button" type="button" aria-pressed="false" aria-label="Loupe" title="Loupe : survole la carte pour la voir grossie ×3">
+    <button id="magnifier" class="lens-button" type="button" aria-pressed="false" aria-label="Loupe" title="Loupe : survole la carte (ou fais-y glisser ton doigt) pour la voir grossie ×3">
       <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><circle cx="10" cy="10" r="6.5" fill="none" stroke="currentColor" stroke-width="2.6"/><line x1="15" y1="15" x2="21" y2="21" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>
     </button>
   </div>
@@ -152,6 +153,7 @@
       <button id="play" type="button">Pause</button>
       <button id="reset" type="button">Recommencer</button>
       <button id="autoplay" type="button" aria-pressed="false" title="Les deux joueurs jouent tout seuls">Partie auto</button>
+      <button id="fullscreen" type="button" aria-pressed="false" title="Le plateau occupe tout l'écran (pratique sur téléphone)">Plein écran</button>
       <button id="home-button" type="button" title="Retour à la page d'accueil (une partie à distance est fermée)">Accueil</button>
     </div>
   </div>
@@ -174,6 +176,7 @@
         <li>Les terrains avec un rond rose rapportent le double.</li>
         <li><b>À distance :</b> depuis l'accueil, l'un crée la partie et envoie son code d'invitation, l'autre colle ce code et renvoie son code réponse. L'hôte (Joueur 1) fait tourner la ville : il règle la pause, la vitesse et « Recommencer », et doit garder son onglet au premier plan. Chacun ne touche que son bac de cartes et ses boutiques.</li>
         <li><b>Partie auto :</b> les deux joueurs jouent tout seuls, pour regarder la ville vivre.</li>
+        <li><b>Sur téléphone :</b> tenu en hauteur, la carte est en haut et les deux bacs de cartes en dessous ; tenu en largeur, le plateau prend toute la hauteur de l'écran. Avec la loupe allumée, fais glisser ton doigt sur la carte pour la voir de près ; un toucher bref joue toujours. « Plein écran » gagne la place de la barre d'adresse.</li>
       </ul>
     </div>
     <div class="card">
@@ -193,6 +196,7 @@
 <script src="js/config.js"></script>
 <script src="js/utils.js"></script>
 <script src="js/canvas.js"></script>
+<script src="js/layout.js"></script>
 <script src="js/draw.js"></script>
 
 <!-- Données : plan de la ville, catalogue, noms, icônes -->

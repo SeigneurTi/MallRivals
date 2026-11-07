@@ -65,13 +65,18 @@ h1 {
   box-shadow: 0 12px 30px rgba(20, 25, 20, .25);
 }
 
+/* La taille du plateau est réglée par js/canvas.js (il tient en entier dans la fenêtre) : on le centre. */
 canvas {
   display: block;
-  width: 100%;
-  height: auto;
+  max-width: 100%;
+  margin: 0 auto;
   border-radius: 8px;
   touch-action: manipulation;
   cursor: pointer;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;     /* pas de menu « Enregistrer l'image » en laissant le doigt appuyé */
+  -webkit-tap-highlight-color: transparent;
 }
 
 /* Bouton de la loupe, sur le bord droit de la tablette. */
@@ -101,9 +106,10 @@ canvas {
   color: #ffffff;
 }
 
-/* Loupe active : le curseur devient une croix. */
+/* Loupe active : le curseur devient une croix ; au doigt, glisser déplace la loupe au lieu de faire défiler la page. */
 .tablet.is-magnifying #board {
   cursor: crosshair;
+  touch-action: none;
 }
 
 /* Rond grossi : posé sur la carte, il laisse passer les clics. */
@@ -493,6 +499,11 @@ button.link:hover {
 
 /* ---------- Petits écrans ---------- */
 
+button {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
 @media (max-width: 720px) {
   .cols {
     grid-template-columns: 1fr;
@@ -509,5 +520,82 @@ button.link:hover {
 
   .home-choice {
     min-height: 0;
+  }
+}
+
+/* Téléphone tenu en hauteur : marges réduites pour que le plateau soit le plus large possible,
+   loupe dans le coin de la tablette, titre plus petit et sans la phrase d'introduction. */
+@media (max-width: 560px) {
+  body {
+    padding-left: max(8px, env(safe-area-inset-left, 0px));
+    padding-right: max(8px, env(safe-area-inset-right, 0px));
+    padding-block: 12px 28px;
+  }
+
+  .wrap {
+    gap: 10px;
+  }
+
+  #game h1 {
+    font-size: 26px;
+  }
+
+  #game > div:first-child > .sub {
+    display: none;
+  }
+
+  .tablet {
+    padding: 5px;
+    border-radius: 14px;
+  }
+
+  canvas {
+    border-radius: 6px;
+  }
+
+  /* Loupe au-dessus de la tablette, à droite du titre : sur la carte, elle cacherait les menus. */
+  .lens-button {
+    top: -46px;
+    right: 2px;
+    border-color: transparent;
+  }
+
+  .bar {
+    padding: 10px 12px;
+    gap: 10px 16px;
+  }
+
+  input[type=range] {
+    width: 110px;
+  }
+
+  .btns button {
+    flex: 1 1 auto;
+  }
+}
+
+/* Téléphone tenu en largeur : peu de hauteur, le plateau passe en premier (sans le titre). */
+@media (max-height: 520px) and (orientation: landscape) {
+  body {
+    padding-block: 6px 24px;
+  }
+
+  #game h1,
+  #game > div:first-child > .sub {
+    display: none;
+  }
+
+  /* En-tête vide (titre caché) : il ne laisse pas d'espace au-dessus du plateau. */
+  #game > div:first-child {
+    display: contents;
+  }
+
+  .tablet {
+    padding: 5px;
+    border-radius: 14px;
+  }
+
+  .lens-button {
+    top: 10px;
   }
 }

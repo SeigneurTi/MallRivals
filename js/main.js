@@ -44,7 +44,7 @@
 
     // Tout ce qui est sur la carte, découpé à ses bords.
     ctx.save();
-    ctx.translate(BOARD.MAP_LEFT, 0);
+    ctx.translate(Game.layout.mapLeft, 0);
     ctx.beginPath();
     ctx.rect(0, 0, BOARD.MAP_WIDTH, BOARD.HEIGHT);
     ctx.clip();

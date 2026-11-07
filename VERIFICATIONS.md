@@ -112,6 +112,19 @@
 - [ ] En partant, il repasse par une cabine et ressort habillé, avec son sac ; personne ne sort dans la rue en maillot.
 - [ ] Bijouterie : comptoir vitré (bagues, colliers, montres), vitrines murales, deux îlots, diamant sous cloche ; des éclats scintillent sur les pierres ; les clients repartent avec un petit écrin.
 
+## Téléphone
+
+Avec un téléphone (ou les outils de développement du navigateur, mode appareil mobile) :
+
+- [ ] Tenu en hauteur : la carte en haut sur toute la largeur, les deux bacs côte à côte en dessous (4 colonnes de cartes, argent en haut à droite de chaque bac). Pas de défilement horizontal.
+- [ ] Toucher une carte (ou son nom) la choisit ; toucher une case grise construit ; toucher sa boutique ouvre un menu grossi, lisible ; « Améliorer » marche.
+- [ ] Toucher un passant affiche son info-bulle, qui reste après avoir levé le doigt.
+- [ ] Loupe (bouton à droite du titre) : glisser le doigt sur la carte déplace la loupe au-dessus du doigt, sans faire défiler la page ni ouvrir de menu ; un toucher bref joue.
+- [ ] Bannière du journal, textes « +12 $ », badge « Pause » et panneau de victoire lisibles.
+- [ ] Tenu en largeur : le plateau habituel occupe toute la hauteur de l'écran, sans titre au-dessus.
+- [ ] « Plein écran » (Android) : le plateau grandit ; le bouton devient « Quitter le plein écran ».
+- [ ] Sur ordinateur, le plateau est comme avant (bacs à gauche et à droite) et tient en entier dans la fenêtre.
+
 ## Loupe
 
 - [ ] Bouton rond à loupe sur le bord droit de la tablette : un clic l'allume (orange). En survolant le plateau, un rond montre la zone sous le curseur grossie ×3, nette (textes et passants sans flou) ; autour, la carte reste normale.

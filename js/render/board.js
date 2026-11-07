@@ -123,8 +123,8 @@
     const view = Game.view;
     const c = view.backgroundCtx;
     const pixelsPerUnit = view.pixelRatio * view.scale;
-    // Repère de la carte : décalé de la largeur du bac de gauche.
-    c.setTransform(pixelsPerUnit, 0, 0, pixelsPerUnit, pixelsPerUnit * BOARD.MAP_LEFT, 0);
+    // Repère de la carte : décalé de la largeur du bac de gauche (disposition large).
+    c.setTransform(pixelsPerUnit, 0, 0, pixelsPerUnit, pixelsPerUnit * Game.layout.mapLeft, 0);
     drawMap(c);
   }
 

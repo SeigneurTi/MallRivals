@@ -189,6 +189,20 @@
     magnifier: {
       ZOOM: 3,                         // grossissement de la loupe
       DIAMETER: 220,                   // diamètre de la loupe, en pixels de l'écran
+      MAX_SCREEN_SHARE: 0.55,          // sur un téléphone : au plus 55 % de la largeur de l'écran
+      FINGER_GAP: 24,                  // au doigt : la loupe s'affiche au-dessus du doigt, à cet écart (pixels)
+      TAP_MAX_MOVE: 12,                // au doigt, loupe allumée : au-delà de ce déplacement (pixels), on regarde au lieu de toucher
+    },
+
+    // Disposition du plateau selon l'écran (js/layout.js).
+    layout: {
+      TALL_TRAY_COLUMNS: 4,            // téléphone en hauteur : colonnes de cartes de chaque bac, sous la carte
+      TALL_MIN_GAIN: 1.05,             // disposition en hauteur choisie si elle affiche le plateau au moins 5 % plus grand
+      COMFORT_SCALE: 0.8,              // échelle (pixels par unité) en dessous de laquelle menus et textes de la carte grossissent
+      MAX_UI_SCALE: 2.2,               // grossissement maximal des menus et textes
+      SCREEN_MARGIN: 8,                // marge sous le plateau pour qu'il tienne en entier dans la fenêtre (pixels)
+      MIN_HEIGHT: 280,                 // hauteur minimale réservée au plateau (pixels)
+      HEIGHT_JITTER: 140,              // sur écran tactile, la barre d'adresse qui apparaît ou disparaît ne redimensionne pas le plateau
     },
 
     // Joueurs automatiques (js/autoplay.js) : « Partie auto » (SHOWCASE pour les deux joueurs)
