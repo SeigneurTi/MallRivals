@@ -76,6 +76,24 @@
       }
     },
 
+    // Deux croches reliées.
+    note(c, cx, cy, r) {
+      for (const [headX, headY] of [[-0.45, 0.45], [0.45, 0.3]]) {
+        c.beginPath();
+        c.ellipse(cx + headX * r, cy + headY * r, r * 0.3, r * 0.21, -0.4, 0, FULL_TURN);
+        c.fill();
+      }
+      c.fillRect(cx - r * 0.2, cy - r * 0.6, r * 0.13, r * 1.05);
+      c.fillRect(cx + r * 0.7, cy - r * 0.75, r * 0.13, r * 1.05);
+      c.beginPath();
+      c.moveTo(cx - r * 0.2, cy - r * 0.6);
+      c.lineTo(cx + r * 0.83, cy - r * 0.78);
+      c.lineTo(cx + r * 0.83, cy - r * 0.52);
+      c.lineTo(cx - r * 0.2, cy - r * 0.34);
+      c.closePath();
+      c.fill();
+    },
+
     cross(c, cx, cy, r) {
       c.fillRect(cx - r * 0.22, cy - r * 0.68, r * 0.44, r * 1.36);
       c.fillRect(cx - r * 0.68, cy - r * 0.22, r * 1.36, r * 0.44);

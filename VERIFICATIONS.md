@@ -20,7 +20,7 @@
 - [ ] La page s'ouvre sans message d'erreur rouge sous le titre.
 - [ ] Le plateau montre un carré de rues en moulinet : la rue de gauche sort en haut, celle du haut sort à droite, celle de droite sort en bas, celle du bas sort à gauche ; une rue centrale relie le haut et le bas. 32 cases grises : tout le tour de la carte (côté extérieur), le long du haut et du bas à l'intérieur, et le long de la rue centrale ; quelques ronds roses, aucune boutique ouverte sauf la banque au centre ; deux parcs arborés, avec le compte à rebours des soldes dans celui de gauche.
 - [ ] Les cases des côtés gauche et droit sont tournées, porte vers la rue ; une boutique construite là a son mobilier tourné et ses clients y entrent.
-- [ ] Chaque bac affiche 27 cartes avec leur prix et leur nom en petit dessous, et « 140 » en bas, avec « objectif 20000 $ » dessous.
+- [ ] Chaque bac affiche 28 cartes avec leur prix et leur nom en petit dessous, et « 140 » en bas, avec « objectif 20000 $ » dessous.
 - [ ] Jauge d'argent : derrière les cartes, un fond à la couleur du joueur descend jusqu'à la dernière boutique abordable (140 $ : jusqu'au Café ; 200 $ : jusqu'à la Librairie) ; elle monte et descend en douceur quand l'argent change.
 - [ ] Au début, peu de passants (8) ; chaque boutique ouverte en fait venir 4 de plus.
 - [ ] Prix des cartes : de 60 $ (Fleuriste) à 1800 $ (Discothèque), de plus en plus espacés.
@@ -28,6 +28,13 @@
 - [ ] Deux boutiques identiques placées n'importe où reçoivent à peu près autant de clients (une boutique isolée sur un côté de la carte n'est pas délaissée).
 - [ ] Les accents s'affichent correctement (« Météorite », « Hôtel », « Manège »).
 - [ ] Des passants arrivent par les 4 routes et se promènent.
+
+## Musique, pharmacie, vendeurs
+
+- [ ] Carte « Musique » (370 $, icône deux croches) entre Jouets et Coiffeur. Le magasin montre six guitares au mur, un piano à queue avec son banc, une batterie sur un tapis rouge, un ampli et un comptoir.
+- [ ] Un client s'assoit au piano, tourné vers le clavier : des notes de couleur s'envolent du piano tant qu'il joue.
+- [ ] Pharmacie : deux rayons de boîtes colorées au milieu ; les clients s'arrêtent dans les allées et ne traversent pas les rayons, y compris sur une case tournée.
+- [ ] Un vendeur (chemise à la couleur de la boutique, tablier blanc) dans la plupart des boutiques : buste derrière le comptoir, ou debout (coiffeur, restaurant, galerie, manège, librairie, jouets, vêtements). Il se tourne de temps en temps ; il n'a pas d'info-bulle. Pas de vendeur au bowling, cinéma, laser game, billard, piscine, ni à la banque.
 
 ## Construire, améliorer, protéger
 

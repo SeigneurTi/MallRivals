@@ -5,7 +5,7 @@
 
   const config = Game.config;
 
-  // Les 25 boutiques, de la moins chère à la plus chère (écart croissant entre deux prix).
+  // Les 26 boutiques, de la moins chère à la plus chère (écart croissant entre deux prix).
   // color : couleur de l'enseigne et des murs ; icon : voir js/icons.js.
   const SHOPS = [
     { id: 'fleuriste', name: 'Fleuriste', price: 60, color: '#e8578f', icon: 'flower' },
@@ -17,6 +17,7 @@
     { id: 'pharmacie', name: 'Pharmacie', price: 240, color: '#27a35a', icon: 'cross' },
     { id: 'pizzeria', name: 'Pizzeria', price: 290, color: '#c8402f', icon: 'pizza' },
     { id: 'jouets', name: 'Jouets', price: 340, color: '#f2a31f', icon: 'bear' },
+    { id: 'musique', name: 'Musique', price: 370, color: '#4b3f9e', icon: 'note' },
     { id: 'coiffeur', name: 'Coiffeur', price: 400, color: '#6b4fb3', icon: 'scissors' },
     { id: 'burger', name: 'Burger', price: 460, color: '#e2552a', icon: 'burger' },
     { id: 'vetements', name: 'Vêtements', price: 520, color: '#2b8fbd', icon: 'shirt' },

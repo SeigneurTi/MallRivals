@@ -30,6 +30,7 @@
 
   Object.assign(Game.interiors, {
     coiffeur: {
+      seller: { u: 0.35, v: 0.36, behindCounter: false },   // vendeur (décor)
       activity: 'sit',
       slots: [slot(0.2, 0.3), slot(0.5, 0.3), slot(0.8, 0.3)],
       drawFurniture(g) {
@@ -49,6 +50,7 @@
     // 5 bornes en colonne contre le mur de gauche ; chaque joueur se tient à droite de la sienne,
     // tourné vers l'écran. À droite : machine à pince, flippers et comptoir à lots (décor).
     arcade: {
+      seller: { u: 0.58, v: 0.77, behindCounter: true },   // vendeur (décor)
       activity: 'play',
       slots: ARCADE_ROWS_V.map(v => slot(0.25, v + 0.11, undefined, -1)),
       drawFurniture(g) {
@@ -315,6 +317,7 @@
 
     // 8 places ; les clients tournent avec le plateau (voir js/people/activities.js).
     manege: {
+      seller: { u: 0.12, v: 0.62, behindCounter: false },   // vendeur (décor)
       activity: 'ride',
       slots: Array.from({ length: CAROUSEL_SEATS }, () => slot(0.5, 0.47, 'ride')),
       drawFurniture(g) {
@@ -346,6 +349,7 @@
     },
 
     hotel: {
+      seller: { u: 0.38, v: 0.17, behindCounter: true },   // vendeur (décor)
       activity: 'lobby',
       slots: [slot(0.5, 0.36), slot(0.15, 0.4), slot(0.15, 0.62), slot(0.85, 0.4), slot(0.85, 0.62)],
       drawFurniture(g) {

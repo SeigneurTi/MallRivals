@@ -200,13 +200,45 @@
     }
   }
 
-  // Ce qui change à chaque image : parties animées, « Complet », compte à rebours du cinéma.
+  // Vendeur, pour le décor : chemise à la couleur de la boutique, tablier blanc.
+  // Derrière un comptoir (behindCounter), on ne voit que son buste. Son allure dépend de la case,
+  // et il se tourne de temps en temps d'un côté puis de l'autre.
+  function drawSeller(lot, time) {
+    const seller = Game.interiors[lot.shop.id].seller;
+    if (!seller) {
+      return;
+    }
+    const people = Game.people;
+    const [x, y] = Game.shopGeometry.lotPointToBoard(lot, seller.u, seller.v);
+    const variant = lot.index * 7 + lot.shop.price;
+    const isGirl = variant % 2 === 0;
+    people.draw({
+      x,
+      y,
+      drawScale: Game.config.people.INSIDE_SCALE,
+      sitAmount: seller.behindCounter ? 1 : 0,
+      seatView: seller.behindCounter ? 'back' : null,
+      walkPhase: 0,
+      facing: Math.sin(time * 0.35 + lot.index * 1.3) > 0 ? 1 : -1,
+      skin: people.SKIN_COLORS[variant % people.SKIN_COLORS.length],
+      hair: people.HAIR_COLORS[(variant >> 1) % people.HAIR_COLORS.length],
+      shirt: lot.shop.color,
+      pants: '#2d2d34',
+      apron: '#ffffff',
+      isGirl,
+      hairStyle: isGirl ? 'ponytail' : 'short',
+      skirt: null,
+    }, false);
+  }
+
+  // Ce qui change à chaque image : parties animées, vendeur, « Complet », compte à rebours du cinéma.
   function drawLiveLayer(lot, time) {
     const ctx = Game.view.ctx;
     const interior = Game.interiors[lot.shop.id];
     if (interior.drawAnimated) {
       withPainter(ctx, frameOfLot(lot), g => interior.drawAnimated(g, lot, time));
     }
+    drawSeller(lot, time);
 
     const freeSlots = lot.occupants.filter(occupant => !occupant).length;
     let label = null;

@@ -2,6 +2,14 @@
 
 Les versions les plus récentes sont en haut.
 
+## v2.20 — Magasin de musique, rayons de la pharmacie, vendeurs (7 novembre 2026)
+
+- **Magasin de musique** (370 $, entre Jouets et Coiffeur) : mur de guitares, piano à queue, batterie sur un tapis, ampli et comptoir. Un client s'assoit au piano et joue : des notes de musique s'envolent. Nouvelle icône (deux croches).
+- **Pharmacie** : deux rayons de médicaments au milieu de la boutique, avec une pancarte verte ; les clients flânent dans les allées et contournent les rayons.
+- **Vendeurs** pour le décor dans 21 boutiques : chemise à la couleur de la boutique et tablier blanc. Derrière un comptoir, on ne voit que leur buste (boulangerie, café, glacier, pizzeria, burger, pharmacie, bijouterie, fleuriste, kiosque, arcade, hôtel, casino, discothèque, musique) ; ailleurs, ils sont debout (coiffeuse près des fauteuils, serveur au restaurant, gardien de la galerie, forain du manège, vendeurs de la librairie, des jouets et des vêtements). Ils se tournent de temps en temps.
+- Partie à distance : version des codes passée à 2 (le catalogue a changé).
+- Fichiers : `js/shops/interiors-music.js` (nouveau), `js/catalog.js`, `js/icons.js`, `js/names.js`, `js/shops/interiors-shops.js` (pharmacie, vendeurs), `js/shops/interiors-food.js`, `js/shops/interiors-leisure.js`, `js/shops/interiors-gallery.js`, `js/shops/interiors-night.js` (vendeurs), `js/shops/shop.js` (`drawSeller`), `js/shops/furniture.js`, `js/people/draw.js` (tablier), `js/people/person.js`, `js/config.js`, `index.html`.
+
 ## v2.19 — Page d'accueil et partie à distance (7 novembre 2026)
 
 - **Page d'accueil** : à l'ouverture, on choisit « Deux joueurs, un écran », « À distance » ou « Partie auto ». Le bouton « Accueil » sous le plateau y ramène.

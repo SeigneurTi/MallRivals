@@ -101,5 +101,6 @@
   //   slots           les places (leur nombre = capacité de la boutique)
   //   drawFurniture   le mobilier fixe (dessiné une fois sur le fond de carte)
   //   drawAnimated    facultatif : ce qui bouge (écran, bornes, quilles), à chaque image
+  //   seller          facultatif : vendeur pour le décor, { u, v, behindCounter } (voir js/shops/shop.js)
   Game.interiors = {};
 })();

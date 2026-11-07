@@ -218,6 +218,8 @@
 
   Game.people = {
     PERSON_STATE,
+    SKIN_COLORS,
+    HAIR_COLORS,
     create,
     placeOnRoute,
     walkAlongRoute,

@@ -24,7 +24,7 @@ bourg-les-bonhommes/
 │   ├── canvas.js            Canvas, mise à l'échelle de l'écran (Game.view)
 │   ├── draw.js              Primitives : rectangle, disque, ellipse, rectangle arrondi
 │   ├── map.js               Carte en moulinet : carrefours, rues, 4 sorties, cases, parcs, trajets
-│   ├── catalog.js           ★ Les 24 boutiques, la banque et les 2 malus, formules de gains
+│   ├── catalog.js           ★ Les 26 boutiques, la banque et les 2 malus, formules de gains
 │   ├── names.js             « le Cinéma », « au Cinéma », « du Cinéma »…
 │   ├── icons.js             Icônes des enseignes et des cartes
 │   ├── sprites.js           Bouclier, voiture, icônes des malus
@@ -39,7 +39,8 @@ bourg-les-bonhommes/
 │   │   ├── interiors-bank.js     Banque (coffre, lingots)
 │   │   ├── interiors-lasergame.js Laser game (équipes, tirs)
 │   │   ├── interiors-gallery.js  Galerie d'art (tableaux, mobile, visiteurs)
-│   │   └── shop.js          Ouverture, places libres, séances, pistes, dessin du bâtiment
+│   │   ├── interiors-music.js    Magasin de musique (guitares, piano, batterie)
+│   │   └── shop.js          Ouverture, places libres, séances, pistes, dessin du bâtiment et du vendeur
 │   ├── state.js             État de la partie (Game.state), nouvelle partie, destruction
 │   ├── feedback.js          Journal, bannière, textes flottants
 │   ├── render/
@@ -99,6 +100,8 @@ bourg-les-bonhommes/
 | Durée de l'attente et de la partie au laser game, cadence de tir | `js/config.js` | `lasergame` |
 | Ce que les clients emportent (fleur, cornet, écrin) | `js/shops/interiors-*.js` | `souvenir` de la boutique |
 | Obstacles que les clients contournent dans une boutique | `js/shops/interiors-*.js` | `obstacles(lot)` de la boutique |
+| Vendeur d'une boutique (place, derrière un comptoir ou debout) | `js/shops/interiors-*.js` | `seller: { u, v, behindCounter }` de la boutique (sans `seller` : pas de vendeur) |
+| Rayons de la pharmacie | `js/shops/interiors-shops.js` | `PHARMACY_AISLES` |
 | Réussite de la voiture-voleur, vitesse de la voiture | `js/config.js` | `thief` |
 | Fréquence des incendies, monstres, OVNI, délai avant le premier (6 min) | `js/config.js` | `events` (`START_DELAY_SECONDS`) |
 | Butin, emplacement et remplissage de la banque | `js/config.js` | `bank` |

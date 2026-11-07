@@ -13,6 +13,7 @@
     pharmacie: 'la ',
     pizzeria: 'la ',
     jouets: 'le magasin de ',
+    musique: 'le magasin de ',
     coiffeur: 'le ',
     burger: 'le ',
     vetements: 'la boutique de ',

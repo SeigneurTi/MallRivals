@@ -99,6 +99,7 @@
 
   Object.assign(Game.interiors, {
     galerie: {
+      seller: { u: 0.75, v: 0.76, behindCounter: false },   // vendeur (décor)
       activity: 'gallery',
       // 6 visiteurs, chacun commence devant un tableau différent.
       slots: [0, 2, 4, 6, 1, 7].map(index => Object.assign(slot(VIEWPOINTS[index].u, VIEWPOINTS[index].v), { viewpoint: index })),

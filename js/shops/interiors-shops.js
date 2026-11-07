@@ -114,8 +114,43 @@
     c.fill();
   }
 
+  // Pharmacie : boîtes de médicaments, et les deux rayons du milieu (u, v, largeur, hauteur).
+  const PHARMACY_BOX_COLORS = ['#ffffff', '#27a35a', '#bfe3f2', '#f2c14e', '#f4a3b8'];
+  const PHARMACY_AISLES = [
+    { u: 0.26, v: 0.32, width: 0.13, height: 0.36 },
+    { u: 0.61, v: 0.32, width: 0.13, height: 0.36 },
+  ];
+
+  // Rectangle de l'intérieur (u, v, largeur, hauteur) en coordonnées du plateau (obstacles).
+  function boardRect(lot, u, v, width, height) {
+    const { lotPointToBoard } = Game.shopGeometry;
+    const [x1, y1] = lotPointToBoard(lot, u, v);
+    const [x2, y2] = lotPointToBoard(lot, u + width, v + height);
+    return { left: Math.min(x1, x2), top: Math.min(y1, y2), right: Math.max(x1, x2), bottom: Math.max(y1, y2) };
+  }
+
+  // Rayon vu de dessus : montant blanc au milieu, boîtes rangées des deux côtés, pancarte en haut.
+  function pharmacyAisle(g, aisle) {
+    const { c, x, y, w, h } = g;
+    rect(c, x(aisle.u), y(aisle.v), w(aisle.width), h(aisle.height), '#d9e2dc');
+    const rows = 7;
+    const half = aisle.width / 2;
+    for (let row = 0; row < rows; row++) {
+      const v = aisle.v + 0.015 + row * (aisle.height - 0.03) / rows;
+      const boxHeight = (aisle.height - 0.03) / rows - 0.01;
+      for (const side of [0, 1]) {
+        const color = PHARMACY_BOX_COLORS[(row * 2 + side + Math.round(aisle.u * 10)) % PHARMACY_BOX_COLORS.length];
+        rect(c, x(aisle.u + 0.01 + side * half), y(v), w(half - 0.02), h(boxHeight), color);
+      }
+    }
+    rect(c, x(aisle.u + half - 0.006), y(aisle.v), w(0.012), h(aisle.height), '#9aa8a0');
+    // Pancarte verte au bout du rayon.
+    rect(c, x(aisle.u - 0.005), y(aisle.v - 0.03), w(aisle.width + 0.01), h(0.035), '#27a35a');
+  }
+
   Object.assign(Game.interiors, {
     fleuriste: {
+      seller: { u: 0.84, v: 0.66, behindCounter: true },   // vendeur (décor)
       activity: 'browse',
       slots: [slot(0.22, 0.45), slot(0.45, 0.45), slot(0.7, 0.45), slot(0.2, 0.75)],
       // Chaque client repart avec une fleur.
@@ -164,6 +199,7 @@
     },
 
     kiosque: {
+      seller: { u: 0.83, v: 0.64, behindCounter: true },   // vendeur (décor)
       activity: 'browse',
       slots: [slot(0.22, 0.42), slot(0.5, 0.42), slot(0.82, 0.42)],
       drawFurniture(g) {
@@ -180,6 +216,7 @@
     },
 
     boulangerie: {
+      seller: { u: 0.5, v: 0.22, behindCounter: true },   // vendeur (décor)
       activity: 'browse',
       slots: [slot(0.2, 0.45), slot(0.4, 0.45), slot(0.6, 0.45), slot(0.8, 0.45)],
       drawFurniture(g) {
@@ -196,6 +233,7 @@
     },
 
     librairie: {
+      seller: { u: 0.16, v: 0.84, behindCounter: false },   // vendeur (décor)
       activity: 'browse',
       slots: [slot(0.25, 0.36), slot(0.5, 0.36), slot(0.75, 0.36), slot(0.18, 0.68)],
       drawFurniture(g) {
@@ -209,15 +247,21 @@
       },
     },
 
+    // Pharmacie : comptoir au fond, étagères le long des murs et deux rayons au milieu,
+    // que les clients contournent pour flâner dans les allées.
     pharmacie: {
+      seller: { u: 0.4, v: 0.2, behindCounter: true },   // vendeur (décor)
       activity: 'browse',
-      slots: [slot(0.5, 0.4), slot(0.2, 0.55), slot(0.8, 0.55)],
+      slots: [slot(0.17, 0.52), slot(0.5, 0.45), slot(0.84, 0.52), slot(0.5, 0.78)],
+      obstacles: lot => PHARMACY_AISLES.map(aisle => boardRect(lot, aisle.u - 0.02, aisle.v - 0.02, aisle.width + 0.04, aisle.height + 0.04)),
       drawFurniture(g) {
         const { c, x, y, w, h } = g;
         checkerFloor(g, '#f4f7f4', '#e6eee6', 7);
-        const boxColors = ['#ffffff', '#27a35a', '#bfe3f2', '#f2c14e'];
-        verticalShelf(c, x(0.02), y(0.06), w(0.07), h(0.72), boxColors);
-        verticalShelf(c, x(0.91), y(0.06), w(0.07), h(0.72), boxColors);
+        verticalShelf(c, x(0.02), y(0.06), w(0.07), h(0.72), PHARMACY_BOX_COLORS);
+        verticalShelf(c, x(0.91), y(0.06), w(0.07), h(0.72), PHARMACY_BOX_COLORS);
+        for (const aisle of PHARMACY_AISLES) {
+          pharmacyAisle(g, aisle);
+        }
         // Comptoir et croix verte.
         rect(c, x(0.3), y(0.05), w(0.4), h(0.16), '#27a35a');
         rect(c, x(0.485), y(0.07), w(0.03), h(0.12), '#fff');
@@ -226,6 +270,7 @@
     },
 
     jouets: {
+      seller: { u: 0.3, v: 0.3, behindCounter: false },   // vendeur (décor)
       activity: 'browse',
       slots: [slot(0.2, 0.38), slot(0.4, 0.38), slot(0.6, 0.38), slot(0.8, 0.38), slot(0.3, 0.72)],
       drawFurniture(g) {
@@ -252,6 +297,7 @@
     },
 
     vetements: {
+      seller: { u: 0.82, v: 0.62, behindCounter: false },   // vendeur (décor)
       activity: 'browse',
       slots: [slot(0.15, 0.44), slot(0.35, 0.44), slot(0.55, 0.44), slot(0.78, 0.5), slot(0.3, 0.74)],
       drawFurniture(g) {
@@ -281,6 +327,7 @@
     // Bijouterie : comptoir vitré au fond, vitrines murales, deux îlots de présentation
     // et un gros diamant sur son coussin ; les pierres scintillent (drawAnimated).
     bijouterie: {
+      seller: { u: 0.27, v: 0.19, behindCounter: true },   // vendeur (décor)
       activity: 'browse',
       slots: [slot(0.3, 0.33), slot(0.7, 0.33), slot(0.2, 0.62), slot(0.8, 0.62)],
       // Chaque client repart avec un petit écrin emballé.

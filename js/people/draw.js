@@ -90,6 +90,12 @@
     ctx.fillStyle = person.inSwimsuit ? person.skin : person.shirt;
     roundedRectPath(ctx, -3.8, -12.5 + top, 7.6, 7.5, 2.5);
     ctx.fill();
+    if (person.apron) {
+      // Vendeur : tablier sur le buste.
+      ctx.fillStyle = person.apron;
+      roundedRectPath(ctx, -2.6, -10 + top, 5.2, 5, 1);
+      ctx.fill();
+    }
     if (person.inSwimsuit) {
       ctx.fillStyle = person.swimsuitColor;
       if (person.isGirl) {
