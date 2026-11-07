@@ -4,7 +4,6 @@
 (function () {
   'use strict';
 
-  const PLAYER_NAMES = Game.config.players.NAMES;
   const ECONOMY = Game.config.economy;
   const { log, floatText } = Game.feedback;
   const { shopName } = Game.names;
@@ -28,7 +27,7 @@
     Game.state.bucks[player] -= shop.price;
     Game.shops.open(lot, shop, player);
     Game.board.draw();
-    log(`${PLAYER_NAMES[player]} ouvre ${shopName(lot)}.`);
+    log(`${Game.autoplay.nameOf(player)} ouvre ${shopName(lot)}.`);
   }
 
   function canUpgrade(lot) {
@@ -40,7 +39,7 @@
     lot.level++;
     Game.board.draw();
     floatText(lot, 'Niveau ' + lot.level, '#b7791f');
-    log(`${PLAYER_NAMES[lot.owner]} améliore ${shopName(lot)} au niveau ${lot.level}.`);
+    log(`${Game.autoplay.nameOf(lot.owner)} améliore ${shopName(lot)} au niveau ${lot.level}.`);
   }
 
   function canAddShield(lot) {

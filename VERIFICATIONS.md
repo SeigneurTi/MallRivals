@@ -4,7 +4,7 @@
 
 ## Accueil et partie à distance
 
-- [ ] La page s'ouvre sur l'accueil : trois choix « Deux joueurs, un écran », « À distance », « Partie auto ». Les deux premiers lancent une partie normale, le troisième une partie auto. « Accueil » sous le plateau y ramène.
+- [ ] La page s'ouvre sur l'accueil : quatre choix « Deux joueurs, un écran », « Contre un bot », « À distance », « Partie auto ». « Deux joueurs » lance une partie normale, « Partie auto » une partie auto. « Accueil » sous le plateau y ramène.
 - [ ] Ouvrir le jeu dans deux navigateurs (ou deux fenêtres). Dans le premier : « À distance » → « Créer une partie » : un code « BLB… » apparaît, « Copier le code » le copie.
 - [ ] Dans le second : « À distance » → « Rejoindre une partie », coller le code, « Valider » : un code réponse apparaît. Le recoller chez l'hôte et « Commencer la partie » : les deux plateaux s'affichent, avec le bandeau vert « Partie à distance : tu joues… ».
 - [ ] Coller le code d'invitation à la place du code réponse (ou un texte quelconque) : message d'erreur rouge clair, rien ne casse.
@@ -116,6 +116,14 @@
 
 - [ ] Bouton rond à loupe sur le bord droit de la tablette : un clic l'allume (orange). En survolant le plateau, un rond montre la zone sous le curseur grossie ×3, nette (textes et passants sans flou) ; autour, la carte reste normale.
 - [ ] Les clics passent à travers la loupe (on peut construire en loupe) ; un nouveau clic sur le bouton l'éteint ; la loupe disparaît quand le curseur quitte le plateau.
+
+## Contre un bot
+
+- [ ] « Contre un bot » ouvre le choix du niveau : Facile, Normal, Difficile, et « ← Retour ». Chaque niveau lance une partie.
+- [ ] Le bac de gauche s'appelle « Joueur 1 (toi) », celui de droite « Bot (Facile) », « Bot (Normal) » ou « Bot (Difficile) ». Le journal et l'écran de victoire utilisent aussi « Bot (…) ».
+- [ ] On ne peut pas choisir les cartes du bot ; le menu d'une boutique du bot n'a que « Fermer ».
+- [ ] Le bot construit, améliore, se protège et attaque tout seul. Facile : lent, petites boutiques, ni amélioration ni bouclier. Difficile : joue vite, prend les cases animées, met des boucliers sur ses meilleures boutiques, pille la banque dès qu'elle est pleine et envoie des météorites sur les boutiques chères du joueur, surtout quand il est derrière.
+- [ ] « Recommencer » relance une partie contre le même bot ; « Accueil » ramène au menu. « Deux joueurs, un écran » ensuite : plus de bot.
 
 ## Partie auto
 

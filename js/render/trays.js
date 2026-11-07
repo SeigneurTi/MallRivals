@@ -174,9 +174,10 @@
     c.textBaseline = 'middle';
     c.font = '800 16px "Baloo 2", system-ui, sans-serif';
     c.fillStyle = '#ffffff';
-    // Partie à distance : « Joueur 1 (toi) » sur le bac de ce navigateur.
-    const isMine = Game.online.myPlayer() === player;
-    c.fillText(isMine ? `${PLAYERS.NAMES[player]} (toi)` : PLAYERS.NAMES[player], middle, 21, BOARD.TRAY_WIDTH - 8);
+    // Partie à distance ou contre un bot : « Joueur 1 (toi) » sur le bac du joueur humain, « Bot (Facile) » sur celui du bot.
+    const isMine = Game.online.myPlayer() === player || (Game.state.botLevel != null && !Game.autoplay.isBot(player));
+    const name = Game.autoplay.nameOf(player);
+    c.fillText(isMine ? `${name} (toi)` : name, middle, 21, BOARD.TRAY_WIDTH - 8);
 
     c.font = '700 11px Nunito, system-ui, sans-serif';
     if (selection && selection.player === player) {

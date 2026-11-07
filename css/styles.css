@@ -263,8 +263,20 @@ button:disabled {
 
 #homeMenu {
   display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+/* Niveaux du bot : trois cartes côte à côte. */
+.home-levels {
+  display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 12px;
+  margin-bottom: 12px;
+}
+
+.home-levels .home-choice {
+  min-height: 120px;
 }
 
 .home-choice {
@@ -490,7 +502,8 @@ button.link:hover {
     margin-left: 0;
   }
 
-  #homeMenu {
+  #homeMenu,
+  .home-levels {
     grid-template-columns: 1fr;
   }
 

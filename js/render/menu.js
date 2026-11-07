@@ -59,7 +59,7 @@
 
   function draw(c, lot) {
     const menu = layout(lot);
-    const ownerName = lot.owner != null ? Game.config.players.NAMES[lot.owner] : 'Sans propriétaire';
+    const ownerName = lot.owner != null ? Game.autoplay.nameOf(lot.owner) : 'Sans propriétaire';
 
     // Ombre et fond.
     c.fillStyle = 'rgba(20,25,20,.25)';

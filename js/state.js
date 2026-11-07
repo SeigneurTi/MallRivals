@@ -23,6 +23,7 @@
     isRunning: !Game.view.prefersReducedMotion,           // bouton Pause / Lecture
     hoveredPerson: null,      // passant survolé (info-bulle)
     isAutoplay: false,        // bouton « Partie auto » : les joueurs jouent tout seuls
+    botLevel: null,           // partie « Contre un bot » : 'easy', 'normal' ou 'hard' (Joueur 2 est le bot)
     winner: null,             // joueur qui a atteint l'objectif (la partie est alors finie)
     victoryAge: 0,            // temps réel écoulé depuis la victoire (s)
     round: 0,                 // numéro de la partie (partie à distance : l'ami voit qu'une nouvelle partie commence)
@@ -121,7 +122,7 @@
     state.victoryAge = 0;
     state.selection = null;
     state.menuLot = null;
-    Game.feedback.log(`${Game.config.players.NAMES[state.winner]} atteint ${target} $ et gagne la partie !`);
+    Game.feedback.log(`${Game.autoplay.nameOf(state.winner)} atteint ${target} $ et gagne la partie !`);
   }
 
   Game.world = { reset, lotCenter, destroyShop, checkVictory };

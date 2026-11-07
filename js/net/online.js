@@ -45,8 +45,9 @@
   }
 
   // Ce navigateur peut-il jouer pour ce joueur ?
+  // Contre un bot, le joueur ne touche pas au bac ni aux boutiques du bot.
   function canControl(player) {
-    return mode === 'local' || player === myPlayer();
+    return (mode === 'local' && !Game.autoplay.isBot(player)) || player === myPlayer();
   }
 
   // ---------- Ordres ----------
@@ -192,6 +193,7 @@
     Game.state.selection = null;
     Game.state.menuLot = null;
     Game.state.isAutoplay = false;
+    Game.state.botLevel = null;
     if (mode === 'host') {
       Game.world.reset();   // l'ami reçoit la nouvelle ville dès la première photo
     }

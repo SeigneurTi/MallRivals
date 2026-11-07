@@ -78,6 +78,12 @@
       routeNodes.push(...map.findPath(current, streetStart).slice(1), streetEnd);
     }
     routeNodes.push(...map.findPath(routeNodes[routeNodes.length - 1], to).slice(1));
+    // Trajet réduit à sa sortie de départ (boutique visée dans la rue de cette sortie, et retour par elle) :
+    // il repart par une autre sortie.
+    if (routeNodes.length < 2) {
+      to = pickRandom(map.exits.filter(id => id !== from));
+      routeNodes.push(...map.findPath(from, to).slice(1));
+    }
     const walkSpeed = randomBetween(PEOPLE.WALK_SPEED_MIN, PEOPLE.WALK_SPEED_MAX);
 
     const isGirl = Math.random() < 0.5;

@@ -2,6 +2,18 @@
 
 Les versions les plus récentes sont en haut.
 
+## v2.22 — Mode contre un bot, trois niveaux (7 novembre 2026)
+
+- **Contre un bot** : nouveau choix sur l'accueil. Tu joues Joueur 1 (bac de gauche), l'ordinateur joue Joueur 2, avec les mêmes cartes et les mêmes règles. Trois niveaux :
+  - **Facile** : réfléchit toutes les 7 s environ, ne construit que de petites boutiques, n'améliore rien, ne se protège pas et n'attaque presque jamais ;
+  - **Normal** : achète dès qu'il peut, améliore ses boutiques, met un bouclier, pille parfois la banque et attaque de temps en temps ;
+  - **Difficile** : joue toutes les 1,5 s, construit la boutique la plus chère possible sur les cases animées, protège ses 3 meilleures boutiques quand tu peux lancer une météorite, améliore celle qui rapporte le plus, pille la banque dès qu'elle est pleine, et envoie des météorites sur tes boutiques chères (sans bouclier de préférence), surtout quand il est derrière.
+- Sur 12 parties simulées contre le joueur de la partie auto : Facile gagne 1 fois, Normal 5 fois, Difficile 12 fois (et Difficile bat Normal 12 fois sur 12).
+- Le bac du bot affiche « Bot (Difficile) » et le tien « Joueur 1 (toi) » ; on ne peut pas jouer les cartes du bot ni toucher à ses boutiques. Le journal et l'écran de victoire disent « Bot (…) ».
+- L'accueil passe à quatre choix, en deux colonnes.
+- **Correction** : pendant les soldes, un client dont la boutique était dans la rue de sa sortie d'arrivée, et qui devait repartir par la même sortie, faisait planter le jeu (trajet d'un seul point). Il repart maintenant par une autre sortie.
+- Fichiers : `js/autoplay.js` (bot et ses trois niveaux, `isBot`, `nameOf`), `js/config.js` (`autoplay.SHOWCASE`, `autoplay.LEVELS`), `js/home.js`, `index.html`, `css/styles.css` (accueil), `js/state.js` (`botLevel`), `js/net/online.js` (`canControl`), `js/render/trays.js`, `js/render/overlay.js`, `js/render/menu.js`, `js/actions.js`, `js/events/attacks.js` (noms), `js/people/person.js` (correction des soldes), `README.md`, `VERIFICATIONS.md`.
+
 ## v2.21 — Vendeurs derrière leur comptoir, qui parlent aux clients (7 novembre 2026)
 
 - **Derrière un comptoir**, le vendeur est maintenant debout et de face, et la façade du comptoir (à la couleur du comptoir de la boutique) passe devant lui : seules sa tête et ses épaules dépassent, ses mains sont posées sur le plateau. Avant, on voyait son buste de dos, posé sur le comptoir.

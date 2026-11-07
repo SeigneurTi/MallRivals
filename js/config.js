@@ -191,11 +191,55 @@
       DIAMETER: 220,                   // diamètre de la loupe, en pixels de l'écran
     },
 
+    // Joueurs automatiques (js/autoplay.js) : « Partie auto » (SHOWCASE pour les deux joueurs)
+    // et bot d'une partie « Contre un bot » (LEVELS). Pour chaque façon de jouer :
+    //   DECISION_SECONDS     temps de réflexion entre deux décisions
+    //   BUILD_CHANCE         préfère construire quand c'est possible
+    //   BANK_ROBBERY_CHANCE  tente de piller la banque quand elle est pleine
+    //   MALUS_CHANCE         lance une météorite ou un voleur contre l'adversaire
+    //   MAX_SHIELDS          boucliers au plus par boutique
     autoplay: {
-      DECISION_SECONDS: 3,             // un joueur réfléchit toutes les 3 s environ
-      BUILD_CHANCE: 0.7,               // préfère construire quand c'est possible
-      BANK_ROBBERY_CHANCE: 0.25,       // tente de piller la banque quand elle est pleine
-      MALUS_CHANCE: 0.05,              // joue rarement une météorite ou un voleur contre l'adversaire
+      SHOWCASE: {
+        strategy: 'showcase',            // chaque type de boutique une fois d'abord, pour montrer toute la variété
+        DECISION_SECONDS: 3,
+        BUILD_CHANCE: 0.7,
+        BANK_ROBBERY_CHANCE: 0.25,
+        MALUS_CHANCE: 0.05,
+        MAX_SHIELDS: 1,
+      },
+      LEVELS: {
+        easy: {
+          label: 'Facile',
+          strategy: 'easy',              // petites boutiques au hasard, n'améliore pas, ne se protège pas
+          DECISION_SECONDS: 7,
+          BUILD_CHANCE: 1,
+          BANK_ROBBERY_CHANCE: 0.1,
+          MALUS_CHANCE: 0.01,
+          MAX_SHIELDS: 0,
+        },
+        normal: {
+          label: 'Normal',
+          strategy: 'normal',            // achète dès qu'il peut, améliore et protège au hasard
+          DECISION_SECONDS: 3,
+          BUILD_CHANCE: 0.7,
+          BANK_ROBBERY_CHANCE: 0.3,
+          MALUS_CHANCE: 0.04,
+          MAX_SHIELDS: 1,
+        },
+        hard: {
+          label: 'Difficile',
+          strategy: 'hard',              // cases animées, meilleures boutiques, protège et attaque à bon escient
+          DECISION_SECONDS: 1.5,
+          BUILD_CHANCE: 0.8,
+          BANK_ROBBERY_CHANCE: 1,
+          MALUS_CHANCE: 0.04,
+          MALUS_CHANCE_WHEN_BEHIND: 0.2, // attaque bien plus quand il est derrière
+          MAX_SHIELDS: 2,
+        },
+      },
+      EASY_SHOP_CHOICES: 3,            // Facile : choisit parmi les 3 boutiques les moins chères qu'il peut s'offrir
+      HARD_PROTECTED_SHOPS: 3,         // Difficile : protège ses 3 boutiques les plus précieuses
+      HARD_MIN_TARGET_VALUE: 400,      // Difficile : n'envoie une météorite que sur une boutique de 400 $ ou plus (prix × niveau)
     },
 
     fire: {

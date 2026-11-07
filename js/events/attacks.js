@@ -2,7 +2,6 @@
 (function () {
   'use strict';
 
-  const PLAYER_NAMES = Game.config.players.NAMES;
   const PLAYER_COLORS = Game.config.players.COLORS;
   const { log, floatText } = Game.feedback;
   const { shopName, shopNameAfterDe } = Game.names;
@@ -29,7 +28,7 @@
   function launchMeteor(player, lot) {
     lot.isBusy = true;
     const [centerX, centerY] = Game.world.lotCenter(lot);
-    log(`${PLAYER_NAMES[player]} envoie une météorite sur ${shopName(lot)} de ${PLAYER_NAMES[lot.owner]} !`);
+    log(`${Game.autoplay.nameOf(player)} envoie une météorite sur ${shopName(lot)} de ${Game.autoplay.nameOf(lot.owner)} !`);
     Game.events.addAnimation({
       kind: 'meteor',
       elapsed: 0,
@@ -59,7 +58,7 @@
   // Échec : la boutique perd quand même un bouclier si elle en a.
   function launchThief(player, lot) {
     lot.isBusy = true;
-    log(`${PLAYER_NAMES[player]} envoie une voiture-voleur vers ${shopName(lot)}…`);
+    log(`${Game.autoplay.nameOf(player)} envoie une voiture-voleur vers ${shopName(lot)}…`);
     const street = Game.map.lotStreet[lot.index];
     const startExit = player ? 'east' : 'west';
     const points = [
@@ -90,7 +89,7 @@
           lot.shields = 0;
           Game.board.draw();
           floatText(lot, 'Volé !', PLAYER_COLORS[player]);
-          log(`Vol réussi : ${lot.shop.name} passe de ${PLAYER_NAMES[previousOwner]} à ${PLAYER_NAMES[player]} !`);
+          log(`Vol réussi : ${lot.shop.name} passe de ${Game.autoplay.nameOf(previousOwner)} à ${Game.autoplay.nameOf(player)} !`);
         } else {
           if (lot.shields > 0) {
             lot.shields--;
@@ -109,7 +108,7 @@
   function robBank(player, lot) {
     if (!Game.shops.isBankFull(lot)) {
       Game.feedback.floatText(lot, 'Coffre vide !', '#555');
-      log(`Le voleur de ${PLAYER_NAMES[player]} arrive trop tard : la banque est vide.`);
+      log(`Le voleur de ${Game.autoplay.nameOf(player)} arrive trop tard : la banque est vide.`);
       Game.events.addSmoke(...Game.world.lotCenter(lot));
       return;
     }
@@ -117,7 +116,7 @@
     lot.bank.gold = 0;
     Game.state.bucks[player] += loot;
     floatText(lot, '+' + loot + ' $', PLAYER_COLORS[player]);
-    log(`${PLAYER_NAMES[player]} pille la banque : +${loot} $ !`);
+    log(`${Game.autoplay.nameOf(player)} pille la banque : +${loot} $ !`);
     Game.events.addSmoke(...Game.world.lotCenter(lot));
   }
 

@@ -9,7 +9,7 @@
 
   const homeElement = element('home');
   const gameElement = element('game');
-  const PANEL_IDS = ['homeMenu', 'homeOnline', 'homeHost', 'homeGuest'];
+  const PANEL_IDS = ['homeMenu', 'homeBot', 'homeOnline', 'homeHost', 'homeGuest'];
   const INVITATION_HASH = '#invitation=';
 
   let connectTimer = null;      // explique pourquoi la connexion n'aboutit pas
@@ -61,11 +61,12 @@
     scrollTo(0, 0);
   }
 
-  // Partie sur un seul écran, à deux ou en partie auto.
-  function startLocalGame(isAutoplay) {
+  // Partie sur un seul écran : à deux, en partie auto, ou contre un bot (botLevel : 'easy', 'normal', 'hard').
+  function startLocalGame(isAutoplay, botLevel = null) {
     Game.online.stop();
     Game.world.reset();
     Game.state.isAutoplay = isAutoplay;
+    Game.state.botLevel = botLevel;
     Game.input.syncAutoplayButton();
     showGame();
   }
@@ -183,6 +184,10 @@
         setNotice('');
         if (choice === 'local' || choice === 'auto') {
           startLocalGame(choice === 'auto');
+        } else if (choice === 'bot') {
+          showPanel('homeBot');
+        } else if (choice.startsWith('bot-')) {
+          startLocalGame(false, choice.slice('bot-'.length));
         } else if (choice === 'online') {
           showPanel('homeOnline');
         } else if (choice === 'host') {

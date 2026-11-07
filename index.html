@@ -26,6 +26,11 @@
       <span class="home-choice-title">Deux joueurs, un écran</span>
       <span class="home-choice-text">Chacun son bac de cartes, sur la même tablette ou le même ordinateur.</span>
     </button>
+    <button class="home-choice" type="button" data-choice="bot">
+      <span class="home-choice-icon" aria-hidden="true">🤖</span>
+      <span class="home-choice-title">Contre un bot</span>
+      <span class="home-choice-text">Tu joues Joueur 1, l'ordinateur joue Joueur 2. Trois niveaux.</span>
+    </button>
     <button class="home-choice home-choice-main" type="button" data-choice="online">
       <span class="home-choice-icon" aria-hidden="true">🌍</span>
       <span class="home-choice-title">À distance</span>
@@ -36,6 +41,29 @@
       <span class="home-choice-title">Partie auto</span>
       <span class="home-choice-text">Les deux joueurs jouent tout seuls : regarde la ville vivre.</span>
     </button>
+  </section>
+
+  <section id="homeBot" class="home-panel home-steps" aria-labelledby="homeBotTitle" hidden>
+    <h2 id="homeBotTitle">Jouer contre un bot</h2>
+    <p>Tu joues Joueur 1, avec le bac de gauche. Le bot joue Joueur 2 : il construit, améliore, se protège et attaque, avec les mêmes cartes et les mêmes règles que toi.</p>
+    <div class="home-levels">
+      <button class="home-choice" type="button" data-choice="bot-easy">
+        <span class="home-choice-icon" aria-hidden="true">🐢</span>
+        <span class="home-choice-title">Facile</span>
+        <span class="home-choice-text">Il prend son temps, ne construit que de petites boutiques et ne se protège pas.</span>
+      </button>
+      <button class="home-choice" type="button" data-choice="bot-normal">
+        <span class="home-choice-icon" aria-hidden="true">🙂</span>
+        <span class="home-choice-title">Normal</span>
+        <span class="home-choice-text">Il achète dès qu'il peut, améliore ses boutiques et attaque de temps en temps.</span>
+      </button>
+      <button class="home-choice" type="button" data-choice="bot-hard">
+        <span class="home-choice-icon" aria-hidden="true">🔥</span>
+        <span class="home-choice-title">Difficile</span>
+        <span class="home-choice-text">Il joue vite, prend les cases animées, protège ses meilleures boutiques et vise les tiennes.</span>
+      </button>
+    </div>
+    <button class="link" type="button" data-choice="back">← Retour</button>
   </section>
 
   <section id="homeOnline" class="home-panel home-steps" aria-labelledby="homeOnlineTitle" hidden>

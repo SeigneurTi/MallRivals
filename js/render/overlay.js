@@ -164,7 +164,7 @@
     ctx.textBaseline = 'middle';
     ctx.fillStyle = players.COLORS[state.winner];
     ctx.font = '800 34px "Baloo 2", system-ui, sans-serif';
-    ctx.fillText(`${players.NAMES[state.winner]} gagne !`, BOARD.MAP_WIDTH / 2, top + 55);
+    ctx.fillText(`${Game.autoplay.nameOf(state.winner)} gagne !`, BOARD.MAP_WIDTH / 2, top + 55);
     const minutes = Math.floor(state.gameTime / 60);
     const seconds = Math.floor(state.gameTime % 60);
     ctx.fillStyle = '#23272b';

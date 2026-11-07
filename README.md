@@ -66,7 +66,7 @@ bourg-les-bonhommes/
 │   │   ├── connection.js    Connexion directe WebRTC, codes d'invitation et de réponse
 │   │   └── online.js        Rôles (hôte, ami), ordres et messages échangés
 │   ├── actions.js           Actions d'un joueur : construire, améliorer, protéger, malus ; ordres (perform)
-│   ├── autoplay.js          Partie auto : les deux joueurs jouent tout seuls
+│   ├── autoplay.js          Joueurs automatiques : partie auto et bot (Facile, Normal, Difficile)
 │   ├── input.js             Clics, survol, curseurs et boutons
 │   ├── home.js              Page d'accueil : choix du mode, échange des codes
 │   └── main.js              Boucle d'animation et démarrage
@@ -107,7 +107,8 @@ bourg-les-bonhommes/
 | Réussite de la voiture-voleur, vitesse de la voiture | `js/config.js` | `thief` |
 | Fréquence des incendies, monstres, OVNI, délai avant le premier (6 min) | `js/config.js` | `events` (`START_DELAY_SECONDS`) |
 | Butin, emplacement et remplissage de la banque | `js/config.js` | `bank` |
-| Comportement de la partie auto | `js/config.js` (et `js/autoplay.js`) | `autoplay` |
+| Comportement de la partie auto | `js/config.js` (et `js/autoplay.js`) | `autoplay.SHOWCASE` |
+| Niveaux du bot (Facile, Normal, Difficile) : vitesse, attaques, boucliers | `js/config.js` (et `js/autoplay.js`) | `autoplay.LEVELS` |
 | Billard (visée, vitesse, frottement) | `js/config.js` | `billiard` |
 | Effets de l'incendie, du monstre, de l'OVNI | `js/config.js` | `fire`, `monster`, `ufo` |
 | Nombre de places d'une boutique | `js/shops/interiors-*.js` | `slots` de la boutique |
