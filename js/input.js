@@ -176,27 +176,66 @@
     bindFullscreenButton();
   }
 
-  // Bouton « Plein écran » (surtout utile sur téléphone), caché si le navigateur ne le permet pas (iPhone).
-  function bindFullscreenButton() {
-    const button = document.getElementById('fullscreen');
-    const root = document.documentElement;
-    if (!document.fullscreenEnabled || !root.requestFullscreen) {
-      button.hidden = true;
-      return;
-    }
-    button.addEventListener('click', () => {
-      if (document.fullscreenElement) {
-        document.exitFullscreen();
-      } else {
-        root.requestFullscreen({ navigationUI: 'hide' }).catch(() => {});
-      }
-    });
-    document.addEventListener('fullscreenchange', () => {
-      const isFullscreen = Boolean(document.fullscreenElement);
-      button.textContent = isFullscreen ? 'Quitter le plein écran' : 'Plein écran';
-      button.setAttribute('aria-pressed', String(isFullscreen));
-    });
+  // Plein écran (surtout utile sur téléphone) : bouton « Plein écran » sous le plateau et bouton à
+  // côté de la loupe. Seul le plateau reste à l'écran (classe is-fullscreen sur la page) ; quand le
+  // navigateur le permet, la barre d'adresse disparaît aussi. Sur iPhone, Safari ne le permet pas :
+  // on garde le mode « plateau seul ».
+  function isFullscreen() {
+    return document.body.classList.contains('is-fullscreen');
   }
 
-  Game.input = { bind, syncPlayButton, syncAutoplayButton };
+  function fullscreenElement() {
+    return document.fullscreenElement || document.webkitFullscreenElement || null;
+  }
+
+  function setFullscreen(enabled) {
+    const root = document.documentElement;
+    document.body.classList.toggle('is-fullscreen', enabled);
+    if (enabled) {
+      const request = root.requestFullscreen || root.webkitRequestFullscreen;
+      if (request && !fullscreenElement()) {
+        try {
+          const result = request.call(root, { navigationUI: 'hide' });
+          if (result && result.catch) {
+            result.catch(() => {});
+          }
+        } catch (error) {
+          // Refusé par le navigateur : on garde le mode « plateau seul ».
+        }
+      }
+    } else if (fullscreenElement()) {
+      const exit = document.exitFullscreen || document.webkitExitFullscreen;
+      exit.call(document);
+    }
+    syncFullscreenButtons();
+    scrollTo(0, 0);
+    Game.view.resize(true);
+  }
+
+  function syncFullscreenButtons() {
+    const enabled = isFullscreen();
+    const barButton = document.getElementById('fullscreen');
+    barButton.textContent = enabled ? 'Quitter le plein écran' : 'Plein écran';
+    barButton.setAttribute('aria-pressed', String(enabled));
+    const cornerButton = document.getElementById('fullscreen-corner');
+    cornerButton.setAttribute('aria-pressed', String(enabled));
+    cornerButton.setAttribute('aria-label', enabled ? 'Quitter le plein écran' : 'Plein écran');
+    cornerButton.title = enabled ? 'Quitter le plein écran' : 'Plein écran : le plateau occupe tout l\'écran';
+  }
+
+  function bindFullscreenButton() {
+    for (const id of ['fullscreen', 'fullscreen-corner']) {
+      document.getElementById(id).addEventListener('click', () => setFullscreen(!isFullscreen()));
+    }
+    // Sortie par le navigateur (touche Échap, geste « retour ») : la page revient aussi à la normale.
+    const onChange = () => {
+      if (!fullscreenElement() && isFullscreen()) {
+        setFullscreen(false);
+      }
+    };
+    document.addEventListener('fullscreenchange', onChange);
+    document.addEventListener('webkitfullscreenchange', onChange);
+  }
+
+  Game.input = { bind, syncPlayButton, syncAutoplayButton, setFullscreen };
 })();

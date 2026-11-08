@@ -122,7 +122,7 @@ Avec un téléphone (ou les outils de développement du navigateur, mode apparei
 - [ ] Loupe (bouton à droite du titre) : glisser le doigt sur la carte déplace la loupe au-dessus du doigt, sans faire défiler la page ni ouvrir de menu ; un toucher bref joue.
 - [ ] Bannière du journal, textes « +12 $ », badge « Pause » et panneau de victoire lisibles.
 - [ ] Tenu en largeur : le plateau habituel occupe toute la hauteur de l'écran, sans titre au-dessus.
-- [ ] « Plein écran » (Android) : le plateau grandit ; le bouton devient « Quitter le plein écran ».
+- [ ] Bouton plein écran (à gauche de la loupe) : seul le plateau reste, sur fond sombre, les deux boutons en haut à droite ; un nouveau toucher sur le bouton revient à la page normale. Sur Android la barre d'adresse disparaît aussi ; sur iPhone, mode « plateau seul ». Le bouton « Plein écran » sous le plateau fait la même chose.
 - [ ] Sur ordinateur, le plateau est comme avant (bacs à gauche et à droite) et tient en entier dans la fenêtre.
 
 ## Loupe

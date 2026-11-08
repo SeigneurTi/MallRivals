@@ -41,6 +41,9 @@
 
   // Ouvre l'accueil. Une partie à distance en cours est fermée.
   function open(notice) {
+    if (document.body.classList.contains('is-fullscreen')) {
+      Game.input.setFullscreen(false);
+    }
     clearTimeout(connectTimer);
     Game.online.stop();
     homeElement.hidden = false;

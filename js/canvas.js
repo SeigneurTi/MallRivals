@@ -14,7 +14,8 @@
   // Adapte les deux canvas à la place disponible et à la densité de l'écran : tout le plateau
   // tient dans la largeur de la tablette et dans la hauteur de la fenêtre. La disposition
   // (large ou haute, voir js/layout.js) est choisie à ce moment-là.
-  function resize() {
+  // force : redimensionne même si seule la hauteur a un peu changé (entrée ou sortie du plein écran).
+  function resize(force) {
     const container = canvas.parentElement;
     const padding = parseFloat(getComputedStyle(container).paddingLeft);
     const width = container.clientWidth - padding * 2;
@@ -25,7 +26,7 @@
     // Sur téléphone, la barre d'adresse qui apparaît en faisant défiler ne change que la hauteur :
     // on n'y touche pas, sinon le plateau grandirait et rapetisserait sans cesse.
     const isJitter = isTouchScreen && lastSize && lastSize.width === width && Math.abs(lastSize.height - height) < LAYOUT.HEIGHT_JITTER;
-    if (isJitter && canvas.width) {
+    if (isJitter && canvas.width && force !== true) {
       return;
     }
     lastSize = { width, height };

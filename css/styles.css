@@ -106,6 +106,20 @@ canvas {
   color: #ffffff;
 }
 
+/* Bouton plein écran : sous la loupe ; son icône change quand le plein écran est actif. */
+.fullscreen-button {
+  top: 72px;
+}
+
+.fullscreen-button .icon-exit,
+.fullscreen-button[aria-pressed="true"] .icon-enter {
+  display: none;
+}
+
+.fullscreen-button[aria-pressed="true"] .icon-exit {
+  display: block;
+}
+
 /* Loupe active : le curseur devient une croix ; au doigt, glisser déplace la loupe au lieu de faire défiler la page. */
 .tablet.is-magnifying #board {
   cursor: crosshair;
@@ -553,11 +567,15 @@ button {
     border-radius: 6px;
   }
 
-  /* Loupe au-dessus de la tablette, à droite du titre : sur la carte, elle cacherait les menus. */
+  /* Loupe et plein écran au-dessus de la tablette, à droite du titre : sur la carte, ils cacheraient les menus. */
   .lens-button {
     top: -46px;
     right: 2px;
     border-color: transparent;
+  }
+
+  .fullscreen-button {
+    right: 46px;
   }
 
   .bar {
@@ -598,4 +616,55 @@ button {
   .lens-button {
     top: 10px;
   }
+
+  .fullscreen-button {
+    top: 54px;
+  }
+}
+
+/* ---------- Plein écran : seul le plateau reste (js/input.js) ---------- */
+
+body.is-fullscreen {
+  padding: env(safe-area-inset-top, 0px) env(safe-area-inset-right, 0px) env(safe-area-inset-bottom, 0px) env(safe-area-inset-left, 0px);
+  background: #16181c;
+  overflow: hidden;
+}
+
+.is-fullscreen #game > div:first-child,
+.is-fullscreen .bar,
+.is-fullscreen .cols {
+  display: none;
+}
+
+.is-fullscreen .wrap {
+  max-width: none;
+}
+
+.is-fullscreen .tablet {
+  box-sizing: border-box;          /* la hauteur de l'écran inclut les marges : rien ne dépasse */
+  padding: 4px;
+  border-radius: 0;
+  box-shadow: none;
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  align-items: center;
+}
+
+/* Les deux boutons passent sur le plateau, en haut à droite, un peu transparents. */
+.is-fullscreen .lens-button {
+  top: 8px;
+  right: 8px;
+  width: 34px;
+  height: 34px;
+  border-color: transparent;
+  background: rgba(42, 46, 54, .8);
+}
+
+.is-fullscreen .lens-button[aria-pressed="true"] {
+  background: rgba(232, 116, 59, .9);
+}
+
+.is-fullscreen .fullscreen-button {
+  right: 48px;
 }

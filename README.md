@@ -99,6 +99,7 @@ bourg-les-bonhommes/
 | Temps pour se changer au vestiaire de la piscine | `js/config.js` | `pool` |
 | Grossissement et taille de la loupe, loupe au doigt | `js/config.js` | `magnifier` |
 | Téléphone : colonnes de cartes en hauteur, grossissement des menus et textes, marges | `js/config.js` | `layout` |
+| Plein écran (ce qui reste affiché, place des boutons) | `css/styles.css` | `.is-fullscreen` |
 | Durée de l'attente et du film au cinéma | `js/config.js` | `cinema` |
 | Durée de l'attente et de la partie au laser game, cadence de tir | `js/config.js` | `lasergame` |
 | Ce que les clients emportent (fleur, cornet, écrin) | `js/shops/interiors-*.js` | `souvenir` de la boutique |

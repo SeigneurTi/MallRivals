@@ -2,6 +2,13 @@
 
 Les versions les plus récentes sont en haut.
 
+## v2.24 — Bouton plein écran sur téléphone (8 novembre 2026)
+
+- **Bouton plein écran** à côté de la loupe (sur téléphone : au-dessus du plateau, à droite du titre ; sur ordinateur : sous la loupe, au bord de la tablette). Seul le plateau reste à l'écran, sur fond sombre, avec la loupe et le bouton pour sortir en haut à droite. Le bouton « Plein écran » sous le plateau fait la même chose.
+- Quand le navigateur le permet (Android, ordinateur), la barre d'adresse disparaît aussi. **Sur iPhone**, où Safari ne le permet pas, le bouton marche quand même (mode « plateau seul »), et le jeu peut être ajouté à l'écran d'accueil (Partager → « Sur l'écran d'accueil ») pour s'ouvrir sans barre d'adresse.
+- Sortie par Échap ou par le geste « retour » : la page revient à la normale ; le bouton « Accueil » quitte aussi le plein écran.
+- Fichiers : `index.html` (bouton, balises pour l'écran d'accueil), `js/input.js` (`setFullscreen`), `js/canvas.js` (redimensionnement forcé), `js/home.js`, `css/styles.css`, `README.md`, `VERIFICATIONS.md`.
+
 ## v2.23 — Adapté au téléphone (8 novembre 2026)
 
 - **Téléphone tenu en hauteur** : nouvelle disposition du plateau. La carte de la ville est en haut, sur toute la largeur ; les deux bacs sont côte à côte en dessous, avec des cartes deux fois plus grandes (4 colonnes) et l'argent de chaque joueur en haut de son bac. Le jeu choisit tout seul la disposition qui affiche le plateau le plus grand (aussi sur une tablette tenue en hauteur).
